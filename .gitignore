@@ -26,8 +26,15 @@ coverage
 out/
 build
 dist
-.expo/
 *.tsbuildinfo
+
+# Flutter / Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+**/.dart_tool/
+**/build/
 
 
 # Debug
