@@ -1,0 +1,25 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+allowBuilds:
+  "@parcel/watcher": true
+  "@swc/core": true
+  sharp: false
+  unrs-resolver: false
+
+minimumReleaseAgeExclude:
+  - "@expo/ui@57.0.21"
+  - expo-camera@57.0.6
+  - expo-constants@57.0.20
+  - expo-modules-core@57.0.20
+  - expo-router@57.0.24
+  - expo@57.0.26
+  - lucide-react-native@1.49.0
+  - "@turbo/darwin-64@2.11.7"
+  - "@turbo/darwin-arm64@2.11.7"
+  - "@turbo/linux-64@2.11.7"
+  - "@turbo/linux-arm64@2.11.7"
+  - "@turbo/windows-64@2.11.7"
+  - "@turbo/windows-arm64@2.11.7"
+  - turbo@2.11.7

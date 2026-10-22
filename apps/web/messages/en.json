@@ -1,0 +1,2202 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "loading": "Loading...",
+    "error": "An error occurred",
+    "search": "Search",
+    "confirm": "Confirm",
+    "back": "Back",
+    "language": "Language"
+  },
+  "auth": {
+    "login": "Sign In",
+    "logout": "Sign Out",
+    "email": "Email",
+    "password": "Password",
+    "loginTitle": "Welcome back",
+    "forgotPassword": "Forgot password?",
+    "register": "Sign Up",
+    "loginSubtitle": "Sign in to manage your storage units, access codes and payments.",
+    "registerTitle": "Create an account",
+    "registerSubtitle": "Join over 100,000 customers who trust StorageHub with their belongings.",
+    "emailPlaceholder": "e.g. john.doe@gmail.com",
+    "passwordPlaceholder": "Enter your password",
+    "newPasswordPlaceholder": "At least 6 characters",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Re-enter your password",
+    "fullName": "Full name",
+    "fullNamePlaceholder": "e.g. John Doe",
+    "phonePlaceholder": "0912 345 678",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "forgotPasswordHint": "Please contact our hotline 1900 8899 to reset your password.",
+    "loggingIn": "Signing in...",
+    "registering": "Creating account...",
+    "loginSuccess": "Signed in successfully!",
+    "registerSuccess": "Account created! Welcome to StorageHub.",
+    "noAccount": "Don't have an account?",
+    "registerNow": "Sign up now",
+    "haveAccount": "Already have an account?",
+    "loginNow": "Sign in",
+    "agreeTerms": "I agree to StorageHub's <terms>Terms of Service</terms> and <privacy>Privacy Policy</privacy>.",
+    "layout": {
+      "headline": "Safe space, more possibilities",
+      "subheadline": "Flexible monthly self-storage — book, pay and unlock your unit in just a few taps.",
+      "security": "24/7 security",
+      "securityDesc": "CCTV monitoring and per-customer access control.",
+      "access": "Flexible access",
+      "accessDesc": "Your own access code, available whenever you need it.",
+      "payment": "Transparent billing",
+      "paymentDesc": "Track invoices and renewals right from your account.",
+      "rights": "All rights reserved.",
+      "backHome": "Back to home"
+    },
+    "phoneOptional": "Phone number (optional)",
+    "continueWithGoogle": "Continue with Google",
+    "or": "or",
+    "continue": "Continue",
+    "sendingOtp": "Sending code...",
+    "otp": "Verification code (OTP)",
+    "otpTitle": "Verify your email",
+    "otpSubtitle": "We sent a 6-digit code to <email></email>. Enter it to finish signing up.",
+    "otpExpiry": "The code is valid for 5 minutes. Check your Spam folder if you can't find it.",
+    "otpSent": "Verification code sent to {email}",
+    "verifyAndRegister": "Verify & create account",
+    "resendOtp": "Resend code",
+    "resendOtpIn": "Resend in {seconds}s",
+    "changeInfo": "Edit details",
+    "errors": {
+      "emailExists": "This email is already registered. Please sign in or use another email.",
+      "invalidOtp": "The code is incorrect or has expired. Try again or resend the code.",
+      "useGoogleLogin": "This account was created with Google. Please use \"Continue with Google\".",
+      "accountBanned": "Your account has been locked. Please contact support."
+    }
+  },
+  "validation": {
+    "emailRequired": "Email is required",
+    "emailInvalid": "Invalid email address",
+    "passwordRequired": "Password is required",
+    "passwordMin": "Password must be at least 6 characters",
+    "confirmPasswordRequired": "Please confirm your password",
+    "passwordMismatch": "Passwords do not match",
+    "fullNameRequired": "Full name is required",
+    "phoneInvalid": "Invalid phone number",
+    "agreeTermsRequired": "You must agree to the Terms of Service",
+    "passwordMax": "Password must be at most 100 characters",
+    "fullNameMin": "Full name must be at least 2 characters",
+    "fullNameMax": "Full name must be at most 50 characters",
+    "otpInvalid": "The code must be 6 digits"
+  },
+  "status": {
+    "active": "Active",
+    "expiringSoon": "Expiring Soon",
+    "maintenance": "Maintenance",
+    "done": "Completed",
+    "new": "New",
+    "inProgress": "In Progress"
+  },
+  "api": {
+    "MESSAGE_CODE_001": "Operation Successful",
+    "MESSAGE_CODE_002": "{0} Created Successfully",
+    "MESSAGE_CODE_003": "{0} Updated Successfully",
+    "MESSAGE_CODE_004": "{0} Deleted Successfully",
+    "MESSAGE_CODE_101": "Invalid Request",
+    "MESSAGE_CODE_102": "Unauthorized Access",
+    "MESSAGE_CODE_103": "Access Denied",
+    "MESSAGE_CODE_104": "{0} Not Found",
+    "MESSAGE_CODE_105": "{0} Already Exists",
+    "MESSAGE_CODE_106": "Internal Server Error",
+    "MESSAGE_CODE_107": "Invalid Email Or Password",
+    "MESSAGE_CODE_108": "{0} Email Is Not Verified",
+    "MESSAGE_CODE_109": "Invalid Or Expired OTP",
+    "MESSAGE_CODE_110": "{0} Is Inactive",
+    "MESSAGE_CODE_111": "{0} Is Banned Or Locked",
+    "MESSAGE_CODE_112": "{0} Has Been Deleted",
+    "MESSAGE_CODE_120": "{0} Role Is Invalid",
+    "MESSAGE_CODE_121": "User Must Have Role {0}",
+    "MESSAGE_CODE_122": "You Do Not Have Permission To Manage {0}",
+    "MESSAGE_CODE_200": "{0} Is Required",
+    "MESSAGE_CODE_201": "Invalid Token",
+    "MESSAGE_CODE_300": "Reservation Not Found",
+    "MESSAGE_CODE_301": "Reservation status has changed, please refresh",
+    "MESSAGE_CODE_302": "Reservation cannot be updated after being received",
+    "MESSAGE_CODE_303": "Reservation cannot be cancelled in its current status",
+    "MESSAGE_CODE_304": "Reservation hold period has expired",
+    "MESSAGE_CODE_305": "Selected storage unit is no longer available",
+    "MESSAGE_CODE_306": "Selected storage unit does not belong to this facility or match the unit type",
+    "MESSAGE_CODE_307": "Insufficient available quantity for amenity {0}",
+    "MESSAGE_CODE_500": "Payment session not found",
+    "MESSAGE_CODE_501": "Facility bank account is not configured",
+    "MESSAGE_CODE_502": "Payment QR session has expired",
+    "MESSAGE_CODE_503": "Contract is not in pending deposit status",
+    "MESSAGE_CODE_504": "Payment session cannot be cancelled in its current status",
+    "MESSAGE_CODE_505": "Order is not awaiting payment or has already been settled",
+    "MESSAGE_CODE_506": "Payment transaction verification failed",
+    "MESSAGE_CODE_507": "Payment has already been settled"
+  },
+  "systemAdmin": {
+    "nav": {
+      "overview": "Overview",
+      "userManagement": "User Management",
+      "auditLogs": "Audit Logs",
+      "facilityManagement": "Facility Management",
+      "settings": "System Settings"
+    },
+    "search": "Search...",
+    "userTable": {
+      "title": "User Management",
+      "createAccount": "+ Create New Account",
+      "searchPlaceholder": "Search users...",
+      "columns": {
+        "user": "User",
+        "role": "Role",
+        "facility": "Assigned Facility",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Locked"
+      },
+      "roles": {
+        "systemAdmin": "System Admin",
+        "businessOpsManager": "Business Ops Manager",
+        "facilityManager": "Facility Manager",
+        "facilityStaff": "Staff",
+        "customer": "Customer"
+      },
+      "pagination": {
+        "page": "Page",
+        "of": "of",
+        "users": "users",
+        "prev": "Prev",
+        "next": "Next"
+      },
+      "roleFilter": {
+        "all": "All Roles"
+      },
+      "loading": "Loading data...",
+      "empty": "No users found.",
+      "edit": "Edit",
+      "lockAccount": "Lock account",
+      "unlockAccount": "Unlock account",
+      "deleteAccount": "Delete account",
+      "createModal": {
+        "title": "Create New Account",
+        "name": "Full Name *",
+        "email": "Email *",
+        "phone": "Phone Number *",
+        "password": "Password *",
+        "role": "Role *",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "confirm": "Create Account"
+      },
+      "editModal": {
+        "title": "Edit User",
+        "name": "Full Name *",
+        "phone": "Phone Number *",
+        "role": "Role *",
+        "status": "Status",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "save": "Save Changes",
+        "updateFailed": "Update failed!"
+      },
+      "deleteModal": {
+        "title": "Confirm Delete User",
+        "message": "Are you sure you want to delete the account",
+        "warning": "This action cannot be undone.",
+        "cancel": "Cancel",
+        "deleting": "Deleting...",
+        "confirm": "Delete Account",
+        "failed": "Failed to delete user. Please try again!"
+      },
+      "createFailed": "Failed to create user.",
+      "retryMessage": "Please try again!",
+      "updateStatusFailed": "Failed to update status!"
+    },
+    "auditLog": {
+      "title": "System Audit Logs",
+      "subtitle": "Track all user activity across the system",
+      "refresh": "Refresh",
+      "searchPlaceholder": "Search logs (email, IP, path...)",
+      "allActions": "All actions",
+      "allStatus": "All status",
+      "statusSuccess": "Success",
+      "statusFailure": "Failed",
+      "from": "From",
+      "to": "To",
+      "clearFilters": "Clear filters",
+      "columns": {
+        "time": "Time",
+        "actor": "Actor",
+        "action": "Action",
+        "resource": "Resource",
+        "result": "Result",
+        "ip": "IP Address",
+        "details": "Details"
+      },
+      "errorMessage": "Unable to load data. Please try again.",
+      "retry": "Retry",
+      "empty": "No log records found.",
+      "guest": "Guest / System",
+      "success": "Success",
+      "failure": "Failed",
+      "showing": "Showing",
+      "of": "of",
+      "records": "records",
+      "total": "Total",
+      "page": "Page",
+      "prevPage": "Previous",
+      "nextPage": "Next",
+      "unknownEmail": "Unknown email",
+      "viewDetails": "View details",
+      "actions": {
+        "login": "Login",
+        "logout": "Logout",
+        "register": "Register",
+        "login_google": "Google Login",
+        "create": "Create",
+        "update": "Update",
+        "delete": "Delete",
+        "restore": "Restore",
+        "change_password": "Change Password",
+        "forgot_password": "Forgot Password",
+        "reset_password": "Reset Password",
+        "send_otp": "Send OTP",
+        "toggle_maintenance": "Toggle Maintenance",
+        "approve": "Approve",
+        "reject": "Reject",
+        "cancel": "Cancel",
+        "assign_manager": "Assign Manager"
+      },
+      "resources": {
+        "auth": "Auth",
+        "user": "User",
+        "profile": "Profile",
+        "facility": "Facility",
+        "unit_type": "Unit Type",
+        "amenity": "Amenity",
+        "facility_unit_type_offering": "Facility Unit Type",
+        "facility_amenity_offerings": "Facility Amenity",
+        "facility_amenity_offering": "Facility Amenity",
+        "storage_unit": "Storage Unit",
+        "reservation": "Reservation",
+        "approval_request": "Approval Request"
+      },
+      "modal": {
+        "title": "Activity Details",
+        "logId": "Log ID",
+        "overview": "Overview",
+        "actor": "Actor",
+        "action": "Action",
+        "on": "on",
+        "time": "Time",
+        "endpoint": "Endpoint",
+        "ipAndRequest": "IP Address & Request ID",
+        "userAgent": "User Agent",
+        "dataDiff": "Data Diff",
+        "before": "Before (Old)",
+        "after": "After (New)",
+        "none": "None",
+        "metadata": "Additional Metadata",
+        "errorMessage": "Failed to load log details. Please try again."
+      }
+    }
+  },
+  "landing": {
+    "meta": {
+      "title": "StorageHub - Safe storage space for every need",
+      "description": "StorageHub - Smart, secure and flexible self-storage rental for individuals and businesses."
+    },
+    "nav": {
+      "home": "Home",
+      "storage": "Storage",
+      "pricing": "Pricing",
+      "about": "About us",
+      "support": "Support"
+    },
+    "header": {
+      "login": "Log in",
+      "register": "Sign up",
+      "quickSearch": "Quick search",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu",
+      "mainNav": "Main navigation"
+    },
+    "hero": {
+      "badge": "Self-service • Secure • Flexible",
+      "title": "Safe storage space <br></br>for <highlight>every need</highlight>",
+      "description": "Find and rent self-storage units quickly and easily. <br></br>Flexible solutions for individuals, families and businesses.",
+      "imageAlt": "Modern StorageHub storage facility hallway",
+      "annotationLine1": "Easy storage",
+      "annotationLine2": "Lighter living"
+    },
+    "search": {
+      "fields": {
+        "location": "Location",
+        "type": "Storage type",
+        "size": "Size",
+        "price": "Price range"
+      },
+      "locationPlaceholder": "Select a facility",
+      "submit": "Find available units",
+      "options": {
+        "location": {
+          "all": {
+            "label": "All facilities",
+            "sublabel": "Nationwide network"
+          },
+          "hcm-q7": {
+            "label": "HCMC - District 7 (Phu My Hung)",
+            "sublabel": "10 Nguyen Van Linh, District 7"
+          },
+          "hcm-bt": {
+            "label": "HCMC - Binh Thanh (Dien Bien Phu)",
+            "sublabel": "Landmark Tower, Binh Thanh"
+          },
+          "hcm-td": {
+            "label": "HCMC - Thu Duc City (Thao Dien)",
+            "sublabel": "24 Song Hanh Street, Thao Dien"
+          },
+          "hn-cg": {
+            "label": "Hanoi - Cau Giay (Duy Tan)",
+            "sublabel": "Duy Tan Hi-tech Zone, Cau Giay"
+          },
+          "hn-tx": {
+            "label": "Hanoi - Thanh Xuan (Nguyen Trai)",
+            "sublabel": "229 Nguyen Trai, Thanh Xuan"
+          },
+          "dn-hc": {
+            "label": "Da Nang - Hai Chau (Bach Dang)",
+            "sublabel": "150 Bach Dang, Hai Chau"
+          }
+        },
+        "type": {
+          "all": {
+            "label": "All types",
+            "sublabel": "Every storage type"
+          },
+          "locker": {
+            "label": "Personal locker",
+            "sublabel": "Documents, suitcases, small items"
+          },
+          "standard": {
+            "label": "Standard dry storage",
+            "sublabel": "Household items, furniture"
+          },
+          "climate_controlled": {
+            "label": "Climate-controlled storage",
+            "sublabel": "Antiques, electronics, wine"
+          },
+          "commercial": {
+            "label": "Business storage",
+            "sublabel": "Inventory, long-term records"
+          }
+        },
+        "size": {
+          "all": {
+            "label": "All sizes",
+            "sublabel": "Any area"
+          },
+          "small": {
+            "label": "Small (1m² - 3m²)",
+            "sublabel": "Fits 10 - 20 cardboard boxes"
+          },
+          "medium": {
+            "label": "Medium (4m² - 8m²)",
+            "sublabel": "Living room or bedroom furniture"
+          },
+          "large": {
+            "label": "Large (9m² - 15m²)",
+            "sublabel": "A whole 2-3 bedroom apartment"
+          },
+          "extra_large": {
+            "label": "Extra large (over 15m²)",
+            "sublabel": "Businesses, small workshops"
+          }
+        },
+        "price": {
+          "all": {
+            "label": "All prices",
+            "sublabel": "Any budget"
+          },
+          "under_1m": {
+            "label": "Under 1,000,000đ / month",
+            "sublabel": "Budget"
+          },
+          "1m_to_2m5": {
+            "label": "1,000,000đ - 2,500,000đ / month",
+            "sublabel": "Most popular"
+          },
+          "2m5_to_5m": {
+            "label": "2,500,000đ - 5,000,000đ / month",
+            "sublabel": "Spacious"
+          },
+          "above_5m": {
+            "label": "Over 5,000,000đ / month",
+            "sublabel": "Business & premium"
+          }
+        }
+      }
+    },
+    "trust": {
+      "facilities": "50+ facilities nationwide",
+      "sizes": "Wide range of unit sizes",
+      "payment": "Flexible payment",
+      "support": "24/7 support"
+    },
+    "benefits": {
+      "security": {
+        "title": "Total security",
+        "description": "24/7 security, CCTV monitoring and code-controlled access."
+      },
+      "flexibility": {
+        "title": "Flexible terms",
+        "description": "Rent by the day, month or year with flexible plans."
+      },
+      "sizes": {
+        "title": "Many sizes",
+        "description": "From small lockers to large units, for every need."
+      },
+      "payment": {
+        "title": "Convenient payment",
+        "description": "Pay by card, e-wallet or bank transfer."
+      },
+      "support": {
+        "title": "24/7 support",
+        "description": "Our team is always ready to help you, anytime."
+      }
+    },
+    "why": {
+      "eyebrow": "Why choose StorageHub?",
+      "title": "Smart storage solutions <br></br>made for you",
+      "description": "We provide modern, secure and convenient storage facilities that help you make the most of your living and working space.",
+      "learnMore": "Learn more",
+      "imageAlt": "A happy customer using StorageHub",
+      "noteTitle": "More room <br></br>for big plans!",
+      "noteCaption": "✦ Declutter with ease",
+      "stats": {
+        "facilities": {
+          "value": "50+",
+          "title": "Facilities nationwide",
+          "description": "Easily find a location near you."
+        },
+        "units": {
+          "value": "1,000+",
+          "title": "Storage units",
+          "description": "Many sizes, plenty of choice."
+        },
+        "customers": {
+          "value": "100,000+",
+          "title": "Trusted customers",
+          "description": "Individuals, families and businesses."
+        },
+        "safety": {
+          "value": "99.9%",
+          "title": "Safety rate",
+          "description": "Modern monitoring systems."
+        }
+      }
+    },
+    "howItWorks": {
+      "title": "Just <highlight>4 simple</highlight> steps",
+      "subtitle": "Renting storage has never been this easy!",
+      "steps": {
+        "search": {
+          "title": "Search",
+          "description": "Choose a facility, storage type, size and rental period."
+        },
+        "booking": {
+          "title": "Book",
+          "description": "Confirm your details and pay the deposit."
+        },
+        "payment": {
+          "title": "Pay",
+          "description": "Complete payment with your preferred method."
+        },
+        "pickup": {
+          "title": "Move in",
+          "description": "Visit the facility, get your access code and start using it."
+        }
+      }
+    },
+    "pricing": {
+      "eyebrow": "Pricing",
+      "title": "Choose the plan that fits you",
+      "description": "Flexible plans with no long-term commitment. Start renting today.",
+      "billingCycle": "Billing cycle",
+      "monthly": "Monthly",
+      "annual": "Yearly",
+      "annualDiscount": "-15%",
+      "popular": "Most popular",
+      "perMonth": "/month",
+      "annualNote": "(Save 15% when paying for 12 months)",
+      "bookNow": "Book now",
+      "customPrompt": "Need a larger unit or a custom plan?",
+      "customLink": "Contact us for advice",
+      "plans": {
+        "small": {
+          "name": "Small",
+          "size": "1–5 m²",
+          "description": "For personal items, luggage and documents",
+          "features": [
+            "Private security lock",
+            "24/7 CCTV monitoring",
+            "Access 7 days a week",
+            "Online support"
+          ]
+        },
+        "medium": {
+          "name": "Medium",
+          "size": "5–15 m²",
+          "description": "Ideal for families or small inventory",
+          "features": [
+            "Private security lock",
+            "24/7 CCTV monitoring",
+            "24/7 access",
+            "Priority support",
+            "Basic property insurance"
+          ]
+        },
+        "large": {
+          "name": "Large",
+          "size": "15–30 m²",
+          "description": "For businesses and commercial goods",
+          "features": [
+            "Smart lock",
+            "24/7 4K cameras",
+            "24/7 access + truck entry",
+            "Dedicated account manager",
+            "Full property insurance",
+            "Monthly reports"
+          ]
+        }
+      }
+    },
+    "testimonials": {
+      "eyebrow": "What our customers say",
+      "title": "Thousands of customers trust StorageHub",
+      "rating": "Rated {rating} out of 5 stars",
+      "items": {
+        "lan": {
+          "name": "Nguyễn Thị Lan",
+          "role": "Homeowner, Hanoi",
+          "content": "StorageHub solved my family’s lack of space. The units are clean and secure, and the staff are very helpful. I’ve used it for 8 months and I’m very satisfied!"
+        },
+        "khoa": {
+          "name": "Trần Minh Khoa",
+          "role": "Business owner, HCMC",
+          "content": "I keep my inventory here. Reasonable prices and professional management. 24/7 access is especially convenient for my business."
+        },
+        "thu": {
+          "name": "Phạm Thị Thu",
+          "role": "Student, Da Nang",
+          "content": "When I went home for the summer, I stored my things at StorageHub. Very convenient and affordable for students. Everything was well kept, nothing damaged."
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to free up <br></br>your space?",
+      "description": "Sign up today and get your first month free on your first unit.",
+      "register": "Sign up for free",
+      "contact": "Talk to an advisor",
+      "note": "No credit card required • Cancel anytime"
+    },
+    "footer": {
+      "description": "StorageHub - Vietnam’s leading self-storage rental platform for individuals and businesses. Total security, flexible terms and maximum convenience.",
+      "address": "Head office: 8th Floor, StorageHub Building, District 7, Ho Chi Minh City",
+      "hotline": "Hotline: 1900 8899 (24/7)",
+      "email": "Support email: hotro@storagehub.vn",
+      "services": {
+        "title": "Storage services",
+        "items": {
+          "personal": "Personal & family storage",
+          "business": "Business / commercial storage",
+          "climate": "Cold & humidity-controlled storage",
+          "locker": "Smart mini lockers",
+          "moving": "Packing & moving services"
+        }
+      },
+      "support": {
+        "title": "Customer support",
+        "items": {
+          "faq": "Frequently asked questions (FAQ)",
+          "pricing": "Pricing & promotions",
+          "guide": "Online booking guide",
+          "insurance": "Goods insurance policy",
+          "terms": "Terms of service"
+        }
+      },
+      "safety": {
+        "title": "Safety standards",
+        "items": {
+          "camera": "24/7 AI camera monitoring and key-card access",
+          "access": "Free 24/7 access without prior notice",
+          "insurance": "Property risk insurance up to 500 million VND"
+        }
+      },
+      "copyright": "© {year} StorageHub Vietnam. All rights reserved.",
+      "legal": {
+        "privacy": "Privacy policy",
+        "regulations": "Operating regulations",
+        "partnership": "Partnerships"
+      }
+    }
+  },
+  "businessOps": {
+    "nav": {
+      "overview": "Overview",
+      "facilities": "Facility Management",
+      "unitTypes": "Unit Types",
+      "amenities": "Amenities & Services",
+      "offerings": "Facility Pricing",
+      "facilityAmenities": "Facility Amenities",
+      "approvals": "Approval Center",
+      "analytics": "Analytics & Reports",
+      "sectionOperations": "BRANCH OPERATIONS"
+    },
+    "searchPlaceholder": "Search facilities, branch code...",
+    "facilities": {
+      "title": "Facility & Branch Network",
+      "subtitle": "Monitor all storage facilities across the StorageHub network, operational statuses, and contact details.",
+      "addFacility": "+ Add New Facility",
+      "searchPlaceholder": "Search by facility name or address...",
+      "cityLabel": "City",
+      "statusLabel": "Status",
+      "refresh": "Refresh",
+      "stats": {
+        "total": "Total Facilities",
+        "active": "Active",
+        "inactive": "Inactive / Closed",
+        "operatingRate": "Operation Rate"
+      },
+      "columns": {
+        "facility": "Facility",
+        "city": "City",
+        "contact": "Hotline & Email",
+        "operatingHours": "Operating Hours",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "cityFilter": {
+        "all": "All Cities",
+        "hanoi": "Hanoi",
+        "hcm": "Ho Chi Minh City",
+        "danang": "Da Nang",
+        "binhduong": "Binh Duong",
+        "haiphong": "Hai Phong",
+        "cantho": "Can Tho"
+      },
+      "statusFilter": {
+        "all": "All Statuses",
+        "active": "Active",
+        "inactive": "Inactive",
+        "closed": "Closed"
+      },
+      "statuses": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "closed": "Closed"
+      },
+      "actions": {
+        "edit": "Edit",
+        "assignManager": "Assign Manager",
+        "viewDetail": "View Details",
+        "delete": "Deactivate",
+        "restore": "Restore"
+      },
+      "pagination": {
+        "showing": "Showing",
+        "of": "of",
+        "facilities": "facilities",
+        "prev": "Previous",
+        "next": "Next"
+      },
+      "empty": {
+        "title": "No facilities found",
+        "description": "Try adjusting your search query or removing some filters.",
+        "clearFilter": "Clear filters"
+      },
+      "loading": "Loading facilities...",
+      "createModal": {
+        "title": "Add New Storage Facility",
+        "subtitle": "Fill in the details to add a new storage branch to the management system.",
+        "name": "Facility Name *",
+        "namePlaceholder": "e.g., StorageHub Cau Giay",
+        "city": "City / Province *",
+        "cityPlaceholder": "Select a city",
+        "address": "Detailed Address *",
+        "addressPlaceholder": "e.g., 123 Cau Giay St, Dich Vong Ward, Cau Giay Dist",
+        "phone": "Hotline / Phone Number",
+        "phonePlaceholder": "e.g., +84 987 654 321",
+        "email": "Contact Email",
+        "emailPlaceholder": "e.g., caugiay@storagehub.vn",
+        "operatingHours": "Operating Hours",
+        "openTime": "Opening Time",
+        "closeTime": "Closing Time",
+        "description": "Facility Description",
+        "descriptionPlaceholder": "Describe infrastructure, highlights, available services...",
+        "cancel": "Cancel",
+        "saving": "Saving...",
+        "submit": "Save Facility",
+        "success": "Facility created successfully!",
+        "error": "Failed to create facility. Please check the information!",
+        "validation": {
+          "nameRequired": "Facility name is required",
+          "cityRequired": "City / Province is required",
+          "addressRequired": "Detailed address is required"
+        }
+      },
+      "editModal": {
+        "title": "Edit Storage Facility",
+        "subtitle": "Update branch information, operating hours, and operational status.",
+        "loading": "Loading facility details...",
+        "name": "Facility Name *",
+        "city": "City / Province *",
+        "address": "Detailed Address *",
+        "phone": "Hotline / Phone Number",
+        "email": "Contact Email",
+        "status": "Operational Status",
+        "operatingHours": "Operating Hours",
+        "openTime": "Opening Time",
+        "closeTime": "Closing Time",
+        "description": "Facility Description",
+        "cancel": "Cancel",
+        "saving": "Saving changes...",
+        "submit": "Save Changes",
+        "success": "Facility updated successfully!",
+        "error": "Failed to update facility. Please check the information!"
+      },
+      "deleteModal": {
+        "title": "Confirm Deactivate Facility",
+        "message": "Are you sure you want to deactivate \"{name}\"?",
+        "warning": "This facility will be temporarily hidden from the system and customer booking app. You can restore it anytime.",
+        "cancel": "Cancel",
+        "confirm": "Confirm Delete",
+        "deleting": "Deleting...",
+        "success": "Facility deleted successfully!",
+        "error": "Failed to delete facility. Please try again!",
+        "undo": "Undo / Restore",
+        "restoring": "Restoring...",
+        "restoreSuccess": "Facility restored successfully!"
+      },
+      "assignManagerModal": {
+        "title": "Assign Facility Manager",
+        "subtitle": "Assign a dedicated Facility Manager responsible for branch operations and contract approvals.",
+        "facilityLabel": "Storage Facility",
+        "selectManager": "Select Facility Manager *",
+        "placeholder": "-- Select Facility Manager --",
+        "noManagers": "No Facility Manager accounts found in the system.",
+        "cancel": "Cancel",
+        "confirm": "Confirm Assignment",
+        "saving": "Assigning...",
+        "success": "Manager assigned successfully!",
+        "error": "Failed to assign manager. Please try again!",
+        "validationRequired": "Please select a Facility Manager"
+      }
+    },
+    "unitTypes": {
+      "title": "Unit Types Directory",
+      "subtitle": "Manage standardized unit classifications, dimensions, area, and volume across the network.",
+      "addUnitType": "+ Add Unit Type",
+      "searchPlaceholder": "Search by unit type name...",
+      "categoryLabel": "Category",
+      "statusLabel": "Status",
+      "sortByLabel": "Sort By",
+      "refresh": "Refresh",
+      "stats": {
+        "total": "Total Unit Types",
+        "active": "Active",
+        "inactive": "Inactive",
+        "categories": "Categories"
+      },
+      "categoryFilter": {
+        "all": "All Categories",
+        "locker": "Locker",
+        "small": "Small",
+        "medium": "Medium",
+        "large": "Large",
+        "climate_controlled": "Climate Controlled"
+      },
+      "statusFilter": {
+        "all": "All Statuses",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "sortBy": {
+        "createdAt": "Recently Added",
+        "name": "Name (A-Z)",
+        "area": "Floor Area (Asc)",
+        "volume": "Volume (Asc)"
+      },
+      "table": {
+        "name": "Name & Description",
+        "category": "Category",
+        "dimensions": "Dimensions (L × W × H)",
+        "metrics": "Area / Volume",
+        "features": "Features & Highlights",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "empty": {
+        "title": "No unit types found",
+        "description": "Try modifying your search query or adjusting your category/status filters."
+      },
+      "pagination": {
+        "showing": "Showing",
+        "to": "-",
+        "of": "of",
+        "unitTypes": "unit types",
+        "prev": "Previous",
+        "next": "Next"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Deactivate",
+        "restore": "Restore",
+        "viewDetails": "View Details"
+      },
+      "createModal": {
+        "title": "Add New Unit Type",
+        "subtitle": "Declare classification, dimensions, and amenities for standard storage space.",
+        "nameLabel": "Unit Type Name *",
+        "namePlaceholder": "e.g. Mini Locker 2x2, Standard Box...",
+        "categoryLabel": "Category *",
+        "dimensionsGroup": "Standard Dimensions (meters) *",
+        "lengthLabel": "Length (m) *",
+        "widthLabel": "Width (m) *",
+        "heightLabel": "Height (m) *",
+        "calculatedMetrics": "Auto-Calculated Metrics",
+        "floorArea": "Floor Area (m²)",
+        "volume": "Volume Capacity (m³)",
+        "statusLabel": "Status",
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Describe recommended items, wall/floor material...",
+        "featuresLabel": "Features & Highlights",
+        "featuresPlaceholder": "Type feature and press Enter (e.g. Climate Controlled, Smart Lock...)",
+        "addFeature": "Add",
+        "cancel": "Cancel",
+        "confirm": "Confirm & Create",
+        "saving": "Creating...",
+        "success": "Unit type created successfully!",
+        "error": "Failed to create unit type. Please try again!",
+        "validation": {
+          "nameRequired": "Please enter a unit type name",
+          "dimensionsRequired": "Length, width, and height must be greater than 0"
+        }
+      },
+      "detailModal": {
+        "title": "Unit Type Details",
+        "subtitle": "Detailed specification fetched directly from the system.",
+        "loading": "Loading details...",
+        "error": "Failed to load unit type details.",
+        "close": "Close"
+      },
+      "editModal": {
+        "title": "Edit Unit Type",
+        "subtitle": "Update dimensions, classification, status, and amenities.",
+        "nameLabel": "Unit Type Name *",
+        "namePlaceholder": "e.g. Mini Locker 2x2...",
+        "categoryLabel": "Category *",
+        "dimensionsGroup": "Standard Dimensions (meters) *",
+        "lengthLabel": "Length (m) *",
+        "widthLabel": "Width (m) *",
+        "heightLabel": "Height (m) *",
+        "calculatedMetrics": "Auto-Calculated Metrics",
+        "floorArea": "Floor Area (m²)",
+        "volume": "Volume Capacity (m³)",
+        "statusLabel": "Status",
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "descriptionLabel": "Description",
+        "descriptionPlaceholder": "Describe recommended items...",
+        "featuresLabel": "Features & Highlights",
+        "featuresPlaceholder": "Type feature and press Enter...",
+        "addFeature": "Add",
+        "cancel": "Cancel",
+        "confirm": "Save Changes",
+        "saving": "Saving...",
+        "success": "Unit type updated successfully!",
+        "error": "Failed to update unit type. Please try again!",
+        "validation": {
+          "nameRequired": "Please enter a unit type name",
+          "dimensionsRequired": "Length, width, and height must be greater than 0"
+        }
+      },
+      "deleteModal": {
+        "title": "Confirm Deactivation",
+        "message": "Are you sure you want to deactivate \"{name}\"?",
+        "warning": "This unit type will be set to Inactive and hidden from new unit creation. Existing contracts will not be affected.",
+        "cancel": "Cancel",
+        "confirm": "Confirm Deactivation",
+        "deleting": "Processing...",
+        "success": "Unit type deactivated successfully!",
+        "error": "Failed to deactivate unit type. Please try again!",
+        "undo": "Undo / Restore",
+        "restoring": "Restoring...",
+        "restoreSuccess": "Unit type restored successfully!"
+      }
+    },
+    "amenities": {
+      "title": "Standard Amenities & Services",
+      "subtitle": "Manage standardized physical equipment and service offerings available across all storage facilities.",
+      "addAmenity": "+ Add New Amenity",
+      "searchPlaceholder": "Search by amenity or service name...",
+      "typeLabel": "Classification",
+      "statusLabel": "Status",
+      "sortByLabel": "Sort By",
+      "refresh": "Refresh",
+      "stats": {
+        "total": "Total Amenities",
+        "physical": "Physical Equipment",
+        "service": "Support Services",
+        "active": "Active Offerings"
+      },
+      "typeFilter": {
+        "all": "All Classifications",
+        "physical": "Physical Equipment",
+        "service": "Support Services"
+      },
+      "statusFilter": {
+        "all": "All Statuses",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "sortBy": {
+        "createdAt": "Recently Added",
+        "name": "Name (A-Z)",
+        "type": "Classification",
+        "status": "Status"
+      },
+      "table": {
+        "name": "Amenity Name & Description",
+        "type": "Classification",
+        "tags": "Tags & Categories",
+        "status": "Status",
+        "createdAt": "Created At",
+        "actions": "Actions"
+      },
+      "type": {
+        "physical": "Physical Equipment",
+        "service": "Support Service"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "empty": {
+        "title": "No amenities found",
+        "description": "Try modifying your search query or adjusting your classification/status filters."
+      },
+      "pagination": {
+        "showing": "Showing",
+        "to": "-",
+        "of": "of",
+        "amenities": "amenities",
+        "prev": "Previous",
+        "next": "Next"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Deactivate",
+        "restore": "Restore",
+        "viewDetails": "View Details"
+      },
+      "createModal": {
+        "title": "Add New Amenity",
+        "subtitle": "Declare standard physical equipment or customer service offering across all facilities.",
+        "nameLabel": "Amenity / Service Name",
+        "namePlaceholder": "E.g., Freight Elevator, 24/7 Security Patrol...",
+        "typeLabel": "Classification",
+        "typePhysical": "Physical Equipment",
+        "typePhysicalDesc": "Hardware, facilities & infrastructure (Elevator, AC, Trolley...)",
+        "typeService": "Support Service",
+        "typeServiceDesc": "Customer & security services (24/7 Guard, Periodic Cleaning...)",
+        "statusLabel": "Status",
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "descriptionLabel": "Detailed Description",
+        "descriptionPlaceholder": "Describe specifications, usage guidelines, or standards...",
+        "tagsLabel": "Tags",
+        "tagsPlaceholder": "Type tag and press Enter...",
+        "addTag": "Add",
+        "imagesLabel": "Image URLs (Optional)",
+        "imagesPlaceholder": "Paste image URL (https://...)",
+        "addImage": "Add Image",
+        "cancel": "Cancel",
+        "submit": "Create Amenity",
+        "submitting": "Creating...",
+        "success": "New amenity created successfully!",
+        "error": "Failed to create amenity. Please try again later.",
+        "duplicateNameError": "This amenity name already exists in the system. Please use a different name!",
+        "validation": {
+          "nameRequired": "Please enter the amenity name",
+          "typeRequired": "Please select the classification"
+        }
+      },
+      "editModal": {
+        "title": "Edit Amenity",
+        "subtitle": "Update detailed specifications, classification, or active status.",
+        "nameLabel": "Amenity / Service Name",
+        "namePlaceholder": "E.g., Freight Elevator, 24/7 Security Patrol...",
+        "typeLabel": "Classification",
+        "typePhysical": "Physical Equipment",
+        "typePhysicalDesc": "Hardware, facilities & infrastructure (Elevator, AC, Trolley...)",
+        "typeService": "Support Service",
+        "typeServiceDesc": "Customer & security services (24/7 Guard, Periodic Cleaning...)",
+        "statusLabel": "Status",
+        "statusActive": "Active",
+        "statusInactive": "Inactive",
+        "descriptionLabel": "Detailed Description",
+        "descriptionPlaceholder": "Describe specifications, usage guidelines, or standards...",
+        "tagsLabel": "Tags",
+        "tagsPlaceholder": "Type tag and press Enter...",
+        "addTag": "Add",
+        "imagesLabel": "Image URLs (Optional)",
+        "imagesPlaceholder": "Paste image URL (https://...)",
+        "addImage": "Add Image",
+        "cancel": "Cancel",
+        "submit": "Save Changes",
+        "submitting": "Saving...",
+        "success": "Amenity updated successfully!",
+        "error": "Failed to update amenity. Please try again later.",
+        "duplicateNameError": "This amenity name already exists in the system. Please use a different name!",
+        "validation": {
+          "nameRequired": "Please enter the amenity name"
+        }
+      },
+      "deleteModal": {
+        "title": "Deactivate Amenity",
+        "warning": "Are you sure you want to deactivate this amenity?",
+        "description": "After deactivation, this amenity will be paused and no longer available for customer assignment at facilities. You can restore it at any time.",
+        "amenityName": "Amenity Name:",
+        "cancel": "Cancel",
+        "confirm": "Confirm Deactivation",
+        "deleting": "Deactivating...",
+        "success": "Amenity deactivated successfully!",
+        "error": "Failed to deactivate amenity. Please try again later."
+      },
+      "restoreModal": {
+        "title": "Restore Amenity",
+        "question": "Do you want to re-activate this amenity?",
+        "description": "This amenity will be restored back to Active status and available across the entire network.",
+        "amenityName": "Amenity Name:",
+        "cancel": "Cancel",
+        "confirm": "Confirm Restore",
+        "restoring": "Restoring...",
+        "success": "Amenity restored successfully!",
+        "error": "Failed to restore amenity. Please try again later."
+      }
+    },
+    "offerings": {
+      "title": "Facility Unit Type Offerings",
+      "subtitle": "Configure which unit types are sold at each facility, with pricing, deposit multiplier and minimum rental days.",
+      "addOffering": "+ Add Offering",
+      "quickLookup": "Quick Lookup",
+      "refresh": "Refresh",
+      "searchPlaceholder": "Search by facility or unit type...",
+      "stats": {
+        "total": "Total Offerings",
+        "active": "Active",
+        "inactive": "Inactive",
+        "facilities": "Facilities"
+      },
+      "facilityFilter": {
+        "all": "All facilities"
+      },
+      "unitTypeFilter": {
+        "all": "All unit types"
+      },
+      "billingUnitFilter": {
+        "all": "All billing units",
+        "day": "Daily",
+        "month": "Monthly",
+        "one_time": "One-time"
+      },
+      "statusFilter": {
+        "all": "All statuses",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "sort": {
+        "createdAtDesc": "Newest first",
+        "createdAtAsc": "Oldest first",
+        "priceDesc": "Price: High to Low",
+        "priceAsc": "Price: Low to High",
+        "minDaysDesc": "Min Days: High to Low",
+        "minDaysAsc": "Min Days: Low to High"
+      },
+      "table": {
+        "facility": "Facility",
+        "unitType": "Unit Type",
+        "price": "Price",
+        "deposit": "Deposit Policy",
+        "minRentalDays": "Min Rental Days",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "billingUnit": {
+        "day": "day",
+        "month": "month",
+        "one_time": "one-time"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "actions": {
+        "view": "View details",
+        "edit": "Edit",
+        "delete": "Deactivate",
+        "restore": "Restore"
+      },
+      "empty": {
+        "title": "No offerings yet",
+        "description": "Add the first unit type offering for a facility."
+      },
+      "emptySearch": {
+        "title": "No offerings found",
+        "description": "No offerings matched the query \"{query}\". Try a different search term or clear the filter."
+      },
+      "searchButton": "Search",
+      "clearSearch": "Clear search",
+      "clearFilter": "Clear filter",
+      "searchResultsCount": "Found {count} offerings matching \"{query}\"",
+      "pagination": {
+        "page": "Page",
+        "prev": "Prev",
+        "next": "Next"
+      },
+      "formModal": {
+        "createTitle": "Add Unit Type Offering",
+        "editTitle": "Edit Offering",
+        "facilityLabel": "Target Facility",
+        "facilityPlaceholder": "Select facility",
+        "unitTypeLabel": "Offered Unit Type",
+        "unitTypePlaceholder": "Select unit type",
+        "priceLabel": "Price (VND)",
+        "pricePlaceholder": "e.g. 1500000",
+        "billingUnitLabel": "Billing Unit",
+        "depositLabel": "Deposit Multiplier",
+        "depositPlaceholder": "e.g. 1",
+        "depositEst": "Estimated Deposit:",
+        "depositHint": "Multiplier of unit price (1 = 1 cycle deposit, 2 = 2 cycles)",
+        "minRentalDaysLabel": "Minimum Rental Days",
+        "minRentalDaysPlaceholder": "e.g. 30",
+        "minRentalDaysHint": "Customer must rent at least this many days",
+        "statusLabel": "Offering Status",
+        "notesLabel": "Notes & Terms",
+        "notesPlaceholder": "Describe promotions, specific conditions...",
+        "duplicateWarning": "This facility already offers this unit type. Please select another unit type or update the existing offering.",
+        "checkingDuplicate": "Checking availability...",
+        "availablePair": "Valid: This unit type is not yet offered at this facility.",
+        "billingUnit": {
+          "day": "day",
+          "month": "month",
+          "oneTime": "one-time"
+        },
+        "status": {
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "cancel": "Cancel",
+        "save": "Save & Publish",
+        "update": "Update Offering",
+        "saving": "Saving...",
+        "success": "Offering saved successfully!",
+        "updateSuccess": "Offering updated successfully!",
+        "noChanges": "You haven't changed anything.",
+        "loadingDetail": "Loading offering...",
+        "loadDetailError": "Could not load this offering.",
+        "retry": "Retry",
+        "fixedPairHint": "Facility and unit type cannot be changed after creation. Deactivate this offering and create a new one if needed.",
+        "error": "Could not save offering. Please verify the information.",
+        "validation": {
+          "required": "Please select a facility and unit type.",
+          "price": "Price must be a valid number >= 0.",
+          "deposit": "Deposit multiplier must be >= 0.",
+          "minDays": "Minimum rental days must be >= 1.",
+          "duplicate": "An offering for this unit type at this facility already exists."
+        }
+      },
+      "detailModal": {
+        "title": "Offering Details",
+        "loading": "Loading details...",
+        "error": "This offering was not found or could not be loaded.",
+        "retry": "Retry",
+        "price": "Listed Price",
+        "facility": "Facility",
+        "unitType": "Unit Type",
+        "deposit": "Deposit",
+        "minRentalDays": "Min. Rental",
+        "days": "days",
+        "billingUnit": "Billing",
+        "notes": "Notes",
+        "noNotes": "No notes",
+        "createdAt": "Created",
+        "updatedAt": "Updated",
+        "close": "Close",
+        "edit": "Edit"
+      },
+      "lookupModal": {
+        "title": "Quick Offering Lookup",
+        "description": "Directly query the pricing configuration of a unit type at the selected facility (GET /facility-unit-type-offerings/facility/:facilityId/unit-type/:unitTypeId).",
+        "facilityLabel": "Facility",
+        "facilityPlaceholder": "Select facility to look up",
+        "unitTypeLabel": "Unit Type",
+        "unitTypePlaceholder": "Select unit type to look up",
+        "promptSelect": "Please select a facility and a unit type to look up pricing.",
+        "searching": "Looking up offering...",
+        "price": "Listed Price",
+        "deposit": "Deposit",
+        "minRentalDays": "Min. Rental",
+        "viewDetail": "View Details",
+        "edit": "Edit",
+        "notFoundTitle": "Not offered at this facility yet",
+        "notFoundDescription": "This facility does not currently have a pricing configuration for the selected unit type.",
+        "createNow": "+ Offer This Unit Type Now",
+        "close": "Close"
+      },
+      "confirmModal": {
+        "deleteTitle": "Deactivate this offering?",
+        "deleteDescription": "This unit type will no longer be available for new storage units at this facility.",
+        "restoreTitle": "Restore this offering?",
+        "restoreDescription": "This unit type will be available again for new storage units at this facility.",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "processing": "Processing...",
+        "error": "Could not process. Please try again."
+      }
+    },
+    "facilityAmenities": {
+      "title": "Facility Amenity Offerings",
+      "subtitle": "Manage amenity inventory allocation and pricing for each storage facility.",
+      "addOffering": "+ Add Amenity Offering",
+      "quickLookup": "Quick Lookup",
+      "refresh": "Refresh",
+      "searchPlaceholder": "Search by facility, amenity, description...",
+      "searchButton": "Search",
+      "clearSearch": "Clear search",
+      "clearFilter": "Clear filter",
+      "searchResultsCount": "Found {count} offerings matching \"{query}\"",
+      "stats": {
+        "total": "Total Offerings",
+        "active": "Active",
+        "inactive": "Inactive",
+        "facilities": "Facilities"
+      },
+      "facilityFilter": {
+        "all": "All facilities"
+      },
+      "amenityFilter": {
+        "all": "All amenities"
+      },
+      "billingUnitFilter": {
+        "all": "All billing units",
+        "day": "Daily",
+        "month": "Monthly",
+        "one_time": "One-time"
+      },
+      "stockFilter": {
+        "all": "All stock",
+        "inStock": "In Stock",
+        "outOfStock": "Out of Stock"
+      },
+      "statusFilter": {
+        "all": "All statuses",
+        "active": "Active",
+        "inactive": "Inactive"
+      },
+      "sort": {
+        "createdAtDesc": "Newest first",
+        "createdAtAsc": "Oldest first",
+        "priceDesc": "Price: High to Low",
+        "priceAsc": "Price: Low to High",
+        "totalQtyDesc": "Total: High to Low",
+        "totalQtyAsc": "Total: Low to High",
+        "inUseDesc": "In Use: High to Low"
+      },
+      "table": {
+        "facility": "Facility",
+        "amenity": "Amenity & Type",
+        "price": "Rental Price",
+        "inventory": "Available Stock",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "billingUnit": {
+        "day": "day",
+        "month": "month",
+        "one_time": "one-time"
+      },
+      "status": {
+        "active": "Active",
+        "inactive": "Inactive",
+        "out_of_stock": "Out of Stock"
+      },
+      "stock": {
+        "inStock": "In Stock",
+        "lowStock": "Low Stock",
+        "outOfStock": "Out of Stock"
+      },
+      "actions": {
+        "view": "View details",
+        "edit": "Edit",
+        "delete": "Deactivate",
+        "restore": "Restore"
+      },
+      "empty": {
+        "title": "No amenity offerings yet",
+        "description": "Allocate the first amenity offering for a facility."
+      },
+      "emptySearch": {
+        "title": "No amenity offerings found",
+        "description": "No offerings matched the query \"{query}\". Try a different search term or clear the filter."
+      },
+      "pagination": {
+        "page": "Page",
+        "prev": "Prev",
+        "next": "Next"
+      },
+      "formModal": {
+        "createTitle": "Allocate Amenity to Facility",
+        "editTitle": "Adjust Amenity Quantity & Pricing",
+        "facilityLabel": "Facility",
+        "facilityPlaceholder": "-- Select Facility --",
+        "amenityLabel": "Amenity",
+        "amenityPlaceholder": "-- Select Amenity --",
+        "priceLabel": "Rental Price",
+        "pricePlaceholder": "e.g. 50000",
+        "billingUnitLabel": "Billing Unit",
+        "billingUnit": {
+          "day": "Daily (day)",
+          "month": "Monthly (month)",
+          "oneTime": "One-time (one_time)"
+        },
+        "totalQuantityLabel": "Total Quantity (Inventory)",
+        "totalQuantityPlaceholder": "e.g. 10",
+        "totalQuantityHint": "Total units of this amenity item equipped at the facility.",
+        "statusLabel": "Status",
+        "status": {
+          "active": "Active",
+          "inactive": "Inactive"
+        },
+        "amenityType": {
+          "physical": "Physical",
+          "service": "Service"
+        },
+        "notesLabel": "Allocation Notes",
+        "notesPlaceholder": "Optional storage requirements or usage notes...",
+        "fixedPairHint": "Facility and amenity are fixed for this allocated offering.",
+        "duplicateWarning": "This amenity has already been allocated to this facility!",
+        "availablePair": "Amenity is ready to be allocated to this facility.",
+        "checkingDuplicate": "Checking...",
+        "cancel": "Cancel",
+        "save": "Save Allocation",
+        "update": "Update",
+        "saving": "Saving...",
+        "success": "Amenity allocated successfully!",
+        "updateSuccess": "Amenity updated successfully!",
+        "error": "An error occurred. Please try again.",
+        "noChanges": "No changes were made.",
+        "loadingDetail": "Loading details...",
+        "loadDetailError": "Could not load amenity offering details.",
+        "retry": "Retry",
+        "validation": {
+          "required": "Please select both a facility and an amenity.",
+          "duplicate": "This amenity offering already exists for this facility.",
+          "price": "Price must be a valid number greater than or equal to 0.",
+          "quantity": "Quantity must be a valid integer greater than or equal to 0.",
+          "quantityLessThanInUse": "Total quantity cannot be reduced below the currently in-use quantity ({inUse})."
+        }
+      },
+      "detailModal": {
+        "title": "Facility Amenity Offering Details",
+        "loading": "Loading details...",
+        "error": "Could not load amenity details.",
+        "retry": "Retry",
+        "close": "Close",
+        "editButton": "Edit",
+        "deleteButton": "Deactivate",
+        "restoreButton": "Restore",
+        "status": {
+          "active": "Active",
+          "inactive": "Inactive",
+          "out_of_stock": "Out of Stock"
+        },
+        "stock": {
+          "inStock": "In Stock",
+          "lowStock": "Low Stock",
+          "outOfStock": "Out of Stock"
+        },
+        "inventoryTitle": "Inventory Status",
+        "totalQty": "Total Equipped",
+        "inUseQty": "In Use",
+        "availableQty": "Available",
+        "priceLabel": "Rental Price",
+        "locationLabel": "Facility Location",
+        "amenityDesc": "Amenity Description",
+        "notesLabel": "Notes",
+        "createdAt": "Created At",
+        "updatedAt": "Updated At",
+        "billingUnit": {
+          "day": "day",
+          "month": "month",
+          "one_time": "time"
+        }
+      },
+      "lookupModal": {
+        "title": "Lookup Facility Amenities",
+        "description": "Check if an amenity is configured at a branch or view available stock.",
+        "facilityLabel": "Facility",
+        "selectFacilityPlaceholder": "-- Select Facility --",
+        "amenityLabel": "Amenity (optional)",
+        "selectAmenityPlaceholder": "-- Select Amenity for specific check --",
+        "lookingUp": "Looking up...",
+        "foundOffering": "Amenity is already configured at this facility",
+        "priceTitle": "Rental Price",
+        "stockTitle": "Inventory",
+        "viewDetail": "View Details",
+        "editOffering": "Edit",
+        "notConfiguredTitle": "Not Yet Allocated",
+        "notConfiguredDescription": "This amenity has not been allocated to the selected facility yet. You can allocate it below.",
+        "createWithPreset": "+ Allocate this amenity now",
+        "availableListTitle": "Available Amenities at this Facility",
+        "loadingAvailable": "Loading available amenities...",
+        "noAvailableAmenities": "No amenities with available stock at this facility.",
+        "close": "Close",
+        "billingUnit": {
+          "day": "day",
+          "month": "month",
+          "one_time": "time"
+        }
+      },
+      "confirmModal": {
+        "deleteTitle": "Deactivate this amenity offering?",
+        "deleteDescription": "Customers will no longer be able to rent this amenity at this facility.",
+        "restoreTitle": "Restore this amenity offering?",
+        "restoreDescription": "This amenity will be available again for rental at this facility.",
+        "inUseWarning": "Warning: There are currently {count} units of this amenity in active rental contracts.",
+        "cancel": "Cancel",
+        "confirmDelete": "Deactivate",
+        "confirmRestore": "Restore",
+        "processing": "Processing...",
+        "error": "Could not process request. Please try again."
+      }
+    },
+    "approvals": {
+      "title": "Approval Center",
+      "subtitle": "Receive, inspect proposed changes (Diff View), and review requests from facility branch managers.",
+      "searchPlaceholder": "Search by reason, requester, facility...",
+      "searchButton": "Search",
+      "clearSearch": "Clear search",
+      "clearFilter": "Clear filter",
+      "refresh": "Refresh",
+      "searchResultsCount": "Found {count} requests matching \"{query}\"",
+      "stats": {
+        "pending": "Pending Review",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "total": "Total Requests"
+      },
+      "facilityFilter": {
+        "all": "All facilities"
+      },
+      "targetTypeFilter": {
+        "all": "All request types",
+        "offering": "Unit Offering Pricing",
+        "facilityAmenity": "Facility Amenity",
+        "unitType": "New Unit Type",
+        "amenity": "New Amenity"
+      },
+      "statusFilter": {
+        "all": "All statuses",
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled"
+      },
+      "sort": {
+        "createdAtDesc": "Newest first",
+        "createdAtAsc": "Oldest first",
+        "statusDesc": "By status",
+        "targetTypeDesc": "By request type"
+      },
+      "table": {
+        "facilityAndRequester": "Facility & Requester",
+        "targetAndAction": "Request & Action",
+        "reason": "Reason",
+        "status": "Status",
+        "createdAt": "Submitted",
+        "actions": "Actions"
+      },
+      "empty": {
+        "title": "No approval requests found",
+        "description": "There are no requests matching your current filters."
+      },
+      "pagination": {
+        "pageInfo": "Page {page} of {totalPages} ({totalItems} requests)",
+        "prev": "Previous",
+        "next": "Next"
+      },
+      "actions": {
+        "viewDiff": "View details",
+        "approve": "Approve",
+        "reject": "Reject"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled"
+      },
+      "targetType": {
+        "unit_type": "New Unit Type",
+        "facility_unit_type_offering": "Unit Offering Pricing",
+        "amenity": "New Amenity",
+        "facility_amenity_offering": "Facility Amenity"
+      },
+      "action": {
+        "create": "Create",
+        "update": "Update"
+      },
+      "diffModal": {
+        "title": "Approval Request Details & Diff View",
+        "subtitle": "Compare current facility configurations with newly proposed values from the branch.",
+        "loading": "Loading request details...",
+        "loadError": "Could not load request details.",
+        "retry": "Retry",
+        "close": "Close",
+        "requester": "Requester",
+        "targetType": "Target type",
+        "createdAt": "Submitted at",
+        "reasonLabel": "Requester's stated reason",
+        "diffTitleUpdate": "Changes Comparison (Current vs Proposed)",
+        "diffTitleCreate": "Proposed Configuration Values",
+        "currentDataCol": "Current (Before)",
+        "proposedDataCol": "Proposed (After)",
+        "changedBadge": "Modified",
+        "newEntityDetails": "New configuration parameters",
+        "alreadyApprovedTitle": "This request has been approved",
+        "alreadyRejectedTitle": "This request was rejected",
+        "approvedBy": "Approved by",
+        "rejectedBy": "Rejected by",
+        "rejectionReasonLabel": "Rejection reason",
+        "cancelledByRequester": "This request was cancelled by the branch manager prior to review.",
+        "approveButton": "Approve request",
+        "rejectButton": "Reject request",
+        "fields": {
+          "pricePerUnit": "Unit price",
+          "depositMultiplier": "Deposit multiplier",
+          "billingUnit": "Billing cycle",
+          "minRentalDays": "Min rental days",
+          "totalQuantity": "Allocated quantity",
+          "name": "Name",
+          "category": "Category",
+          "dimensions": "Dimensions (L × W × H)",
+          "area": "Floor area",
+          "volume": "Volume",
+          "description": "Description",
+          "notes": "Notes",
+          "status": "Status"
+        }
+      },
+      "reviewModal": {
+        "approveTitle": "Confirm Approval",
+        "approveSubtitle": "The system will automatically apply these configuration changes to the facility immediately.",
+        "rejectTitle": "Reject Request",
+        "rejectSubtitle": "Please provide a clear reason so the facility manager understands why this request was declined.",
+        "targetLabel": "Request type",
+        "actionLabel": "Action",
+        "facilityLabel": "Target facility",
+        "requesterLabel": "Requester",
+        "approveNotesLabel": "Approval notes",
+        "approveNotesPlaceholder": "Add optional notes for the branch (e.g. Approved effective today...)",
+        "approveAutoApplyNotice": "Note: Changes take effect in the database immediately upon approval.",
+        "rejectionReasonLabel": "Rejection reason",
+        "rejectionReasonPlaceholder": "State why this request is declined (e.g. Price does not match company guidelines...)",
+        "rejectionReasonRequired": "Please enter a reason before rejecting.",
+        "rejectWarning": "This request will be permanently marked as Rejected and cannot be undone.",
+        "cancel": "Cancel",
+        "confirmApprove": "Confirm Approval",
+        "confirmReject": "Confirm Rejection",
+        "processing": "Processing...",
+        "optional": "Optional",
+        "genericError": "Could not review request. Please try again."
+      }
+    }
+  },
+  "storageUnitStatus": {
+    "available": "Available",
+    "reserved": "Reserved",
+    "occupied": "Occupied",
+    "under_maintenance": "Under maintenance",
+    "inactive": "Inactive"
+  },
+  "facilityManager": {
+    "roleLabel": "Facility Manager",
+    "nav": {
+      "reservations": "Reservations",
+      "contracts": "Lease Contracts",
+      "storageUnits": "Storage units",
+      "sectionFacility": "FACILITY OPERATIONS",
+      "requests": "Request Center"
+    },
+    "sidebar": {
+      "assignedFacility": "Assigned facility",
+      "noFacility": "No facility assigned"
+    },
+    "storageUnits": {
+      "title": "Storage Unit Management",
+      "subtitle": "Physical storage units of {facility}: location, unit type and status.",
+      "addUnit": "+ Add storage unit",
+      "searchPlaceholder": "Search by unit number...",
+      "floorPlaceholder": "Floor",
+      "zonePlaceholder": "Zone",
+      "unitTypeFilterAll": "All unit types",
+      "clearFilters": "Clear filters",
+      "refresh": "Refresh",
+      "retry": "Try again",
+      "stats": {
+        "total": "Total units",
+        "available": "Available",
+        "inUse": "Reserved / Occupied",
+        "maintenance": "Under maintenance"
+      },
+      "statusFilter": {
+        "all": "All statuses",
+        "available": "Available",
+        "reserved": "Reserved",
+        "occupied": "Occupied",
+        "under_maintenance": "Under maintenance",
+        "inactive": "Inactive"
+      },
+      "sortBy": {
+        "createdAt": "Newest first",
+        "unitNumber": "Unit number (A-Z)",
+        "floor": "Floor ascending",
+        "status": "Status"
+      },
+      "table": {
+        "unit": "Unit & Notes",
+        "location": "Location",
+        "unitType": "Unit type",
+        "size": "Area / Volume",
+        "status": "Status",
+        "actions": "Actions"
+      },
+      "location": {
+        "floor": "Floor {floor}",
+        "zone": "Zone {zone}"
+      },
+      "empty": {
+        "title": "This facility has no storage units yet",
+        "description": "Click \"Add storage unit\" to create the first unit for your facility.",
+        "filteredTitle": "No matching storage units",
+        "filteredDescription": "Try another keyword or adjust the floor, zone, unit type and status filters."
+      },
+      "loadError": {
+        "title": "Unable to load storage units"
+      },
+      "noFacility": {
+        "title": "Could not determine your facility",
+        "description": "Your account has not been assigned to a facility. Please contact Business Operations to get one assigned."
+      },
+      "pagination": {
+        "showing": "Showing",
+        "to": "-",
+        "of": "of",
+        "units": "units",
+        "prev": "Previous",
+        "next": "Next"
+      },
+      "actions": {
+        "edit": "Edit",
+        "delete": "Delete unit",
+        "deleteBlocked": "Cannot delete a unit that is reserved or occupied",
+        "startMaintenance": "Start maintenance",
+        "reopen": "Finish maintenance / Reopen unit",
+        "maintenanceBlocked": "Only Available or Under maintenance units can change maintenance status"
+      },
+      "formModal": {
+        "createTitle": "Add Storage Unit",
+        "createSubtitle": "Enter the unit number, location and unit type of the new physical unit.",
+        "editTitle": "Edit Storage Unit",
+        "editSubtitle": "Update the location, unit type, status and notes of this unit.",
+        "unitNumberLabel": "Unit number *",
+        "unitNumberPlaceholder": "e.g. A-101",
+        "unitTypeLabel": "Unit type *",
+        "unitTypePlaceholder": "Select a unit type",
+        "unitTypeLocked": "This unit is reserved or occupied, so its unit type cannot be changed.",
+        "noOffering": "This facility does not offer any unit type yet, so units cannot be created. Send a request to Business Operations to offer a unit type first.",
+        "floorLabel": "Floor *",
+        "zoneLabel": "Zone",
+        "zonePlaceholder": "e.g. A",
+        "statusLabel": "Status",
+        "statusOptions": {
+          "available": "Available",
+          "under_maintenance": "Under maintenance",
+          "inactive": "Inactive"
+        },
+        "statusReadonly": "This status is managed by the system based on reservations / contracts.",
+        "notesLabel": "Notes",
+        "notesPlaceholder": "e.g. Next to the elevator, moisture-proof floor...",
+        "cancel": "Cancel",
+        "confirmCreate": "Create unit",
+        "confirmEdit": "Save changes",
+        "saving": "Saving...",
+        "successCreate": "Storage unit created successfully!",
+        "successEdit": "Storage unit updated successfully!",
+        "validation": {
+          "unitNumberRequired": "Please enter a unit number",
+          "unitNumberMax": "Unit number must not exceed {max} characters",
+          "floorInvalid": "Floor must be a whole number of 1 or more",
+          "zoneMax": "Zone must not exceed {max} characters",
+          "unitTypeRequired": "Please select a unit type",
+          "notesMax": "Notes must not exceed {max} characters"
+        }
+      },
+      "deleteModal": {
+        "title": "Confirm deleting storage unit",
+        "message": "Are you sure you want to delete unit \"{unitNumber}\"?",
+        "warning": "The unit will be hidden from the list and can no longer be reserved. You can undo right after deleting. Units that are reserved or occupied cannot be deleted.",
+        "cancel": "Cancel",
+        "confirm": "Confirm delete",
+        "deleting": "Processing...",
+        "success": "Storage unit deleted successfully!",
+        "undo": "Undo / Restore",
+        "restoring": "Restoring..."
+      },
+      "errors": {
+        "cannotDeleteBusy": "Cannot delete a unit that is reserved or occupied.",
+        "createRejected": "Could not create the unit. Make sure the facility offers this unit type and is active.",
+        "updateRejected": "Could not update the unit. Reserved/occupied units cannot change unit type, and the facility must offer the selected unit type.",
+        "duplicateUnitNumber": "This unit number already exists in the facility. Please choose another."
+      },
+      "view": {
+        "table": "Table",
+        "map": "Floor plan"
+      },
+      "map": {
+        "legend": "Legend",
+        "loadError": "Could not load the floor plan",
+        "emptyDescription": "This facility has no storage units to show on the floor plan yet.",
+        "unitCount": "{count} units",
+        "noZone": "No zone"
+      },
+      "maintenanceModal": {
+        "startHint": "The unit will switch to Under maintenance and stop accepting reservations until it is reopened.",
+        "reopenHint": "Confirm the unit has been cleaned / fixed. It will return to Available and accept reservations again.",
+        "notesLabel": "Unit notes",
+        "startPlaceholder": "E.g. Ceiling leak, waiting for repair...",
+        "reopenPlaceholder": "E.g. Cleaned and door lock checked...",
+        "notesMax": "Notes must not exceed {max} characters",
+        "blocked": {
+          "reserved": "This unit is reserved, so it cannot be put under maintenance.",
+          "occupied": "This unit is rented out, so it cannot be put under maintenance.",
+          "inactive": "This unit is inactive. Edit its status before starting maintenance."
+        },
+        "close": "Close",
+        "confirmStart": "Start maintenance",
+        "confirmReopen": "Finish & Reopen",
+        "saving": "Updating...",
+        "successStart": "Unit {unitNumber} is now under maintenance",
+        "successReopen": "Unit {unitNumber} has been reopened",
+        "errors": {
+          "invalidStatus": "The unit status has changed, so maintenance cannot be toggled. Please refresh and try again."
+        }
+      }
+    },
+    "requests": {
+      "title": "Request Center",
+      "subtitle": "Browse the unit types and amenities currently offered at your facility, and submit requests to Business Operations.",
+      "createRequest": "+ New Request",
+      "catalogSectionTitle": "Available at this facility",
+      "requestsSectionTitle": "Submitted Requests",
+      "empty": "You haven't submitted any requests yet.",
+      "cancelRequest": "Cancel",
+      "cancelError": "Could not cancel the request. Please try again.",
+      "rejectionReasonPrefix": "Rejection reason",
+      "table": {
+        "target": "Request Type",
+        "reason": "Reason",
+        "status": "Status",
+        "createdAt": "Submitted",
+        "actions": "Actions",
+        "page": "Page"
+      },
+      "status": {
+        "pending": "Pending",
+        "approved": "Approved",
+        "rejected": "Rejected",
+        "cancelled": "Cancelled"
+      },
+      "targetType": {
+        "unit_type": "New Unit Type",
+        "facility_unit_type_offering": "Unit Type Pricing",
+        "amenity": "New Amenity",
+        "facility_amenity_offering": "Facility Amenity"
+      },
+      "action": {
+        "create": "Create",
+        "update": "Update"
+      },
+      "catalog": {
+        "unitTypesTitle": "Unit types on sale",
+        "amenitiesTitle": "Amenities offered",
+        "loading": "Loading...",
+        "emptyUnitTypes": "This facility has no unit types on sale yet.",
+        "emptyAmenities": "This facility has no amenities yet.",
+        "available": "Available",
+        "billingUnit": {
+          "day": "day",
+          "month": "month",
+          "one_time": "one-time"
+        }
+      },
+      "createModal": {
+        "title": "Create Request",
+        "kindLabel": "Request Type",
+        "kind": {
+          "newOffering": "Request to sell a new unit type at this facility",
+          "adjustPrice": "Request price / deposit adjustment",
+          "newAmenity": "Request additional amenity",
+          "newUnitType": "Propose a new unit type (system-wide)"
+        },
+        "unitTypeLabel": "Unit Type (catalog)",
+        "unitTypePlaceholder": "Select unit type",
+        "offeringLabel": "Current offering at this facility",
+        "offeringPlaceholder": "Select offering to adjust",
+        "amenityLabel": "Amenity (catalog)",
+        "amenityPlaceholder": "Select amenity",
+        "priceLabel": "Proposed Price (VND)",
+        "depositLabel": "Deposit Multiplier",
+        "totalQuantityLabel": "Quantity",
+        "billingUnitLabel": "Billing Unit",
+        "billingUnit": {
+          "day": "day",
+          "month": "month",
+          "oneTime": "one-time"
+        },
+        "newTypeNameLabel": "New Unit Type Name",
+        "lengthLabel": "Length (m)",
+        "widthLabel": "Width (m)",
+        "heightLabel": "Height (m)",
+        "reasonLabel": "Reason",
+        "reasonPlaceholder": "Explain why you're submitting this request...",
+        "cancel": "Cancel",
+        "submit": "Submit Request",
+        "submitting": "Submitting...",
+        "success": "Request submitted! Waiting for Business Operations to review.",
+        "error": "Could not submit the request. Please try again.",
+        "validation": {
+          "required": "Please fill in all required fields.",
+          "reason": "Reason must be at least {min} characters."
+        }
+      },
+      "detailModal": {
+        "title": "Request Details",
+        "actionLabel": "Action",
+        "requesterLabel": "Requested by",
+        "payloadLabel": "Proposed Changes",
+        "currentDataLabel": "Current Data",
+        "approverLabel": "Reviewed by",
+        "reviewNotesLabel": "Review Notes",
+        "fields": {
+          "pricePerUnit": "Price",
+          "billingUnit": "Billing unit",
+          "depositMultiplier": "Deposit multiplier",
+          "totalQuantity": "Quantity",
+          "name": "Name",
+          "dimensions": "Dimensions (L × W × H)"
+        }
+      }
+    },
+    "reservations": {
+      "title": "Reservation & Unit Assignment Management",
+      "subtitle": "Receive reservations, assign physical storage units, verify deposit payments, and confirm bookings at {facility}.",
+      "refresh": "Refresh",
+      "retry": "Retry",
+      "loadError": "Unable to load reservations. Please try again.",
+      "noFacility": {
+        "title": "Could not determine your assigned facility",
+        "description": "Your Manager account has not been assigned to a facility yet. Please contact Business Operations."
+      },
+      "quickTabs": {
+        "all": "All reservations",
+        "pending": "Pending receipt",
+        "received": "Received",
+        "awaitingDeposit": "Awaiting deposit",
+        "paymentSuccessful": "Deposit paid",
+        "confirmed": "Confirmed",
+        "closed": "Completed"
+      },
+      "statuses": {
+        "pending": "Pending receipt",
+        "received": "Received",
+        "pending_payment": "Awaiting deposit",
+        "payment_failed": "Deposit failed",
+        "payment_successful": "Deposit paid",
+        "confirmed": "Confirmed",
+        "completed": "Completed",
+        "cancelled": "Cancelled",
+        "rejected": "Rejected",
+        "expired": "Hold expired"
+      },
+      "billingUnit": {
+        "day": "day",
+        "month": "month",
+        "one_time": "one-time"
+      },
+      "filters": {
+        "searchCodePlaceholder": "Search by code (e.g. RSV-2026...)",
+        "allStatuses": "All statuses",
+        "allOfferings": "All unit types",
+        "startFrom": "Start from",
+        "startTo": "To",
+        "sortBy": {
+          "createdAt": "Newest created",
+          "startDate": "Rental start date",
+          "totalAmount": "Total amount",
+          "updatedAt": "Recently updated"
+        },
+        "toggleSortOrder": "Toggle sort order",
+        "desc": "Descending",
+        "asc": "Ascending",
+        "clear": "Clear filters"
+      },
+      "table": {
+        "codeAndDate": "Code & Created",
+        "customer": "Customer",
+        "packageAndSchedule": "Package & Schedule",
+        "storageUnit": "Physical Unit",
+        "financials": "Deposit & Total",
+        "status": "Status & Hold",
+        "actions": "Quick Actions",
+        "standardPackage": "Standard Storage Package",
+        "amenitiesCount": "add-on amenities",
+        "floorShort": "Floor {floor}",
+        "zoneShort": "Zone {zone}",
+        "unassigned": "Unassigned",
+        "depositLabel": "Deposit",
+        "totalLabel": "Est. Total",
+        "paidBadge": "Paid"
+      },
+      "actions": {
+        "receive": "Receive",
+        "assignUnit": "Assign unit",
+        "assignUnitShort": "Assign unit",
+        "reject": "Reject",
+        "verifyPayment": "Verify payment",
+        "confirmOrder": "Confirm order",
+        "createContract": "Create Contract & Assign Check-in",
+        "createContractShort": "Create contract",
+        "completeShort": "Complete",
+        "completeHandover": "Complete handover",
+        "cancel": "Cancel",
+        "viewDetail": "Details"
+      },
+      "empty": {
+        "title": "No reservations found",
+        "description": "No reservations match the current filters at your facility."
+      },
+      "pagination": {
+        "showing": "Showing",
+        "of": "of",
+        "items": "reservations",
+        "prev": "Previous",
+        "next": "Next"
+      },
+      "feedback": {
+        "receiveSuccess": "Reservation {code} marked as received!",
+        "completeSuccess": "Reservation {code} completed and handed over!"
+      },
+      "errors": {
+        "statusChanged": "Reservation status has changed. Data has been refreshed automatically.",
+        "unitNotAvailableReloaded": "The selected storage unit is no longer available. The available units list has been reloaded!",
+        "unitMismatch": "Selected storage unit does not belong to this facility or match the requested unit type.",
+        "cannotCancel": "This reservation cannot be cancelled in its current status."
+      },
+      "assignModal": {
+        "title": "Assign Physical Storage Unit & Open Deposit",
+        "subtitle": "Select an available physical storage unit matching the requested unit type to hold for the customer and open deposit payment.",
+        "customerSection": "Customer Information",
+        "packageSection": "Requested Package",
+        "requestedUnitType": "Selected Unit Type",
+        "depositLabel": "Required Deposit",
+        "startDate": "Start date",
+        "totalEstimated": "Estimated total",
+        "pendingReceiveHintTitle": "Reservation is currently Pending Receipt",
+        "pendingReceiveHintDesc": "You can click \"Mark as Received\" first, or directly select a storage unit below to assign and open deposit payment immediately.",
+        "markReceivedBtn": "Mark as Received",
+        "receiving": "Receiving...",
+        "receiveSuccess": "Reservation marked as Received!",
+        "selectUnitLabel": "Select an Available Physical Storage Unit",
+        "availableCount": "{count} available units matching this package",
+        "searchUnitPlaceholder": "Search unit...",
+        "allFloors": "All floors",
+        "allZones": "All zones",
+        "floorItem": "Floor {floor}",
+        "zoneItem": "Zone {zone}",
+        "refreshUnits": "Refresh",
+        "noAvailableUnitsTitle": "No available physical storage units for this unit type!",
+        "noAvailableUnitsDesc": "All units of this type at your facility are currently reserved, occupied, or under maintenance. You may check your unit inventory or reject this reservation.",
+        "switchToRejectBtn": "Reject reservation due to no available units",
+        "noFilteredUnits": "No available units match the floor / zone / unit number filter.",
+        "selectedBadge": "Selected",
+        "availableBadge": "Available",
+        "holdingHoursLabel": "Deposit Hold Duration (hours)",
+        "expectedExpiresAt": "Expected hold expiry at",
+        "notesLabel": "Operational Notes (optional)",
+        "notesPlaceholder": "Location notes or check-in instructions for the customer...",
+        "cancel": "Close",
+        "submitBtn": "Assign Unit & Open Deposit Payment",
+        "submitting": "Assigning unit...",
+        "assignSuccess": "Assigned unit {unitNumber} and opened deposit payment!",
+        "validation": {
+          "unitRequired": "Please select an available physical storage unit.",
+          "holdingHoursInvalid": "Hold duration must be an integer between 1 and 168 hours.",
+          "invalidInput": "Invalid unit assignment parameters."
+        }
+      },
+      "rejectModal": {
+        "title": "Reject Reservation",
+        "subtitle": "This reservation will move to Rejected status and notify the customer with your reason.",
+        "customerLabel": "Customer",
+        "depositLabel": "Deposit amount",
+        "reasonLabel": "Rejection Reason",
+        "reasonPlaceholder": "Enter rejection reason (3–500 characters, e.g. No units available on Floor 1)...",
+        "validationReason": "Please enter a rejection reason between 3 and 500 characters.",
+        "cancel": "Cancel",
+        "confirmBtn": "Confirm Rejection",
+        "submitting": "Rejecting...",
+        "success": "Reservation rejected successfully!"
+      },
+      "confirmModal": {
+        "title": "Confirm Reservation",
+        "subtitle": "The customer has paid the deposit. Confirm this reservation to lock the unit until check-in.",
+        "customerLabel": "Customer",
+        "assignedUnitLabel": "Assigned Unit",
+        "paidDepositLabel": "Paid Deposit",
+        "paidAtLabel": "Paid At",
+        "startDateLabel": "Start Date",
+        "notesLabel": "Confirmation Notes (optional)",
+        "notesPlaceholder": "Enter handover instructions or counter notes...",
+        "validationError": "Notes cannot exceed 1000 characters.",
+        "cancel": "Close",
+        "confirmBtn": "Confirm Reservation",
+        "submitting": "Confirming...",
+        "success": "Reservation confirmed successfully!"
+      },
+      "cancelModal": {
+        "title": "Cancel Reservation",
+        "subtitle": "Confirm cancelling this reservation and releasing assigned facility resources.",
+        "impactTitle": "Cancellation Impact:",
+        "releaseUnitNotice": "Physical storage unit {unitNumber} will be automatically released back to Available status.",
+        "restoreAmenitiesNotice": "Inventory stock for {count} add-on amenities will be restored.",
+        "refundFullNotice": "Status is Deposit Paid (not yet confirmed): Customer receives a 100% deposit refund ({amount}).",
+        "refundZeroConfirmedNotice": "Status is Confirmed: Per policy, deposit refund is 0 VND.",
+        "reasonLabel": "Cancellation Reason",
+        "reasonPlaceholder": "Enter cancellation reason (3–500 characters)...",
+        "validationReason": "Please enter a cancellation reason between 3 and 500 characters.",
+        "back": "Back",
+        "confirmBtn": "Confirm Cancellation",
+        "submitting": "Cancelling...",
+        "success": "Reservation cancelled and unit released!"
+      },
+      "manualPaymentModal": {
+        "title": "Inspect & Confirm Deposit Payment",
+        "subtitle": "View the active VietQR session or manually confirm counter payment (Cash / Bank Transfer).",
+        "loadingSession": "Loading deposit payment session...",
+        "depositAmountLabel": "Required Deposit Amount",
+        "bankLabel": "Beneficiary Bank",
+        "accountNumberLabel": "Account Number",
+        "accountHolderLabel": "Account Holder",
+        "transferContentLabel": "Transfer Content",
+        "qrExpiresAtLabel": "QR Session Expiry",
+        "manualSectionTitle": "Manual Payment Verification",
+        "manualSectionDesc": "Use when the customer pays cash at the counter or transfers via bank without automatic webhook matching.",
+        "methodCash": "Cash at Counter",
+        "methodBankTransfer": "Bank Transfer",
+        "referenceCodeLabel": "Transaction Reference / Receipt No. (optional)",
+        "referenceCodePlaceholder": "e.g. FT26085123456 or receipt number...",
+        "noteLabel": "Verification Note (required)",
+        "notePlaceholder": "Enter payment verification note (2–1000 characters, e.g. Received cash in full at reception)...",
+        "validationNoteRequired": "Please enter a verification note between 2 and 1000 characters.",
+        "noPaymentSessionError": "No active payment session found to confirm.",
+        "close": "Close",
+        "confirmBtn": "Confirm Deposit Received",
+        "submitting": "Confirming...",
+        "success": "Deposit payment confirmed manually!"
+      },
+      "detailSheet": {
+        "title": "Reservation Details",
+        "createdAt": "Created at",
+        "refresh": "Refresh details",
+        "timelineTitle": "Reservation Workflow Progress (6 Steps)",
+        "steps": {
+          "pending": "1. Customer submitted reservation",
+          "received": "2. Facility Manager received reservation",
+          "pending_payment": "3. Physical unit assigned & Awaiting deposit",
+          "payment_failed": "3. Physical unit assigned & Deposit payment issue",
+          "payment_successful": "4. Customer completed deposit payment",
+          "confirmed": "5. Facility Manager confirmed reservation",
+          "completed": "6. Handed over & Converted to Contract"
+        },
+        "stepStates": {
+          "completed": "Completed",
+          "current": "In progress",
+          "error": "Payment failed",
+          "upcoming": "Upcoming"
+        },
+        "unitStatuses": {
+          "available": "Available",
+          "reserved": "Reserved",
+          "occupied": "Occupied",
+          "under_maintenance": "Under maintenance",
+          "inactive": "Inactive"
+        },
+        "terminal": {
+          "rejectedTitle": "Reservation was rejected",
+          "cancelledTitle": "Reservation was cancelled",
+          "expiredTitle": "Reservation hold expired before deposit payment",
+          "reason": "Reason",
+          "refundAmount": "Refunded deposit",
+          "expiredAt": "Expired at"
+        },
+        "customerTitle": "Customer Contact Information",
+        "customerName": "Full name",
+        "customerPhone": "Phone number",
+        "customerEmail": "Email address",
+        "notesLabel": "Customer notes",
+        "assignedUnitTitle": "Assigned Physical Unit",
+        "unitStatusLabel": "Unit status",
+        "floorLabel": "Floor {floor}",
+        "zoneLabel": "Zone {zone}",
+        "unassignedUnitText": "No physical storage unit assigned yet",
+        "scheduleTitle": "Rental Schedule & Hold Expiry",
+        "unitTypeLabel": "Unit Type",
+        "standardOffering": "Standard Package",
+        "startDateLabel": "Start Date",
+        "durationLabel": "Rental Duration",
+        "holdExpiresAtLabel": "Deposit Hold Expiry",
+        "financialTitle": "Storage Package, Amenities & Deposit Breakdown",
+        "storageRentalRow": "Base Storage Rental",
+        "amenitiesHeader": "Selected Amenities",
+        "totalAmountLabel": "Estimated Total Amount",
+        "depositRequiredLabel": "Required Reservation Deposit",
+        "paidDepositText": "Paid by customer",
+        "close": "Close"
+      }
+    }
+  }
+}
