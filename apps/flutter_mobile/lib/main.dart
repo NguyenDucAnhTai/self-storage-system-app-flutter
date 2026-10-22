@@ -1,43 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import 'app/router.dart';
+import 'core/theme/app_theme.dart';
 
 void main() {
-  runApp(const StorageHubApp());
+  runApp(const ProviderScope(child: StorageHubApp()));
 }
 
-class StorageHubApp extends StatelessWidget {
+class StorageHubApp extends ConsumerWidget {
   const StorageHubApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    const brandColor = Color(0xFF0B927E);
-
-    return MaterialApp(
+  Widget build(BuildContext context, WidgetRef ref) {
+    return MaterialApp.router(
       title: 'StorageHub',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(
-          seedColor: brandColor,
-          brightness: Brightness.light,
-        ),
-        useMaterial3: true,
-      ),
-      home: const StorageHubHomePage(),
-    );
-  }
-}
-
-class StorageHubHomePage extends StatelessWidget {
-  const StorageHubHomePage({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Scaffold(
-      body: Center(
-        child: Text(
-          'StorageHub',
-          style: TextStyle(fontSize: 28, fontWeight: FontWeight.w600),
-        ),
-      ),
+      theme: AppTheme.light,
+      routerConfig: ref.watch(appRouterProvider),
     );
   }
 }
