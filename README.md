@@ -1,6 +1,6 @@
 # StorageHub - Frontend Monorepo
 
-StorageHub is a modern Self-Storage Management System frontend built with Turborepo, pnpm workspaces, Next.js (App Router), and Expo (React Native).
+StorageHub is a modern Self-Storage Management System frontend built with Turborepo, pnpm workspaces, Next.js (App Router), and Flutter app.
 
 ---
 
