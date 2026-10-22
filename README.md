@@ -49,7 +49,7 @@ flutter run
 
 Select an Android emulator or connected device before running. On Windows, Flutter can build Android apps; iOS builds require macOS and Xcode.
 
-The mobile project currently contains only the StorageHub starter screen and the foundation dependencies. Authentication, Explore, reservations, payments, contracts and other product flows are not implemented yet.
+The Flutter mobile project contains customer flows for authentication, Explore, reservations, payments, profile, notifications and contracts. Current coverage, backend blockers and verification evidence are documented in [docs/flutter/FEATURE-STATUS.md](docs/flutter/FEATURE-STATUS.md).
 
 Reusable starter images, font, and Vietnamese/English translation JSON files are stored under `apps/flutter_mobile/assets/`.
 

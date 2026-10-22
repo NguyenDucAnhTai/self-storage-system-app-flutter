@@ -1,17 +1,29 @@
-# flutter_mobile
+# StorageHub Flutter Mobile
 
-A new Flutter project.
+Customer app for facility discovery, reservations, payments and storage contracts.
 
-## Getting Started
+## Run
 
-This project is a starting point for a Flutter application.
+```powershell
+flutter pub get
+flutter run
+```
 
-A few resources to get you started if this is your first Flutter project:
+The default API address targets the backend on the Android emulator host. Set `API_BASE_URL` to a reachable host for other environments.
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+## Build Android debug APK
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+```powershell
+flutter build apk --debug
+```
+
+The default API base URL is the Render production backend (`https://self-storage-system-be.onrender.com`). Override `API_BASE_URL` with `--dart-define` only when intentionally targeting another environment. Do not use production credentials for testing.
+
+## Quality checks
+
+```powershell
+flutter analyze
+flutter test
+```
+
+See [the Flutter architecture guide](../../../docs/flutter/ARCHITECTURE.md), [API integration map](../../../docs/flutter/API-INTEGRATION.md), and [feature/test status](../../../docs/flutter/FEATURE-STATUS.md).
