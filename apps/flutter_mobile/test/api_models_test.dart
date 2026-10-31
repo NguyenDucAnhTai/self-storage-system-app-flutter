@@ -1,8 +1,97 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_mobile/features/payments/data/models/payment.dart';
 import 'package:flutter_mobile/features/reservations/data/models/reservation.dart';
+import 'package:flutter_mobile/features/notifications/data/notification_models.dart';
+import 'package:flutter_mobile/features/dashboard/data/customer_inventory_summary.dart';
 
 void main() {
+  test(
+    'customer inventory dashboard summary parses backend metrics and activity',
+    () {
+      final summary = CustomerInventorySummary.fromJson({
+        'totalSkus': 12,
+        'totalQuantity': 105.5,
+        'totalStorageUnits': 3,
+        'totalActiveContracts': 2,
+        'categoryBreakdown': [
+          {'category': 'Boxes', 'skuCount': 4, 'totalQuantity': 20},
+        ],
+        'recentMovements': [
+          {'movementCode': 'MOV-1', 'type': 'IN', 'quantity': 5},
+        ],
+      });
+
+      expect(summary.totalSkus, 12);
+      expect(summary.totalQuantity, 105.5);
+      expect(summary.totalStorageUnits, 3);
+      expect(summary.totalActiveContracts, 2);
+      expect(summary.categoryBreakdown.single['category'], 'Boxes');
+      expect(summary.recentMovements.single['movementCode'], 'MOV-1');
+    },
+  );
+
+  test(
+    'customer inventory dashboard summary rejects missing required metrics',
+    () {
+      expect(
+        () => CustomerInventorySummary.fromJson({}),
+        throwsFormatException,
+      );
+    },
+  );
+
+  group('Notification backend DTO', () {
+    test('parses notification with nullable fields absent', () {
+      final notification = AppNotification.fromJson({
+        'id': 'n1',
+        'recipientId': 'customer-1',
+        'title': 'Reservation updated',
+        'content': 'Your reservation changed.',
+        'type': 'reservation',
+        'priority': 'normal',
+        'channels': ['in_app'],
+        'isRead': false,
+      });
+      expect(notification.id, 'n1');
+      expect(notification.facilityId, isNull);
+      expect(notification.readAt, isNull);
+      expect(notification.metadata, isNull);
+    });
+
+    test('parses paginated response and pagination flags', () {
+      final page = NotificationPage.fromJson({
+        'items': [
+          {
+            'id': 'n1',
+            'recipientId': 'customer-1',
+            'title': 'Payment received',
+            'content': 'Payment details',
+            'type': 'payment',
+            'priority': 'high',
+            'channels': ['in_app', 'email'],
+            'isRead': true,
+            'readAt': '2026-10-23T10:00:00Z',
+            'facilityId': 'facility-1',
+            'metadata': {'reservationId': 'reservation-1'},
+            'createdAt': '2026-10-23T09:00:00Z',
+            'updatedAt': '2026-10-23T10:00:00Z',
+          },
+        ],
+        'pagination': {
+          'page': 1,
+          'limit': 20,
+          'totalItems': 21,
+          'totalPages': 2,
+          'hasNextPage': true,
+          'hasPrevPage': false,
+        },
+      });
+      expect(page.items.single.metadata?['reservationId'], 'reservation-1');
+      expect(page.pagination.hasNextPage, isTrue);
+      expect(page.pagination.totalItems, 21);
+    });
+  });
+
   group('Reservation backend DTO', () {
     test('parses required check-in fields, physical unit and status', () {
       final reservation = Reservation.fromJson({

@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/app_providers.dart';
+import '../../../../core/widgets/app_ui.dart';
 import '../../data/profile_repository.dart';
 import '../../../auth/application/auth_controller.dart';
+import '../../../notifications/presentation/notification_bell.dart';
 
 class ProfileScreen extends ConsumerStatefulWidget {
   const ProfileScreen({super.key});
@@ -26,7 +28,10 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
   Widget build(BuildContext context) {
     final user = ref.watch(authControllerProvider).value;
     return Scaffold(
-      appBar: AppBar(title: const Text('Profile')),
+      appBar: AppBar(
+        title: const Text('Profile'),
+        actions: const [NotificationBell()],
+      ),
       body: FutureBuilder<Map<String, dynamic>>(
         future: _profile,
         builder: (context, s) {
@@ -43,33 +48,55 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
           }
           final data = s.data!;
           return ListView(
-            padding: const EdgeInsets.all(20),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
             children: [
-              CircleAvatar(
-                radius: 36,
-                child: Text(
-                  user?.name.isNotEmpty == true
-                      ? user!.name[0].toUpperCase()
-                      : '?',
+              Card(
+                child: Padding(
+                  padding: const EdgeInsets.all(20),
+                  child: Column(
+                    children: [
+                      CircleAvatar(
+                        radius: 38,
+                        backgroundColor: Theme.of(context)
+                            .colorScheme
+                            .primaryContainer,
+                        child: Text(
+                          user?.name.isNotEmpty == true
+                              ? user!.name[0].toUpperCase()
+                              : '?',
+                          style: Theme.of(context).textTheme.headlineSmall
+                              ?.copyWith(
+                                color: Theme.of(context).colorScheme.primary,
+                              ),
+                        ),
+                      ),
+                      const SizedBox(height: 14),
+                      Text(
+                        user?.name ?? '',
+                        textAlign: TextAlign.center,
+                        style: Theme.of(context).textTheme.titleLarge,
+                      ),
+                      const SizedBox(height: 4),
+                      Text(user?.email ?? '', textAlign: TextAlign.center),
+                      if (user?.phoneNumber != null)
+                        Text(user!.phoneNumber!, textAlign: TextAlign.center),
+                      if (data['address'] != null) ...[
+                        const SizedBox(height: 4),
+                        Text('${data['address']}', textAlign: TextAlign.center),
+                      ],
+                      const SizedBox(height: 16),
+                      OutlinedButton.icon(
+                        onPressed: () => _edit(data),
+                        icon: const Icon(Icons.edit_outlined),
+                        label: const Text('Edit profile'),
+                      ),
+                    ],
+                  ),
                 ),
               ),
-              const SizedBox(height: 16),
-              Text(
-                user?.name ?? '',
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              Text(user?.email ?? '', textAlign: TextAlign.center),
-              if (user?.phoneNumber != null)
-                Text(user!.phoneNumber!, textAlign: TextAlign.center),
-              if (data['address'] != null)
-                Text('${data['address']}', textAlign: TextAlign.center),
-              const SizedBox(height: 18),
-              OutlinedButton.icon(
-                onPressed: () => _edit(data),
-                icon: const Icon(Icons.edit),
-                label: const Text('Edit profile'),
-              ),
+              const SizedBox(height: 24),
+              const AppSectionHeader(title: 'Account settings'),
+              const SizedBox(height: 8),
               ListTile(
                 leading: const Icon(Icons.lock_outline),
                 title: const Text('Change password'),

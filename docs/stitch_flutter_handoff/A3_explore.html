@@ -1,0 +1,292 @@
+<!-- A3. Khám phá kho (Explore) -->
+<!DOCTYPE html>
+
+<html class="h-full" lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><title>Self Storage</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;min-height:100%;margin:0;padding:0;background-color:#f8f9ff;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "secondary-fixed-dim": "#4edea3", "primary": "#003327", "on-tertiary-fixed": "#121e1c", "outline-variant": "#c0c9c3", "on-error": "#ffffff", "secondary-container": "#6cf8bb", "on-primary-container": "#86b9a6", "on-error-container": "#93000a", "error": "#ba1a1a", "on-secondary": "#ffffff", "inverse-on-surface": "#eaf1ff", "outline": "#707975", "tertiary": "#222e2c", "primary-container": "#164a3c", "tertiary-fixed-dim": "#bcc9c7", "surface-dim": "#d0dbed", "surface-container": "#e6eeff", "on-surface": "#121c2a", "primary-fixed": "#b9eeda", "error-container": "#ffdad6", "background": "#f8f9ff", "on-secondary-container": "#00714d", "on-tertiary-fixed-variant": "#3d4947", "inverse-surface": "#27313f", "secondary": "#006c49", "surface-container-high": "#dee9fc", "on-secondary-fixed-variant": "#005236", "on-tertiary-container": "#a3b1ae", "surface-container-highest": "#d9e3f6", "surface-variant": "#d9e3f6", "on-tertiary": "#ffffff", "surface": "#f8f9ff", "secondary-fixed": "#6ffbbe", "tertiary-fixed": "#d7e5e2", "on-background": "#121c2a", "surface-tint": "#366758", "on-primary-fixed-variant": "#1c4f41", "tertiary-container": "#374442", "on-surface-variant": "#404945", "surface-container-low": "#eff4ff", "inverse-primary": "#9dd1be", "on-primary": "#ffffff", "primary-fixed-dim": "#9dd1be", "on-secondary-fixed": "#002113", "on-primary-fixed": "#002018", "surface-container-lowest": "#ffffff", "surface-bright": "#f8f9ff" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-sm": "0.5rem", "space-md": "1rem", "gutter": "1rem", "space-lg": "1.5rem", "margin": "1rem", "space-xs": "0.25rem", "space-xl": "2rem" }, fontFamily: { "label-lg": ["Inter"], "headline-lg-mobile": ["Inter"], "label-md": ["Inter"], "label-sm": ["Inter"], "body-lg": ["Inter"], "headline-sm": ["Inter"], "headline-lg": ["Inter"], "body-md": ["Inter"], "headline-md": ["Inter"], "body-sm": ["Inter"] }, fontSize: { "label-lg": ["15px", { "lineHeight": "20px", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }], "label-md": ["13px", { "lineHeight": "18px", "fontWeight": "500" }], "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-screen antialiased selection:bg-secondary-fixed selection:text-on-secondary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="flex items-center justify-between px-margin h-16"><div class="flex items-center gap-space-sm min-w-0"><img alt="Self Storage Vault Logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1UWtBm6ywF0qC4y9jkzHThVmJV0Aa5Sp0hWueCIdmhowNiNOytxXuZrU3KdvY98NiTxJ07PVeDNkTmiqS8msiRaWL_z4DhSwj_EMpFsmn40qGcfmOP8cFUQS7UuaeiJz0DP6Hkw0JBGW0PeP8HDYwzLMluj1obN7FGytlm6ha39TvopnvM5qvoB88Kp60cqZ5hVPNksdfFsQI3IOrHbIG3ayXtD1pts7STa6SRrdmymeg"/><div class="flex flex-col min-w-0"><span class="text-label-sm font-label-sm tracking-wider uppercase text-secondary truncate">Self Storage</span><h1 class="text-headline-sm font-headline-sm text-on-surface truncate leading-tight">Khám Phá</h1></div></div><div class="flex items-center gap-space-xs"><button aria-label="Thông báo" class="relative flex items-center justify-center w-11 h-11 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/60 transition-colors" type="button"><span class="material-symbols-outlined text-[24px]">notifications</span><span class="absolute top-2.5 right-2.5 flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-error"></span></span></button><button aria-label="Hồ sơ người dùng" class="flex items-center justify-center w-11 h-11 rounded-full hover:ring-2 hover:ring-primary/20 transition-all ml-0.5" type="button"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALNBGJKzObyzVA4bSogbTZ5N-Gv0KojbZGC1A162oR7TlzDKKcA_yMlLN168nAP7SV1cnlH5hQ0GWzXlbASmenw6vG9xjWQKx0rTDvdrNcnP9f9NSpsZOIRMjhs56p5nZTniIE-cCSggJyZ3sWPX-Yv71CF44ioPJXotGsCqEmQtQ2qDsyustOoevbHBljXOH0mv_z6ckVkYOOHkrlfFgGO20BmI-SPKRNl6l6lAIA"/></button></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-20 bg-surface"><div class="flex flex-col w-full">
+<!-- Search & Filter Controls -->
+<div class="px-margin pt-space-sm pb-space-sm flex flex-col gap-space-sm">
+<!-- M3 Search Bar -->
+<div class="flex items-center gap-space-xs">
+<div class="flex-1 flex items-center bg-surface-container-lowest rounded-full px-space-md py-2.5 shadow-[0px_2px_8px_rgba(22,74,60,0.06)]">
+<span class="material-symbols-outlined text-outline text-[22px] mr-2.5">search</span>
+<input class="w-full bg-transparent text-on-surface placeholder:text-outline text-body-md font-body-md focus:outline-none" placeholder="Tìm quận, địa chỉ hoặc tên kho..." type="text"/>
+<button aria-label="Xóa tìm kiếm" class="text-outline hover:text-on-surface p-1 rounded-full" type="button">
+<span class="material-symbols-outlined text-[18px]">mic</span>
+</button>
+</div>
+<!-- Filter Modal Trigger -->
+<button aria-label="Bộ lọc nâng cao" class="w-12 h-12 flex items-center justify-center rounded-full bg-primary-container text-on-primary shadow-[0px_2px_8px_rgba(22,74,60,0.12)] active:scale-95 transition-transform" id="filter-trigger" type="button">
+<span class="material-symbols-outlined text-[22px]">tune</span>
+</button>
+</div>
+<!-- Quick Filter Chips Scrollable Row -->
+<div class="flex items-center gap-space-xs overflow-x-auto no-scrollbar py-1 -mx-margin px-margin">
+<button class="filter-chip active flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-label-md font-label-md whitespace-nowrap transition-colors bg-secondary-fixed text-on-secondary-fixed" type="button">
+<span class="material-symbols-outlined text-[16px]" style="font-variation-settings: 'FILL' 1;">check</span>
+<span>Tất cả</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-label-md font-label-md whitespace-nowrap transition-colors bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container" type="button">
+<span class="material-symbols-outlined text-[16px]">near_me</span>
+<span>Gần tôi nhất</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-label-md font-label-md whitespace-nowrap transition-colors bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container" type="button">
+<span class="material-symbols-outlined text-[16px]">inventory_2</span>
+<span>Kho mini (&lt;3m²)</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-label-md font-label-md whitespace-nowrap transition-colors bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container" type="button">
+<span class="material-symbols-outlined text-[16px]">home_work</span>
+<span>Kho gia đình (5-10m²)</span>
+</button>
+<button class="filter-chip flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-label-md font-label-md whitespace-nowrap transition-colors bg-surface-container-lowest text-on-surface-variant hover:bg-surface-container" type="button">
+<span class="material-symbols-outlined text-[16px]">ac_unit</span>
+<span>Điều hòa 24/7</span>
+</button>
+</div>
+</div>
+<!-- Results Summary Header -->
+<div class="px-margin pt-space-xs pb-space-sm flex items-center justify-between">
+<div class="flex items-center gap-1.5">
+<span class="text-body-sm font-body-sm text-on-surface-variant">Tìm thấy</span>
+<span class="text-label-md font-label-md text-primary bg-primary-fixed px-2 py-0.5 rounded-full">18 kho bãi</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">tại TP. Hồ Chí Minh</span>
+</div>
+<button class="flex items-center gap-1 text-label-sm font-label-sm text-secondary hover:underline" type="button">
+<span class="material-symbols-outlined text-[16px]">map</span>
+<span>Bản đồ</span>
+</button>
+</div>
+<!-- Facility Listing Cards Section -->
+<div class="px-margin flex flex-col gap-space-lg pb-space-xl">
+<!-- Card 1: Nam Sài Gòn -->
+<article class="bg-surface-container-lowest rounded-xl p-space-md shadow-[0px_4px_16px_rgba(22,74,60,0.06)] flex flex-col gap-space-md">
+<!-- Media Header with Badge -->
+<div class="relative w-full h-44 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Modern indoor self-storage corridor with polished glossy concrete floors, clean emerald teal locker doors, crisp white LED lighting, architectural perspective, biometric keypads on each unit door, ultra-secure pristine storage facility." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBLsnJWfF-OXEWDPcN1oiJXWlfMF5ptpwog-RDtK83K_XTgh2RlaQckl9C0zWQW86cZNc489pQ90Yz8LTtHqHGuxopxza8cBddnQ7lmV8DWpgm7rGZNTbcLw27SoYHJMWRlntweIzNX7ZomnJb2Yk5Stoj3dP0JHVCLg0-Y-qL1sZnZfO9eBdxjBD9N1xWGu4BpZnHGHBEx-IkVWxWf28yuorj7pPZbUsUvf1QwFU3O"/>
+<!-- Distance Tag -->
+<div class="absolute top-2.5 left-2.5 bg-tertiary/80 backdrop-blur-md text-on-tertiary px-2.5 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary-fixed">navigation</span>
+<span class="text-label-sm font-label-sm">2.1 km từ vị trí của bạn</span>
+</div>
+<!-- Availability Badge -->
+<div class="absolute bottom-2.5 right-2.5 bg-surface-container-lowest/90 backdrop-blur-md text-secondary px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-pulse"></span>
+<span class="text-label-sm font-label-sm">Còn 4 phòng trống</span>
+</div>
+</div>
+<!-- Facility Details -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-start justify-between gap-space-sm">
+<h2 class="text-headline-sm font-headline-sm text-on-surface line-clamp-1">Self Storage Nam Sài Gòn</h2>
+<div class="flex items-center gap-1 bg-surface-container-high px-2 py-0.5 rounded-md flex-shrink-0">
+<span class="material-symbols-outlined text-[14px] text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-sm font-label-sm text-on-surface">4.9 (128)</span>
+</div>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">location_on</span>
+<span class="truncate">Nguyễn Văn Linh, Phường Tân Phong, Quận 7</span>
+</p>
+<!-- Feature Pills -->
+<div class="flex flex-wrap items-center gap-1.5 pt-1">
+<span class="bg-surface-container text-on-surface-variant text-label-sm font-label-sm px-2.5 py-1 rounded-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">straighten</span> 1.5m² - 12m²
+          </span>
+<span class="bg-surface-container text-on-surface-variant text-label-sm font-label-sm px-2.5 py-1 rounded-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">ac_unit</span> Điều hòa 24°C
+          </span>
+<span class="bg-surface-container text-on-surface-variant text-label-sm font-label-sm px-2.5 py-1 rounded-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">videocam</span> Camera AI 24/7
+          </span>
+</div>
+</div>
+<!-- Pricing and Action CTA -->
+<div class="pt-space-xs flex items-center justify-between gap-space-sm">
+<div class="flex flex-col">
+<span class="text-body-sm font-body-sm text-outline">Giá thuê sàn</span>
+<div class="flex items-baseline gap-1">
+<span class="text-headline-sm font-headline-sm text-primary">Từ 950.000 ₫</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">/tháng</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3.5 h-10 rounded-lg text-primary text-label-md font-label-md hover:bg-surface-container transition-colors" type="button">
+            Chi tiết
+          </button>
+<button class="px-4 h-10 rounded-lg bg-primary-container text-on-primary text-label-md font-label-md shadow-sm active:scale-95 transition-all flex items-center gap-1" type="button">
+<span>Đặt kho</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 2: An Phú Thủ Đức (Featured / Offer Badge) -->
+<article class="bg-surface-container-lowest rounded-xl p-space-md shadow-[0px_4px_16px_rgba(22,74,60,0.06)] flex flex-col gap-space-md relative overflow-hidden">
+<!-- Media Header with Badge -->
+<div class="relative w-full h-44 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Wide access loading bay of an automated high-end self-storage facility with delivery truck ramp, bright LED strip illumination, electronic roll-up security shutters, lush indoor plants framing the entrance, cinematic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBzqzC-_SbfTCOy8s9Cq2ZLn4sypFQPWkngR31g2-G8Eq58LnwtNZf6BcNqql-EBSnTp7HvJFjBcoTx5LmMvBkGjzXHZ6LYEq0pSGGGvpcro6OW4qrA-qqmqF_pP-XThgBiq6cd-8jYl0RcTjNTaMaYjRsmgeuCs34y7uR4nI8Zf9HWG6Y7FUui1RTGalIFc-6F3RRCn7FKf2hH6Fgdydx5g77FAUi4kRNLtFX4P5v8"/>
+<!-- Distance Tag -->
+<div class="absolute top-2.5 left-2.5 bg-tertiary/80 backdrop-blur-md text-on-tertiary px-2.5 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary-fixed">navigation</span>
+<span class="text-label-sm font-label-sm">5.4 km từ vị trí của bạn</span>
+</div>
+<!-- Special Discount Badge -->
+<div class="absolute bottom-2.5 left-2.5 bg-secondary-container text-on-secondary-container px-2.5 py-1 rounded-full flex items-center gap-1 font-label-sm text-label-sm shadow-sm">
+<span class="material-symbols-outlined text-[14px]">local_offer</span>
+<span>Ưu đãi tháng đầu -20%</span>
+</div>
+<div class="absolute bottom-2.5 right-2.5 bg-surface-container-lowest/90 backdrop-blur-md text-secondary px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+<span class="text-label-sm font-label-sm">Còn 7 phòng</span>
+</div>
+</div>
+<!-- Facility Details -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-start justify-between gap-space-sm">
+<h2 class="text-headline-sm font-headline-sm text-on-surface line-clamp-1">Self Storage An Phú</h2>
+<div class="flex items-center gap-1 bg-surface-container-high px-2 py-0.5 rounded-md flex-shrink-0">
+<span class="material-symbols-outlined text-[14px] text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-sm font-label-sm text-on-surface">4.8 (94)</span>
+</div>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">location_on</span>
+<span class="truncate">Đường Song Hành, An Phú, TP. Thủ Đức</span>
+</p>
+<!-- Feature Pills -->
+<div class="flex flex-wrap items-center gap-1.5 pt-1">
+<span class="bg-surface-container text-on-surface-variant text-label-sm font-label-sm px-2.5 py-1 rounded-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">local_shipping</span> Bốc dỡ tận nơi
+          </span>
+<span class="bg-surface-container text-on-surface-variant text-label-sm font-label-sm px-2.5 py-1 rounded-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">key</span> Mở khóa Bluetooth
+          </span>
+<span class="bg-surface-container text-on-surface-variant text-label-sm font-label-sm px-2.5 py-1 rounded-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">security</span> Bảo hiểm miễn phí
+          </span>
+</div>
+</div>
+<!-- Pricing and Action CTA -->
+<div class="pt-space-xs flex items-center justify-between gap-space-sm">
+<div class="flex flex-col">
+<span class="text-body-sm font-body-sm text-outline">Giá thuê sàn</span>
+<div class="flex items-baseline gap-1">
+<span class="text-headline-sm font-headline-sm text-primary">Từ 1.200.000 ₫</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">/tháng</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3.5 h-10 rounded-lg text-primary text-label-md font-label-md hover:bg-surface-container transition-colors" type="button">
+            Chi tiết
+          </button>
+<button class="px-4 h-10 rounded-lg bg-primary-container text-on-primary text-label-md font-label-md shadow-sm active:scale-95 transition-all flex items-center gap-1" type="button">
+<span>Đặt kho</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Card 3: Tân Bình Eco -->
+<article class="bg-surface-container-lowest rounded-xl p-space-md shadow-[0px_4px_16px_rgba(22,74,60,0.06)] flex flex-col gap-space-md">
+<!-- Media Header with Badge -->
+<div class="relative w-full h-44 rounded-lg overflow-hidden bg-surface-container">
+<img class="w-full h-full object-cover" data-alt="Interior of an eco-friendly smart self-storage facility with timber accents, clean white metal corrugated wall partitions, energy-saving skylights, neat row of lockboxes with digital keypad terminals, quiet institutional atmosphere." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAoD8agmd7dkUOTpN-YE5pOzPtUeTjG7phxCM55860bKAgBOM_3N83Nxk1UV9MNFvQ0c4EwUCVAcJEZ_rfenGHvRWlxJMpfZYLalcHDrNhJ7WYXQr486cQzwAfJIkwBpFpL49KDbmwZsirHrM6OPcqji0dJrs8lpM8i0EqXIjizXC4KX0RPHd2fK1JmoZqnGi2g33bteeJ68XqO4Sy5pU6NLHBzfgv2EvxvfDJaoKbw"/>
+<!-- Distance Tag -->
+<div class="absolute top-2.5 left-2.5 bg-tertiary/80 backdrop-blur-md text-on-tertiary px-2.5 py-1 rounded-full flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary-fixed">navigation</span>
+<span class="text-label-sm font-label-sm">6.8 km từ vị trí của bạn</span>
+</div>
+<!-- Limited Units Badge -->
+<div class="absolute bottom-2.5 right-2.5 bg-error-container text-on-error-container px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm">
+<span class="material-symbols-outlined text-[14px]">warning</span>
+<span class="text-label-sm font-label-sm">Chỉ còn 2 phòng lớn</span>
+</div>
+</div>
+<!-- Facility Details -->
+<div class="flex flex-col gap-space-xs">
+<div class="flex items-start justify-between gap-space-sm">
+<h2 class="text-headline-sm font-headline-sm text-on-surface line-clamp-1">Self Storage Tân Bình Eco</h2>
+<div class="flex items-center gap-1 bg-surface-container-high px-2 py-0.5 rounded-md flex-shrink-0">
+<span class="material-symbols-outlined text-[14px] text-secondary" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="text-label-sm font-label-sm text-on-surface">4.7 (76)</span>
+</div>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">location_on</span>
+<span class="truncate">Hoàng Văn Thụ, Phường 4, Quận Tân Bình</span>
+</p>
+<!-- Feature Pills -->
+<div class="flex flex-wrap items-center gap-1.5 pt-1">
+<span class="bg-surface-container text-on-surface-variant text-label-sm font-label-sm px-2.5 py-1 rounded-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">alarm</span> Ra vào 24/7
+          </span>
+<span class="bg-surface-container text-on-surface-variant text-label-sm font-label-sm px-2.5 py-1 rounded-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">pallet</span> Xe nâng miễn phí
+          </span>
+<span class="bg-surface-container text-on-surface-variant text-label-sm font-label-sm px-2.5 py-1 rounded-md flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">bolt</span> Trạm sạc pin
+          </span>
+</div>
+</div>
+<!-- Pricing and Action CTA -->
+<div class="pt-space-xs flex items-center justify-between gap-space-sm">
+<div class="flex flex-col">
+<span class="text-body-sm font-body-sm text-outline">Giá thuê sàn</span>
+<div class="flex items-baseline gap-1">
+<span class="text-headline-sm font-headline-sm text-primary">Từ 800.000 ₫</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">/tháng</span>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="px-3.5 h-10 rounded-lg text-primary text-label-md font-label-md hover:bg-surface-container transition-colors" type="button">
+            Chi tiết
+          </button>
+<button class="px-4 h-10 rounded-lg bg-primary-container text-on-primary text-label-md font-label-md shadow-sm active:scale-95 transition-all flex items-center gap-1" type="button">
+<span>Đặt kho</span>
+<span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</article>
+<!-- Trust & Safety Banner -->
+<div class="bg-primary text-on-primary rounded-xl p-space-md flex items-center gap-space-md shadow-[0px_4px_16px_rgba(0,51,39,0.1)]">
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center flex-shrink-0 text-secondary-fixed">
+<span class="material-symbols-outlined text-[28px]" style="font-variation-settings: 'FILL' 1;">verified_user</span>
+</div>
+<div class="flex flex-col min-w-0">
+<h3 class="text-label-lg font-label-lg leading-snug">Bảo vệ hợp đồng &amp; tài sản 100%</h3>
+<p class="text-body-sm font-body-sm text-on-primary-container pt-0.5">Mọi kho lưu trữ đều đi kèm bảo hiểm rủi ro lên đến 200.000.000 ₫ và hợp đồng điện tử pháp lý tức thì.</p>
+</div>
+</div>
+</div>
+</div>
+<script>
+  // Quick Filter Chip toggle micro-interaction
+  document.querySelectorAll('.filter-chip').forEach(button => {
+    button.addEventListener('click', () => {
+      document.querySelectorAll('.filter-chip').forEach(el => {
+        el.classList.remove('bg-secondary-fixed', 'text-on-secondary-fixed', 'active');
+        el.classList.add('bg-surface-container-lowest', 'text-on-surface-variant');
+        const icon = el.querySelector('.material-symbols-outlined');
+        if (icon && icon.textContent.trim() === 'check') {
+          icon.remove();
+        }
+      });
+      button.classList.remove('bg-surface-container-lowest', 'text-on-surface-variant');
+      button.classList.add('bg-secondary-fixed', 'text-on-secondary-fixed', 'active');
+      
+      const existingCheck = button.querySelector('span.check-icon');
+      if (!existingCheck && button.querySelector('span:not(.material-symbols-outlined)')) {
+        const checkIcon = document.createElement('span');
+        checkIcon.className = 'material-symbols-outlined text-[16px] check-icon';
+        checkIcon.style.fontVariationSettings = "'FILL' 1";
+        checkIcon.textContent = 'check';
+        button.insertBefore(checkIcon, button.firstChild);
+      }
+    });
+  });
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 bg-surface/95 backdrop-blur-xl pb-safe shadow-[0_-2px_12px_rgba(22,74,60,0.06)]" data-active-classes="text-primary font-label-md [&amp;_span.material-symbols-outlined]:font-variation-settings-'FILL'-1 [&amp;_.nav-pill]:bg-secondary-fixed/50"><div class="flex items-center justify-around h-16 px-space-xs"><a class="flex flex-col items-center justify-center flex-1 h-full py-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="trang-chu" href="#"><div class="nav-pill flex items-center justify-center px-4 py-1 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">home</span></div><span class="text-label-sm font-label-sm mt-0.5 tracking-tight truncate">Trang chủ</span></a><a class="flex flex-col items-center justify-center flex-1 h-full py-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="kham-pha" href="#"><div class="nav-pill flex items-center justify-center px-4 py-1 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">explore</span></div><span class="text-label-sm font-label-sm mt-0.5 tracking-tight truncate">Khám phá</span></a><a class="flex flex-col items-center justify-center flex-1 h-full py-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="don-dat-kho" href="#"><div class="nav-pill flex items-center justify-center px-4 py-1 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">assignment</span></div><span class="text-label-sm font-label-sm mt-0.5 tracking-tight truncate">Đơn đặt kho</span></a><a class="flex flex-col items-center justify-center flex-1 h-full py-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="ca-nhan" href="#"><div class="nav-pill flex items-center justify-center px-4 py-1 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">person</span></div><span class="text-label-sm font-label-sm mt-0.5 tracking-tight truncate">Cá nhân</span></a></div></nav></body></html>

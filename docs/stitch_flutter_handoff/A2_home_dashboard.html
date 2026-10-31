@@ -1,0 +1,349 @@
+<!-- A2. Trang chủ (Home Dashboard) -->
+<!DOCTYPE html>
+
+<html class="h-full" lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_tab" name="shell-type"/><title>Self Storage</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;min-height:100%;margin:0;padding:0;background-color:#f8f9ff;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "secondary-fixed-dim": "#4edea3", "primary": "#003327", "on-tertiary-fixed": "#121e1c", "outline-variant": "#c0c9c3", "on-error": "#ffffff", "secondary-container": "#6cf8bb", "on-primary-container": "#86b9a6", "on-error-container": "#93000a", "error": "#ba1a1a", "on-secondary": "#ffffff", "inverse-on-surface": "#eaf1ff", "outline": "#707975", "tertiary": "#222e2c", "primary-container": "#164a3c", "tertiary-fixed-dim": "#bcc9c7", "surface-dim": "#d0dbed", "surface-container": "#e6eeff", "on-surface": "#121c2a", "primary-fixed": "#b9eeda", "error-container": "#ffdad6", "background": "#f8f9ff", "on-secondary-container": "#00714d", "on-tertiary-fixed-variant": "#3d4947", "inverse-surface": "#27313f", "secondary": "#006c49", "surface-container-high": "#dee9fc", "on-secondary-fixed-variant": "#005236", "on-tertiary-container": "#a3b1ae", "surface-container-highest": "#d9e3f6", "surface-variant": "#d9e3f6", "on-tertiary": "#ffffff", "surface": "#f8f9ff", "secondary-fixed": "#6ffbbe", "tertiary-fixed": "#d7e5e2", "on-background": "#121c2a", "surface-tint": "#366758", "on-primary-fixed-variant": "#1c4f41", "tertiary-container": "#374442", "on-surface-variant": "#404945", "surface-container-low": "#eff4ff", "inverse-primary": "#9dd1be", "on-primary": "#ffffff", "primary-fixed-dim": "#9dd1be", "on-secondary-fixed": "#002113", "on-primary-fixed": "#002018", "surface-container-lowest": "#ffffff", "surface-bright": "#f8f9ff" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-sm": "0.5rem", "space-md": "1rem", "gutter": "1rem", "space-lg": "1.5rem", "margin": "1rem", "space-xs": "0.25rem", "space-xl": "2rem" }, fontFamily: { "label-lg": ["Inter"], "headline-lg-mobile": ["Inter"], "label-md": ["Inter"], "label-sm": ["Inter"], "body-lg": ["Inter"], "headline-sm": ["Inter"], "headline-lg": ["Inter"], "body-md": ["Inter"], "headline-md": ["Inter"], "body-sm": ["Inter"] }, fontSize: { "label-lg": ["15px", { "lineHeight": "20px", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }], "label-md": ["13px", { "lineHeight": "18px", "fontWeight": "500" }], "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-screen antialiased selection:bg-secondary-fixed selection:text-on-secondary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="flex items-center justify-between px-margin h-16"><div class="flex items-center gap-space-sm min-w-0"><img alt="Self Storage Vault Logo" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1UWtBm6ywF0qC4y9jkzHThVmJV0Aa5Sp0hWueCIdmhowNiNOytxXuZrU3KdvY98NiTxJ07PVeDNkTmiqS8msiRaWL_z4DhSwj_EMpFsmn40qGcfmOP8cFUQS7UuaeiJz0DP6Hkw0JBGW0PeP8HDYwzLMluj1obN7FGytlm6ha39TvopnvM5qvoB88Kp60cqZ5hVPNksdfFsQI3IOrHbIG3ayXtD1pts7STa6SRrdmymeg"/><div class="flex flex-col min-w-0"><span class="text-label-sm font-label-sm tracking-wider uppercase text-secondary truncate">Self Storage</span><h1 class="text-headline-sm font-headline-sm text-on-surface truncate leading-tight">Trang Chủ</h1></div></div><div class="flex items-center gap-space-xs"><button aria-label="Thông báo" class="relative flex items-center justify-center w-11 h-11 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/60 transition-colors" type="button"><span class="material-symbols-outlined text-[24px]">notifications</span><span class="absolute top-2.5 right-2.5 flex h-2 w-2"><span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-error opacity-75"></span><span class="relative inline-flex rounded-full h-2 w-2 bg-error"></span></span></button><button aria-label="Hồ sơ người dùng" class="flex items-center justify-center w-11 h-11 rounded-full hover:ring-2 hover:ring-primary/20 transition-all ml-0.5" type="button"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALNBGJKzObyzVA4bSogbTZ5N-Gv0KojbZGC1A162oR7TlzDKKcA_yMlLN168nAP7SV1cnlH5hQ0GWzXlbASmenw6vG9xjWQKx0rTDvdrNcnP9f9NSpsZOIRMjhs56p5nZTniIE-cCSggJyZ3sWPX-Yv71CF44ioPJXotGsCqEmQtQ2qDsyustOoevbHBljXOH0mv_z6ckVkYOOHkrlfFgGO20BmI-SPKRNl6l6lAIA"/></button></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-20 bg-surface"><div class="flex flex-col w-full">
+<div class="px-margin pt-space-md pb-space-lg flex flex-col gap-space-lg">
+<!-- 1. Header Chào Mừng & Profile Status -->
+<div class="flex items-center justify-between">
+<div class="flex flex-col min-w-0">
+<div class="flex items-center gap-space-xs">
+<span class="text-body-sm font-body-sm text-on-surface-variant">Chào buổi sáng</span>
+<span class="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-secondary-fixed text-on-secondary-fixed text-[10px] font-semibold tracking-wide">
+<span class="material-symbols-outlined text-[12px]" style="font-variation-settings: 'FILL' 1;">verified</span>
+            Đã xác thực
+          </span>
+</div>
+<h2 class="text-headline-md font-headline-md text-on-surface tracking-tight mt-0.5 truncate">
+          Phương Thảo 👋
+        </h2>
+</div>
+<div class="flex items-center gap-space-xs">
+<button aria-label="Lịch mở cửa" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary hover:bg-surface-container-high transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px]">calendar_today</span>
+</button>
+<button aria-label="Trợ giúp an ninh" class="w-10 h-10 rounded-full bg-surface-container flex items-center justify-center text-primary hover:bg-surface-container-high transition-colors shadow-sm" type="button">
+<span class="material-symbols-outlined text-[20px]">shield</span>
+</button>
+</div>
+</div>
+<!-- 2. Thẻ Tóm Tắt Kho Đang Thuê (Active Storage Unit Card) -->
+<section class="relative overflow-hidden rounded-[20px] bg-primary-container text-on-primary p-space-md shadow-xl flex flex-col gap-space-md">
+<!-- Ambient decorative lock icon backdrop -->
+<div class="absolute -right-4 -bottom-6 opacity-10 pointer-events-none text-surface-container-lowest select-none">
+<span class="material-symbols-outlined text-[160px]" style="font-variation-settings: 'FILL' 1;">lock</span>
+</div>
+<!-- Top Row: Badge & Expiry -->
+<div class="flex items-center justify-between relative z-10">
+<div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container font-label-sm text-label-sm shadow-sm">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span>Đang hiệu lực</span>
+</div>
+<div class="flex items-center gap-1 text-on-primary-container text-body-sm font-body-sm bg-primary/40 px-2.5 py-1 rounded-full">
+<span class="material-symbols-outlined text-[15px]">event_repeat</span>
+<span>Còn 48 ngày</span>
+</div>
+</div>
+<!-- Unit Meta Title -->
+<div class="flex flex-col relative z-10">
+<div class="flex items-baseline justify-between">
+<h3 class="text-headline-md font-headline-md text-surface-bright tracking-tight">Unit A-204</h3>
+<span class="text-label-md font-label-md text-primary-fixed bg-surface-tint/30 px-2 py-0.5 rounded-lg">12 m² • Lầu 2</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-primary-container flex items-center gap-1 mt-0.5">
+<span class="material-symbols-outlined text-[16px] text-primary-fixed">location_on</span>
+          Chi nhánh Quận 7, TP.HCM
+        </p>
+</div>
+<!-- Live Environment telemetry pills -->
+<div class="grid grid-cols-2 gap-2 relative z-10">
+<div class="bg-primary/50 backdrop-blur-sm rounded-xl p-2.5 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]">thermostat</span>
+<div class="flex flex-col">
+<span class="text-[10px] text-on-primary-container">Nhiệt độ ổn định</span>
+<span class="text-label-md font-label-md text-surface-bright">23.5°C</span>
+</div>
+</div>
+<div class="bg-primary/50 backdrop-blur-sm rounded-xl p-2.5 flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]">humidity_mid</span>
+<div class="flex flex-col">
+<span class="text-[10px] text-on-primary-container">Độ ẩm kho</span>
+<span class="text-label-md font-label-md text-surface-bright">52% RH</span>
+</div>
+</div>
+</div>
+<!-- Action Buttons Row inside Card -->
+<div class="pt-1 flex items-center gap-2 relative z-10">
+<button class="flex-1 h-[44px] rounded-xl bg-secondary-fixed text-on-secondary-fixed font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-md active:scale-95 transition-transform" id="qrOpenBtn" type="button">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">qr_code_2</span>
+          Mã mở khóa QR
+        </button>
+<button aria-label="Quản lý đồ đạc" class="h-[44px] px-3 rounded-xl bg-primary/60 text-surface-bright hover:bg-primary transition-colors flex items-center justify-center gap-1 font-label-md text-label-md" type="button">
+<span class="material-symbols-outlined text-[18px]">inventory_2</span>
+<span>Đồ đạc</span>
+</button>
+<button aria-label="Báo cáo sự cố" class="h-[44px] w-11 rounded-xl bg-primary/60 text-surface-bright hover:bg-primary transition-colors flex items-center justify-center" type="button">
+<span class="material-symbols-outlined text-[18px]">report_problem</span>
+</button>
+</div>
+</section>
+<!-- 3. Thẻ Nhắc Nhở Thanh Toán (Pending Reservation Alert) -->
+<section class="rounded-2xl bg-surface-container-high p-space-md shadow-md flex flex-col gap-space-sm relative overflow-hidden">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-10 h-10 rounded-xl bg-error-container text-on-error-container flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[22px]">pending_actions</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-label-md font-label-md text-on-surface">Đơn đặt kho #RES-8921</span>
+<span class="px-1.5 py-0.2 rounded bg-error-container text-on-error-container text-[11px] font-semibold">Chờ thanh toán</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Kho Mát Mini (6m²) • Chi nhánh Phú Nhuận</p>
+</div>
+</div>
+</div>
+<div class="flex items-center justify-between pt-1">
+<div class="flex items-center gap-1.5 text-error text-body-sm font-body-sm">
+<span class="material-symbols-outlined text-[18px] animate-spin" style="animation-duration: 4s;">timer</span>
+<span>Hết hạn sau: <strong class="font-label-md" id="countdown">14:32</strong></span>
+</div>
+<div class="text-right">
+<span class="text-label-sm font-label-sm text-on-surface-variant block">Tổng số tiền</span>
+<span class="text-label-lg font-label-lg text-primary">1.450.000 đ</span>
+</div>
+</div>
+<button class="w-full h-11 rounded-xl bg-primary text-on-primary font-label-md text-label-md flex items-center justify-center gap-1.5 shadow-sm active:scale-95 transition-transform mt-1" type="button">
+<span class="material-symbols-outlined text-[18px]">credit_card</span>
+        Thanh toán ngay (1.450.000 đ)
+      </button>
+</section>
+<!-- 4. Lối Tắt Thao Tác Nhanh (Quick Actions Grid) -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<h4 class="text-headline-sm font-headline-sm text-on-surface">Thao tác nhanh</h4>
+<span class="text-label-sm font-label-sm text-secondary">Tuỳ chỉnh</span>
+</div>
+<div class="grid grid-cols-4 gap-2.5">
+<!-- Action 1 -->
+<button class="flex flex-col items-center justify-center p-2.5 rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all active:scale-95 group text-center shadow-sm" type="button">
+<div class="w-12 h-12 rounded-xl bg-secondary-fixed/50 text-on-secondary-fixed flex items-center justify-center group-hover:scale-105 transition-transform mb-1.5">
+<span class="material-symbols-outlined text-[24px]">add_business</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface tracking-tight">Thuê kho</span>
+</button>
+<!-- Action 2 -->
+<button class="flex flex-col items-center justify-center p-2.5 rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all active:scale-95 group text-center shadow-sm" type="button">
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest text-primary flex items-center justify-center group-hover:scale-105 transition-transform mb-1.5">
+<span class="material-symbols-outlined text-[24px]">all_inbox</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface tracking-tight">Tồn kho</span>
+</button>
+<!-- Action 3 -->
+<button class="flex flex-col items-center justify-center p-2.5 rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all active:scale-95 group text-center shadow-sm" type="button">
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest text-primary flex items-center justify-center group-hover:scale-105 transition-transform mb-1.5">
+<span class="material-symbols-outlined text-[24px]">description</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface tracking-tight">Hợp đồng</span>
+</button>
+<!-- Action 4 -->
+<button class="flex flex-col items-center justify-center p-2.5 rounded-2xl bg-surface-container-low hover:bg-surface-container transition-all active:scale-95 group text-center shadow-sm" type="button">
+<div class="w-12 h-12 rounded-xl bg-surface-container-highest text-primary flex items-center justify-center group-hover:scale-105 transition-transform mb-1.5">
+<span class="material-symbols-outlined text-[24px]">support_agent</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface tracking-tight">Hỗ trợ 24/7</span>
+</button>
+</div>
+</section>
+<!-- 5. Hoạt Động Gần Đây (Recent Activity) -->
+<section class="flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<h4 class="text-headline-sm font-headline-sm text-on-surface">Hoạt động gần đây</h4>
+<a class="text-label-sm font-label-sm text-secondary hover:underline" href="#">Xem tất cả</a>
+</div>
+<div class="flex flex-col gap-2">
+<!-- Item 1 -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-full bg-secondary-fixed/40 text-secondary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[19px]">outbox</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-label-md font-label-md text-on-surface truncate">Xuất kho #REQ-104</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant truncate">3 kiện đồ nội thất gia đình</span>
+</div>
+</div>
+<div class="flex flex-col items-end flex-shrink-0 ml-2">
+<span class="text-label-sm font-label-sm text-secondary">Hoàn tất</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant text-[11px]">Hôm qua</span>
+</div>
+</div>
+<!-- Item 2 -->
+<div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-lowest shadow-sm">
+<div class="flex items-center gap-3 min-w-0">
+<div class="w-9 h-9 rounded-full bg-primary-fixed text-primary flex items-center justify-center flex-shrink-0">
+<span class="material-symbols-outlined text-[19px]">receipt_long</span>
+</div>
+<div class="flex flex-col min-w-0">
+<span class="text-label-md font-label-md text-on-surface truncate">Gia hạn kỳ 2 (Kho A-204)</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant truncate">Thanh toán qua Ví điện tử</span>
+</div>
+</div>
+<div class="flex flex-col items-end flex-shrink-0 ml-2">
+<span class="text-label-sm font-label-sm text-secondary">Thành công</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant text-[11px]">3 ngày trước</span>
+</div>
+</div>
+</div>
+</section>
+<!-- 6. Kho Đề Xuất Nổi Bật (Featured Facilities) -->
+<section class="flex flex-col gap-space-sm pb-space-sm">
+<div class="flex items-center justify-between">
+<div>
+<h4 class="text-headline-sm font-headline-sm text-on-surface">Kho đề xuất nổi bật</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Không gian thông minh gần vị trí của bạn</p>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant text-[20px]">tune</span>
+</div>
+<!-- Featured Card -->
+<div class="rounded-2xl bg-surface-container-lowest overflow-hidden shadow-md flex flex-col">
+<div class="relative h-44 w-full overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="Interior view of a modern clean self storage facility corridor in Ho Chi Minh City with emerald green roller doors, polished concrete floor, bright LED lighting, humidity sensors, and digital access control pads under warm atmospheric architectural lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBox8mTiKf0yvNGg0dkXwh6cvhcHTldqA24J_sl-X4iBThQ4RqOuuXBdJIvYFehCDXF-gTj2et7dZNTpHnUYPUZ5ngYgVth2nHloj1aLGXvfXnpTcgj4LE8ExZPfSHe9k7ZpyBD1qNdYKaR_CGWWArzYjkzs-yzmR-OFfE196WxFr_6pDZI6BmevOt2wJYn9G4ZMFyNue8jDFXYFIOYqpTE1msOfTGsSMeWx5l7Ro2n"/>
+<div class="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent"></div>
+<div class="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur-md shadow-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary">verified_user</span>
+<span class="text-label-sm font-label-sm text-on-surface">Chuẩn Quốc Tế</span>
+</div>
+<div class="absolute top-3 right-3 flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/80 backdrop-blur-md text-surface-bright text-body-sm font-body-sm">
+<span class="material-symbols-outlined text-[14px] text-secondary-container" style="font-variation-settings: 'FILL' 1;">star</span>
+<span class="font-label-md">4.9</span>
+<span class="text-[11px] text-on-primary-container">(128)</span>
+</div>
+<div class="absolute bottom-3 left-3 right-3 flex items-end justify-between text-white">
+<div>
+<h5 class="text-headline-sm font-headline-sm leading-snug drop-shadow-sm">Self Storage Sunrise Central</h5>
+<p class="text-body-sm font-body-sm text-white/90 flex items-center gap-1 drop-shadow-sm">
+<span class="material-symbols-outlined text-[15px]">pin_drop</span>
+                Đường Nguyễn Hữu Thọ, Quận 7 (cách 1.2 km)
+              </p>
+</div>
+</div>
+</div>
+<div class="p-space-md flex flex-col gap-space-sm">
+<!-- Features tags -->
+<div class="flex flex-wrap items-center gap-1.5">
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant text-[12px] font-medium">
+<span class="material-symbols-outlined text-[14px] text-secondary">ac_unit</span>
+              Máy lạnh 24/7
+            </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant text-[12px] font-medium">
+<span class="material-symbols-outlined text-[14px] text-secondary">videocam</span>
+              Camera AI nhận diện
+            </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-surface-container-high text-on-surface-variant text-[12px] font-medium">
+<span class="material-symbols-outlined text-[14px] text-secondary">local_shipping</span>
+              Bãi đỗ xe tải
+            </span>
+</div>
+<!-- Price & CTA -->
+<div class="pt-2 flex items-center justify-between border-t border-surface-container">
+<div class="flex flex-col">
+<span class="text-body-sm font-body-sm text-on-surface-variant">Giá ưu đãi từ</span>
+<div class="flex items-baseline gap-1">
+<span class="text-headline-sm font-headline-sm text-secondary">850.000 đ</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">/ tháng</span>
+</div>
+</div>
+<button class="h-10 px-4 rounded-xl bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1 active:scale-95 transition-transform shadow-sm" type="button">
+<span>Xem chi tiết</span>
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- QR Access Modal Overlay (Delight micro-interaction) -->
+<div class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-end sm:items-center justify-center p-4" id="qrModal">
+<div class="w-full max-w-sm bg-surface-container-lowest rounded-3xl p-6 flex flex-col items-center gap-4 shadow-2xl transition-all animate-bounce-short">
+<div class="w-12 h-1.5 bg-surface-container-high rounded-full -mt-2 mb-1"></div>
+<div class="text-center">
+<h4 class="text-headline-sm font-headline-sm text-on-surface">Khóa Điện Tử Unit A-204</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Quét tại bảng điều khiển cửa kho hoặc chốt tầng</p>
+</div>
+<!-- QR Visual Block -->
+<div class="p-4 bg-white rounded-2xl shadow-inner flex flex-col items-center">
+<svg class="w-48 h-48 text-primary" fill="currentColor" viewbox="0 0 100 100">
+<!-- Simplified styled QR representation for delight -->
+<rect fill="currentColor" height="24" rx="4" width="24" x="10" y="10"></rect>
+<rect fill="#fff" height="16" rx="2" width="16" x="14" y="14"></rect>
+<rect fill="currentColor" height="8" rx="1" width="8" x="18" y="18"></rect>
+<rect fill="currentColor" height="24" rx="4" width="24" x="66" y="10"></rect>
+<rect fill="#fff" height="16" rx="2" width="16" x="70" y="14"></rect>
+<rect fill="currentColor" height="8" rx="1" width="8" x="74" y="18"></rect>
+<rect fill="currentColor" height="24" rx="4" width="24" x="10" y="66"></rect>
+<rect fill="#fff" height="16" rx="2" width="16" x="14" y="70"></rect>
+<rect fill="currentColor" height="8" rx="1" width="8" x="18" y="74"></rect>
+<rect fill="#006c49" height="6" rx="2" width="16" x="42" y="12"></rect>
+<rect fill="#006c49" height="6" rx="2" width="16" x="42" y="24"></rect>
+<rect fill="#003327" height="12" rx="3" width="12" x="44" y="44"></rect>
+<rect fill="#006c49" height="18" rx="2" width="8" x="64" y="44"></rect>
+<rect fill="#006c49" height="8" rx="2" width="16" x="20" y="44"></rect>
+<rect fill="#006c49" height="8" rx="2" width="20" x="42" y="66"></rect>
+<rect fill="#003327" height="12" rx="2" width="18" x="68" y="78"></rect>
+</svg>
+<span class="mt-2 text-[11px] text-on-surface-variant font-mono tracking-wider">MÃ TOKEN: #SEC-9842-881</span>
+</div>
+<div class="flex items-center gap-1.5 text-secondary text-label-md font-label-md">
+<span class="material-symbols-outlined text-[18px]">bluetooth_connected</span>
+<span>Bluetooth sẵn sàng mở tự động</span>
+</div>
+<button class="w-full h-12 rounded-xl bg-surface-container-high text-on-surface font-label-md text-label-md" id="closeQrBtn" type="button">
+        Đóng cửa sổ
+      </button>
+</div>
+</div>
+</div>
+<script>
+  // Countdown simulation for Pending Reservation
+  (function() {
+    let duration = 14 * 60 + 32;
+    const timerDisplay = document.getElementById('countdown');
+    if (timerDisplay) {
+      setInterval(function () {
+        if (duration > 0) {
+          duration--;
+          let minutes = Math.floor(duration / 60);
+          let seconds = duration % 60;
+          timerDisplay.textContent = 
+            (minutes < 10 ? '0' : '') + minutes + ':' + 
+            (seconds < 10 ? '0' : '') + seconds;
+        }
+      }, 1000);
+    }
+
+    // Modal Interaction
+    const qrBtn = document.getElementById('qrOpenBtn');
+    const qrModal = document.getElementById('qrModal');
+    const closeQr = document.getElementById('closeQrBtn');
+
+    if (qrBtn && qrModal && closeQr) {
+      qrBtn.addEventListener('click', function() {
+        qrModal.classList.remove('hidden');
+      });
+      closeQr.addEventListener('click', function() {
+        qrModal.classList.add('hidden');
+      });
+      qrModal.addEventListener('click', function(e) {
+        if (e.target === qrModal) {
+          qrModal.classList.add('hidden');
+        }
+      });
+    }
+  })();
+</script></main><nav class="fixed bottom-0 inset-x-0 z-50 bg-surface/95 backdrop-blur-xl pb-safe shadow-[0_-2px_12px_rgba(22,74,60,0.06)]" data-active-classes="text-primary font-label-md [&amp;_span.material-symbols-outlined]:font-variation-settings-'FILL'-1 [&amp;_.nav-pill]:bg-secondary-fixed/50"><div class="flex items-center justify-around h-16 px-space-xs"><a class="flex flex-col items-center justify-center flex-1 h-full py-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="trang-chu" href="#"><div class="nav-pill flex items-center justify-center px-4 py-1 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">home</span></div><span class="text-label-sm font-label-sm mt-0.5 tracking-tight truncate">Trang chủ</span></a><a class="flex flex-col items-center justify-center flex-1 h-full py-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="kham-pha" href="#"><div class="nav-pill flex items-center justify-center px-4 py-1 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">explore</span></div><span class="text-label-sm font-label-sm mt-0.5 tracking-tight truncate">Khám phá</span></a><a class="flex flex-col items-center justify-center flex-1 h-full py-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="don-dat-kho" href="#"><div class="nav-pill flex items-center justify-center px-4 py-1 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">assignment</span></div><span class="text-label-sm font-label-sm mt-0.5 tracking-tight truncate">Đơn đặt kho</span></a><a class="flex flex-col items-center justify-center flex-1 h-full py-1 text-on-surface-variant hover:text-on-surface transition-colors" data-path="ca-nhan" href="#"><div class="nav-pill flex items-center justify-center px-4 py-1 rounded-full transition-colors"><span class="material-symbols-outlined text-[24px]">person</span></div><span class="text-label-sm font-label-sm mt-0.5 tracking-tight truncate">Cá nhân</span></a></div></nav></body></html>

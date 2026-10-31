@@ -1,6 +1,6 @@
 # Render Production Integration
 
-**Checked:** 2026-10-22  
+**Checked:** 2026-10-23
 **Overall:** PARTIAL — production HTTPS and public facility GET flows verified; authentication and protected customer flows are not verified. No production writes were issued.
 
 ## Configuration
@@ -34,6 +34,30 @@ Requests used HTTPS GET only, with no Authorization header. Response bodies from
 | `GET /storage-units/facility/{facilityId}/available` | 200 | Standard envelope; `data` is an array; 0 rows for the tested facility. | Compatible with physical-unit list parser; no unit could be selected from this response. |
 | `GET /facility-time-slots/facility/{facilityId}/available?date=2026-10-22` | 200 | Standard envelope; `data` is an array; 0 rows for the tested facility/date. | Compatible with time-slot list parser; no slot was available in this response. |
 
+### Reported reservation date
+
+| Request | HTTP | Result |
+| --- | --- | --- |
+| `GET /storage-units/facility/660000000000000000000003/available?unitTypeId=661000000000000000000002` | 200 | Contains `LK-301` (`663000000000000000000006`, floor 1, status `available`). |
+| `GET /facility-time-slots/facility/660000000000000000000003/available?date=2026-10-28` | 200 | `{ "success": true, "statusCode": 200, "messageCode": "MESSAGE_CODE_001", "message": "Operation Successful", "data": [] }`. This is a valid empty result for the user-reported date. |
+| Public OpenAPI: `/facility-time-slots/facility/{facilityId}/available` | — | Declares a facility/date GET returning an array. Slot item fields include `id`, `slotName`, `startTime`, `endTime`, `availableCapacity`, and `isAvailable`; Flutter checks all these fields and now rejects incomplete response items as parsing errors. |
+
+The slot endpoint does not accept a physical storage unit ID. The Flutter request is facility and date based, so selecting LK-301 does not cause a slot refresh. A new date selection does issue a new request. For Oct 28, the selected unit is available but no check-in slots are returned; the create button correctly remains disabled because the user has no valid slot to select.
+
+### Facility `660000000000000000000001` investigation (2026-10-23)
+
+| Read-only request | HTTP | Result |
+| --- | --- | --- |
+| `GET /facility-time-slots/facility/660000000000000000000001/available?date=2026-10-28` | 200 | `success: true`, `data: []`. |
+| `GET /facility-time-slots/facility/660000000000000000000001/available?date=2026-10-29` | 200 | `success: true`, `data: []`. |
+| `GET /storage-units/facility/660000000000000000000001/available` | 200 | Four physical units returned with `status: available`. |
+
+The separate unit response does not imply check-in slot availability: storage-unit availability and facility/date time-slot availability are distinct APIs and data. The Flutter repository calls the documented GET path and serializes the selected local calendar date as `YYYY-MM-DD`, without UTC conversion. The response parser accepts a valid empty array and rejects malformed arrays/items; screen state only displays “No time slots” for a successful empty response and displays API/parsing failures separately. The public Swagger/OpenAPI document is accessible and declares this route as a facility path parameter plus required date query parameter with an array response. No FE contract mismatch was found.
+
+Both checked dates have no available time slots on Render. These two responses do not establish whether slot configuration is missing facility-wide or whether the dates have no available capacity; Backend/Admin should inspect actual facility time-slot configuration and capacity for these dates, then create/configure real slots if absent. Flutter did not synthesize slots and no production write was made.
+
+The FE previously displayed the “No time slots” message after any failed request because `_slots` remained empty in the error path. The screen now separates loading, a valid empty result, request errors (401/403/404/server/network/timeout), and invalid response data, with retry controls for failed availability requests. Stale results from an earlier request are ignored. No production reservation or payment write was made.
+
 No facility records, reservations, payments, OTPs, or other production data were created or changed.
 
 ## Protected API and authentication status
@@ -61,6 +85,7 @@ The embedded OpenAPI request schemas include:
 
 ## Android emulator
 
+- On 2026-10-23, `emulator-5554` was reachable. The rebuilt debug APK installed and launched; Android reported `com.storagehub.flutter_mobile/.MainActivity` fully drawn, and the UI hierarchy showed the welcome screen with Sign in and Create account actions. No Flutter fatal exception or app crash appeared in the captured log. The reservation screen itself remains unverified on-device because no test account was used to enter the customer flow.
 - Pixel 6 AVD was available (Android 17/API 37, emulator-5554). The Render-default debug APK built, installed and started; Login rendered. Register rendered with the corrected enabled idle **Send email code** button. No login/OTP action was submitted.
 - Screenshots: [Render-default Login](render-emulator-login.png), [Render-default Register](render-emulator-register.png).
 - Startup is verified, but the emulator app did not issue a Render request on the Login/Register screens. Device-side TLS/API response rendering is therefore NOT VERIFIED; the HTTPS GET checks above were performed from the host.
@@ -73,7 +98,7 @@ The embedded OpenAPI request schemas include:
 | --- | --- |
 | `flutter pub get` | PASS; dependencies resolved (9 newer versions are outside current constraints). |
 | `flutter analyze` | PASS; no issues. |
-| `flutter test` | PASS; all 13 tests. |
+| `flutter test` | PASS; all 20 tests. |
 | `flutter build apk --debug` | PASS; `apps/flutter_mobile/build/app/outputs/flutter-apk/app-debug.apk`, installed on emulator. |
 
 ## Production safety and remaining blockers

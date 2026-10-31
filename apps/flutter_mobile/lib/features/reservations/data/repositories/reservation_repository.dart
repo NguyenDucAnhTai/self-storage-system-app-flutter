@@ -14,9 +14,46 @@ class ReservationRepository {
       '/facility-time-slots/facility/$facilityId/available',
       queryParameters: {'date': _dateOnly(date)},
     );
-    return _list(response.data?['data'])
-        .map(AvailableTimeSlot.fromJson)
-        .toList();
+    final data = response.data?['data'];
+    if (data is! List) {
+      throw const FormatException(
+        'Backend availability response did not include a data array.',
+      );
+    }
+    return data.map((item) {
+      if (item is! Map) {
+        throw const FormatException(
+          'Backend availability response contained an invalid time slot.',
+        );
+      }
+      final json = Map<String, dynamic>.from(item);
+      const requiredFields = [
+        'id',
+        'facilityId',
+        'slotName',
+        'startTime',
+        'endTime',
+        'maxCapacity',
+        'bookedCount',
+        'availableCapacity',
+        'isAvailable',
+      ];
+      if (requiredFields.any((field) => !json.containsKey(field)) ||
+          json['id'] is! String ||
+          json['facilityId'] is! String ||
+          json['slotName'] is! String ||
+          json['startTime'] is! String ||
+          json['endTime'] is! String ||
+          json['maxCapacity'] is! num ||
+          json['bookedCount'] is! num ||
+          json['availableCapacity'] is! num ||
+          json['isAvailable'] is! bool) {
+        throw const FormatException(
+          'Backend availability response contained an incomplete time slot.',
+        );
+      }
+      return AvailableTimeSlot.fromJson(json);
+    }).toList();
   }
 
   Future<List<Map<String, dynamic>>> getAvailableUnits(
@@ -27,7 +64,29 @@ class ReservationRepository {
       '/storage-units/facility/$facilityId/available',
       queryParameters: {'unitTypeId': ?unitTypeId},
     );
-    return _list(response.data?['data'])
+    final data = response.data?['data'];
+    if (data is! List) {
+      throw const FormatException(
+        'Backend unit availability response did not include a data array.',
+      );
+    }
+    return data
+        .map((item) {
+          if (item is! Map) {
+            throw const FormatException(
+              'Backend unit availability response contained an invalid unit.',
+            );
+          }
+          final unit = Map<String, dynamic>.from(item);
+          if (unit['id'] is! String ||
+              (unit['id'] as String).isEmpty ||
+              unit['status'] is! String) {
+            throw const FormatException(
+              'Backend unit availability response contained an incomplete unit.',
+            );
+          }
+          return unit;
+        })
         .where((unit) => unit['status'] == 'available')
         .toList();
   }
@@ -39,6 +98,7 @@ class ReservationRepository {
     required String checkInTimeSlot,
     required int rentalDuration,
     required String facilityUnitTypeOfferingId,
+    required bool termsAccepted,
     DateTime? startDate,
     List<Map<String, dynamic>> amenities = const [],
     String? notes,
@@ -47,12 +107,15 @@ class ReservationRepository {
         storageUnitId.isEmpty ||
         facilityUnitTypeOfferingId.isEmpty ||
         checkInTimeSlot.trim().isEmpty ||
-        rentalDuration < 1) {
+        rentalDuration < 1 ||
+        !termsAccepted) {
       throw ArgumentError(
-        'Facility, storage unit, unit offering, check-in slot, and a positive rental duration are required.',
+        'Facility, storage unit, unit offering, check-in slot, a positive rental duration, and explicit terms acceptance are required.',
       );
     }
-    if (checkInDate.isBefore(DateTime.now().subtract(const Duration(days: 1)))) {
+    if (checkInDate.isBefore(
+      DateTime.now().subtract(const Duration(days: 1)),
+    )) {
       throw ArgumentError('Check-in date cannot be in the past.');
     }
     final response = await _dio.post<Map<String, dynamic>>(
@@ -66,6 +129,7 @@ class ReservationRepository {
         if (startDate != null) 'startDate': _dateOnly(startDate),
         'rentalDuration': rentalDuration,
         'amenities': amenities,
+        'termsAccepted': termsAccepted,
         if (notes != null && notes.isNotEmpty) 'notes': notes,
       },
     );

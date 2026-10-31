@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/widgets/app_ui.dart';
 import '../../data/models/reservation.dart';
 import '../../data/repositories/reservation_repository.dart';
 
@@ -27,7 +28,7 @@ class _ReservationListScreenState extends State<ReservationListScreen> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('My reservations')),
+    appBar: AppBar(title: const Text('Đơn đặt kho')),
     body: FutureBuilder<List<Reservation>>(
       future: _reservations,
       builder: (context, snapshot) {
@@ -35,34 +36,98 @@ class _ReservationListScreenState extends State<ReservationListScreen> {
           return const Center(child: CircularProgressIndicator());
         }
         if (snapshot.hasError) {
-          return _MessageState(
-            message: 'Could not load reservations. Check your connection and try again.',
+          return AppErrorState(
+            message: 'Không thể tải đơn đặt kho. Vui lòng kiểm tra kết nối và thử lại.',
             onRetry: _reload,
           );
         }
         final items = snapshot.data ?? const [];
         if (items.isEmpty) {
-          return const Center(child: Text('No reservations yet.'));
+          return const AppEmptyState(
+            icon: Icons.inventory_2_outlined,
+            title: 'Chưa có đơn đặt kho',
+            message: 'Đơn đặt kho sẽ hiển thị tại đây sau khi bạn xác nhận đặt kho.',
+          );
         }
         return RefreshIndicator(
           onRefresh: () async => _reload(),
           child: ListView.separated(
-            padding: const EdgeInsets.all(16),
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
             itemCount: items.length,
             separatorBuilder: (_, _) => const SizedBox(height: 10),
             itemBuilder: (context, index) {
               final item = items[index];
+              final facilityName = item.facility?['name']?.toString();
+              final unitNumber = item.storageUnit?['unitNumber']?.toString();
               return Card(
-                child: ListTile(
-                  title: Text(
-                    item.reservationCode,
-                    style: const TextStyle(fontWeight: FontWeight.w700),
-                  ),
-                  subtitle: Text(
-                    '${item.status} · Check-in ${MaterialLocalizations.of(context).formatMediumDate(item.checkInDate.toLocal())} · ${item.checkInTimeSlot}',
-                  ),
-                  trailing: const Icon(Icons.chevron_right),
+                clipBehavior: Clip.antiAlias,
+                child: InkWell(
                   onTap: () => widget.onSelect(item),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                item.reservationCode,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
+                            Chip(label: Text(_statusLabel(item.status))),
+                          ],
+                        ),
+                        if (facilityName != null &&
+                            facilityName.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            facilityName,
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                        const SizedBox(height: 12),
+                        Row(
+                          children: [
+                            const Icon(Icons.calendar_today_outlined, size: 18),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                MaterialLocalizations.of(
+                                  context,
+                                ).formatMediumDate(item.checkInDate.toLocal()),
+                              ),
+                            ),
+                            const Icon(Icons.schedule_outlined, size: 18),
+                            const SizedBox(width: 6),
+                            Text(item.checkInTimeSlot),
+                          ],
+                        ),
+                        if (unitNumber != null && unitNumber.isNotEmpty) ...[
+                          const SizedBox(height: 8),
+                          Row(
+                            children: [
+                              const Icon(Icons.inventory_2_outlined, size: 18),
+                              const SizedBox(width: 8),
+                              Text('Kho $unitNumber'),
+                            ],
+                          ),
+                        ],
+                        const SizedBox(height: 12),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: Text(
+                            'Xem chi tiết  →',
+                            style: TextStyle(
+                              color: Theme.of(context).colorScheme.primary,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               );
             },
@@ -71,24 +136,15 @@ class _ReservationListScreenState extends State<ReservationListScreen> {
       },
     ),
   );
-}
 
-class _MessageState extends StatelessWidget {
-  const _MessageState({required this.message, required this.onRetry});
-  final String message;
-  final VoidCallback onRetry;
-  @override
-  Widget build(BuildContext context) => Center(
-    child: Padding(
-      padding: const EdgeInsets.all(24),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(message, textAlign: TextAlign.center),
-          const SizedBox(height: 12),
-          OutlinedButton(onPressed: onRetry, child: const Text('Try again')),
-        ],
-      ),
-    ),
-  );
+  String _statusLabel(String status) => switch (status.toLowerCase()) {
+    'pending' => 'Chờ xác nhận',
+    'pending_payment' => 'Chờ thanh toán',
+    'confirmed' => 'Đã xác nhận',
+    'active' => 'Đang sử dụng',
+    'completed' => 'Hoàn tất',
+    'cancelled' => 'Đã hủy',
+    'expired' => 'Hết hạn',
+    _ => status,
+  };
 }

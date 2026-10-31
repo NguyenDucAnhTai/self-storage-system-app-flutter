@@ -1,11 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
+import '../../../core/widgets/app_ui.dart';
 import '../data/contract_repository.dart';
 
 class ContractsScreen extends StatefulWidget {
-  const ContractsScreen({super.key, required this.dio});
+  const ContractsScreen({
+    super.key,
+    required this.dio,
+    this.onContractsChanged,
+  });
   final Dio dio;
+  final VoidCallback? onContractsChanged;
   @override
   State<ContractsScreen> createState() => _ContractsScreenState();
 }
@@ -30,23 +36,34 @@ class _ContractsScreenState extends State<ContractsScreen> {
           return const Center(child: CircularProgressIndicator());
         }
         if (s.hasError) {
-          return Center(
-            child: TextButton(
-              onPressed: () => setState(() => _future = _repo.list()),
-              child: const Text('Could not load contracts. Retry'),
-            ),
+          return AppErrorState(
+            message: 'Contracts could not be loaded. Check your connection and retry.',
+            onRetry: () => setState(() => _future = _repo.list()),
           );
         }
         final rows = s.data ?? const [];
         if (rows.isEmpty) {
-          return const Center(child: Text('No storage contracts yet.'));
+          return const AppEmptyState(
+            icon: Icons.description_outlined,
+            title: 'No contracts yet',
+            message: 'Your active storage contracts will appear here.',
+          );
         }
         return ListView.separated(
-          padding: const EdgeInsets.all(16),
-          itemCount: rows.length,
+          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
+          itemCount: rows.length + 1,
           separatorBuilder: (_, _) => const SizedBox(height: 8),
           itemBuilder: (context, i) {
-            final c = rows[i];
+            if (i == 0) {
+              return const Padding(
+                padding: EdgeInsets.only(bottom: 12),
+                child: AppSectionHeader(
+                  title: 'Your storage contracts',
+                  subtitle: 'Review terms and active storage periods',
+                ),
+              );
+            }
+            final c = rows[i - 1];
             return Card(
               child: ListTile(
                 title: Text('${c['contractCode'] ?? 'Contract'}'),
@@ -92,6 +109,7 @@ class _ContractsScreenState extends State<ContractsScreen> {
                   onPressed: () async {
                     try {
                       await _repo.acceptTerms(id);
+                      widget.onContractsChanged?.call();
                       if (context.mounted) Navigator.pop(context);
                       if (mounted) setState(() => _future = _repo.list());
                     } catch (e) {
@@ -143,6 +161,7 @@ class _ContractsScreenState extends State<ContractsScreen> {
     if (chosen == null) return;
     try {
       await _repo.renew(id, chosen);
+      widget.onContractsChanged?.call();
       if (sheetContext.mounted) Navigator.pop(sheetContext);
       if (mounted) setState(() => _future = _repo.list());
     } catch (error) {

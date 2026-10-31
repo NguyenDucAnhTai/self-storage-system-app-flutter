@@ -9,6 +9,8 @@ import '../features/auth/presentation/screens/register_screen.dart';
 import '../features/explore/application/facility_providers.dart';
 import '../features/explore/presentation/screens/explore_screen.dart';
 import '../features/explore/presentation/screens/facility_detail_screen.dart';
+import '../features/dashboard/presentation/customer_dashboard_screen.dart';
+import '../features/dashboard/application/dashboard_providers.dart';
 import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/change_password_screen.dart';
 import '../features/auth/presentation/screens/forgot_password_screen.dart';
@@ -27,26 +29,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
   final facilityRepo = ref.watch(facilityRepositoryProvider);
   return GoRouter(
     initialLocation: '/splash',
-    redirect: (context, state) {
-      final path = state.matchedLocation;
-      if (auth.isLoading) return path == '/splash' ? null : '/splash';
-      final signedIn = auth.value != null;
-      if (path == '/splash') return signedIn ? '/explore' : '/login';
-      final guarded =
-          path.startsWith('/reservations') ||
-          path.startsWith('/payments') ||
-          path == '/profile' ||
-          path == '/change-password' ||
-          path == '/contracts' ||
-          path == '/notifications';
-      if (guarded && !signedIn) {
-        return '/login?from=${Uri.encodeComponent(state.uri.toString())}';
-      }
-      if (signedIn && (path == '/login' || path == '/register')) {
-        return '/explore';
-      }
-      return null;
-    },
+    redirect: (context, state) => resolveAuthRedirect(
+      authLoading: auth.isLoading,
+      signedIn: auth.value != null,
+      path: state.matchedLocation,
+      currentUri: state.uri.toString(),
+    ),
     routes: [
       GoRoute(path: '/splash', builder: (_, _) => const _SplashScreen()),
       GoRoute(
@@ -64,6 +52,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             _AppShell(location: state.matchedLocation, child: child),
         routes: [
           GoRoute(
+            path: '/home',
+            builder: (context, _) => const CustomerDashboardScreen(),
+          ),
+          GoRoute(
             path: '/explore',
             builder: (context, _) => ExploreScreen(
               repository: facilityRepo,
@@ -75,6 +67,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => FacilityDetailScreen(
               facilityId: state.pathParameters['id']!,
               repository: facilityRepo,
+              availabilityRepository: features.reservations,
               onBook: (selection) {
                 if (auth.value == null) {
                   context.go(
@@ -100,7 +93,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   ) ??
                   1,
               repository: features.reservations,
-              onCreated: (r) => context.go('/payments/${r.id}'),
+              facilityRepository: facilityRepo,
+              onCreated: (r) {
+                ref.invalidate(dashboardInventorySummaryProvider);
+                ref.invalidate(dashboardContractsProvider);
+                ref.invalidate(dashboardReservationsProvider);
+                context.go('/payments/${r.id}');
+              },
             ),
           ),
           GoRoute(
@@ -115,6 +114,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => ReservationDetailScreen(
               reservationId: state.pathParameters['id']!,
               repository: features.reservations,
+              onReservationChanged: () {
+                ref.invalidate(dashboardInventorySummaryProvider);
+                ref.invalidate(dashboardContractsProvider);
+                ref.invalidate(dashboardReservationsProvider);
+              },
               onPayment: (Reservation r) => context.push('/payments/${r.id}'),
             ),
           ),
@@ -124,6 +128,11 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               reservationId: state.pathParameters['id']!,
               repository: features.payments,
               tracker: PaymentStatusTracker(features.payments),
+              onPaymentStatusChanged: () {
+                ref.invalidate(dashboardInventorySummaryProvider);
+                ref.invalidate(dashboardContractsProvider);
+                ref.invalidate(dashboardReservationsProvider);
+              },
             ),
           ),
           GoRoute(path: '/profile', builder: (_, _) => const ProfileScreen()),
@@ -133,17 +142,46 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/contracts',
-            builder: (_, _) => ContractsScreen(dio: ref.read(dioProvider)),
+            builder: (_, _) => ContractsScreen(
+              dio: ref.read(dioProvider),
+              onContractsChanged: () {
+                ref.invalidate(dashboardInventorySummaryProvider);
+                ref.invalidate(dashboardContractsProvider);
+              },
+            ),
           ),
           GoRoute(
             path: '/notifications',
-            builder: (_, _) => NotificationsScreen(dio: ref.read(dioProvider)),
+            builder: (_, _) => const NotificationsScreen(),
           ),
         ],
       ),
     ],
   );
 });
+
+String? resolveAuthRedirect({
+  required bool authLoading,
+  required bool signedIn,
+  required String path,
+  required String currentUri,
+}) {
+  if (authLoading) return path == '/splash' ? null : '/splash';
+  if (path == '/splash') return signedIn ? '/home' : '/login';
+  final guarded =
+      path == '/home' ||
+      path.startsWith('/reservations') ||
+      path.startsWith('/payments') ||
+      path == '/profile' ||
+      path == '/change-password' ||
+      path == '/contracts' ||
+      path == '/notifications';
+  if (guarded && !signedIn) {
+    return '/login?from=${Uri.encodeComponent(currentUri)}';
+  }
+  if (signedIn && (path == '/login' || path == '/register')) return '/home';
+  return null;
+}
 
 class _SplashScreen extends StatelessWidget {
   const _SplashScreen();
@@ -157,31 +195,67 @@ class _AppShell extends StatelessWidget {
   final String location;
   final Widget child;
   int get _index => location.startsWith('/profile')
-      ? 2
+      ? 3
       : location.startsWith('/reservations') || location.startsWith('/payments')
+      ? 2
+      : location.startsWith('/explore') || location.startsWith('/facilities')
       ? 1
       : 0;
   @override
   Widget build(BuildContext context) => Scaffold(
     body: child,
-    bottomNavigationBar: NavigationBar(
-      selectedIndex: _index,
-      onDestinationSelected: (i) => context.go(switch (i) {
-        0 => '/explore',
-        1 => '/reservations',
-        _ => '/profile',
-      }),
-      destinations: const [
-        NavigationDestination(icon: Icon(Icons.search), label: 'Explore'),
-        NavigationDestination(
-          icon: Icon(Icons.inventory_2_outlined),
-          label: 'My bookings',
+    bottomNavigationBar: SafeArea(
+      top: false,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(12, 0, 12, 7),
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surface,
+            borderRadius: BorderRadius.circular(24),
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x140F3515),
+                blurRadius: 18,
+                offset: Offset(0, 4),
+              ),
+            ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(24),
+            child: NavigationBar(
+              selectedIndex: _index,
+              onDestinationSelected: (i) => context.go(switch (i) {
+                0 => '/home',
+                1 => '/explore',
+                2 => '/reservations',
+                _ => '/profile',
+              }),
+              destinations: const [
+                NavigationDestination(
+                  icon: Icon(Icons.home_outlined),
+                  selectedIcon: Icon(Icons.home_rounded),
+                  label: 'Trang chủ',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.search),
+                  selectedIcon: Icon(Icons.search_rounded),
+                  label: 'Khám phá',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.inventory_2_outlined),
+                  selectedIcon: Icon(Icons.inventory_2),
+                  label: 'Đơn đặt kho',
+                ),
+                NavigationDestination(
+                  icon: Icon(Icons.person_outline),
+                  selectedIcon: Icon(Icons.person),
+                  label: 'Cá nhân',
+                ),
+              ],
+            ),
+          ),
         ),
-        NavigationDestination(
-          icon: Icon(Icons.person_outline),
-          label: 'Profile',
-        ),
-      ],
+      ),
     ),
   );
 }

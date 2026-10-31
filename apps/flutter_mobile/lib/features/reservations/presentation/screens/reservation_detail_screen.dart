@@ -9,10 +9,12 @@ class ReservationDetailScreen extends StatefulWidget {
     required this.reservationId,
     required this.repository,
     this.onPayment,
+    this.onReservationChanged,
   });
   final String reservationId;
   final ReservationRepository repository;
   final ValueChanged<Reservation>? onPayment;
+  final VoidCallback? onReservationChanged;
   @override
   State<ReservationDetailScreen> createState() =>
       _ReservationDetailScreenState();
@@ -56,6 +58,8 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
             ),
             const SizedBox(height: 8),
             Chip(label: Text(r.status)),
+            const SizedBox(height: 8),
+            _ReservationStatusProcessLine(status: r.status),
             _DetailRow(
               label: 'Check-in date',
               value: MaterialLocalizations.of(context)
@@ -142,7 +146,10 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
     setState(() => _cancelling = true);
     try {
       final result = await widget.repository.cancel(reservation.id, reason);
-      if (mounted) setState(() => _future = Future.value(result));
+      if (mounted) {
+        setState(() => _future = Future.value(result));
+        widget.onReservationChanged?.call();
+      }
     } catch (_) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -154,6 +161,147 @@ class _ReservationDetailScreenState extends State<ReservationDetailScreen> {
     } finally {
       if (mounted) setState(() => _cancelling = false);
     }
+  }
+}
+
+class _ReservationStatusProcessLine extends StatelessWidget {
+  const _ReservationStatusProcessLine({required this.status});
+
+  final String status;
+
+  static const _steps = [
+    ('pending', 'Request received'),
+    ('received', 'Reservation reviewed'),
+    ('pending_payment', 'Payment pending'),
+    ('payment_successful', 'Payment confirmed'),
+    ('confirmed', 'Reservation confirmed'),
+    ('completed', 'Completed'),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final normalizedStatus = status.trim().toLowerCase();
+    final isPaymentFailed = normalizedStatus == 'payment_failed';
+    final terminalMessage = switch (normalizedStatus) {
+      'cancelled' => 'This reservation was cancelled.',
+      'expired' => 'This reservation has expired.',
+      'rejected' => 'This reservation was rejected.',
+      _ => null,
+    };
+    final currentIndex = _steps.indexWhere(
+      (step) => step.$1 == normalizedStatus,
+    );
+    final progressIndex = isPaymentFailed ? 2 : currentIndex;
+    final colors = Theme.of(context).colorScheme;
+
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'Reservation progress',
+              style: Theme.of(context).textTheme.titleMedium,
+            ),
+            const SizedBox(height: 12),
+            if (terminalMessage != null || isPaymentFailed)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 12),
+                child: Text(
+                  terminalMessage ??
+                      'Payment failed. Please review the payment details.',
+                  style: TextStyle(
+                    color: colors.error,
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+              ),
+            if (currentIndex < 0 && !isPaymentFailed)
+              Text('Current status: $status')
+            else
+              for (var index = 0; index < _steps.length; index++)
+                _ProcessLineStep(
+                  title: _steps[index].$2,
+                  isLast: index == _steps.length - 1,
+                  isComplete:
+                      index < progressIndex || normalizedStatus == 'completed',
+                  isCurrent: index == progressIndex,
+                  isFailed: isPaymentFailed && index == progressIndex,
+                ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProcessLineStep extends StatelessWidget {
+  const _ProcessLineStep({
+    required this.title,
+    required this.isLast,
+    required this.isComplete,
+    required this.isCurrent,
+    required this.isFailed,
+  });
+
+  final String title;
+  final bool isLast;
+  final bool isComplete;
+  final bool isCurrent;
+  final bool isFailed;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final color = isFailed
+        ? colors.error
+        : isComplete || isCurrent
+        ? colors.primary
+        : colors.outlineVariant;
+
+    return SizedBox(
+      height: isLast ? 32 : 44,
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(
+            width: 24,
+            child: Column(
+              children: [
+                Icon(
+                  isFailed
+                      ? Icons.error
+                      : isComplete
+                      ? Icons.check_circle
+                      : isCurrent
+                      ? Icons.radio_button_checked
+                      : Icons.radio_button_unchecked,
+                  size: 20,
+                  color: color,
+                ),
+                if (!isLast) Expanded(child: Container(width: 2, color: color)),
+              ],
+            ),
+          ),
+          const SizedBox(width: 10),
+          Padding(
+            padding: const EdgeInsets.only(top: 1),
+            child: Text(
+              title,
+              style: TextStyle(
+                color: isCurrent || isComplete || isFailed
+                    ? colors.onSurface
+                    : colors.onSurfaceVariant,
+                fontWeight: isCurrent || isFailed
+                    ? FontWeight.w700
+                    : FontWeight.normal,
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
   }
 }
 

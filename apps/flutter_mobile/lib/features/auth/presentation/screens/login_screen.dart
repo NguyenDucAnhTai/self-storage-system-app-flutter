@@ -105,7 +105,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       await ref
           .read(authControllerProvider.notifier)
           .login(_email.text, _password.text);
-      if (mounted) context.go(widget.returnTo ?? '/explore');
+      if (mounted) context.go(widget.returnTo ?? '/home');
     } catch (e) {
       if (mounted) setState(() => _error = e.toString());
     } finally {
