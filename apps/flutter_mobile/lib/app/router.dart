@@ -15,6 +15,7 @@ import '../features/profile/presentation/screens/profile_screen.dart';
 import '../features/profile/presentation/screens/change_password_screen.dart';
 import '../features/auth/presentation/screens/forgot_password_screen.dart';
 import '../features/contracts/presentation/contracts_screen.dart';
+import '../features/contracts/presentation/contract_detail_route_screen.dart';
 import '../features/notifications/presentation/notifications_screen.dart';
 import '../features/reservations/data/models/reservation.dart';
 import '../features/reservations/presentation/screens/reservation_create_screen.dart';
@@ -123,6 +124,20 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ),
           ),
           GoRoute(
+            path: '/payments/:id/view',
+            builder: (context, state) => PaymentScreen(
+              existingPaymentId: state.pathParameters['id']!,
+              expectedContractId: state.uri.queryParameters['contractId'],
+              repository: features.payments,
+              tracker: PaymentStatusTracker(features.payments),
+              onPaymentStatusChanged: () {
+                ref.invalidate(dashboardInventorySummaryProvider);
+                ref.invalidate(dashboardContractsProvider);
+                ref.invalidate(dashboardReservationsProvider);
+              },
+            ),
+          ),
+          GoRoute(
             path: '/payments/:id',
             builder: (context, state) => PaymentScreen(
               reservationId: state.pathParameters['id']!,
@@ -145,6 +160,17 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (_, _) => ContractsScreen(
               dio: ref.read(dioProvider),
               onContractsChanged: () {
+                ref.invalidate(dashboardInventorySummaryProvider);
+                ref.invalidate(dashboardContractsProvider);
+              },
+            ),
+          ),
+          GoRoute(
+            path: '/contracts/:id',
+            builder: (context, state) => ContractDetailRouteScreen(
+              contractId: state.pathParameters['id']!,
+              dio: ref.read(dioProvider),
+              onContractChanged: () {
                 ref.invalidate(dashboardInventorySummaryProvider);
                 ref.invalidate(dashboardContractsProvider);
               },
@@ -174,7 +200,7 @@ String? resolveAuthRedirect({
       path.startsWith('/payments') ||
       path == '/profile' ||
       path == '/change-password' ||
-      path == '/contracts' ||
+      path.startsWith('/contracts') ||
       path == '/notifications';
   if (guarded && !signedIn) {
     return '/login?from=${Uri.encodeComponent(currentUri)}';

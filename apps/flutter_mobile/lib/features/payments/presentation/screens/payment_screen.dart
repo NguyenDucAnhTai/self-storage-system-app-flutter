@@ -12,12 +12,16 @@ import '../../data/repositories/payment_repository.dart';
 class PaymentScreen extends StatefulWidget {
   const PaymentScreen({
     super.key,
-    required this.reservationId,
+    this.reservationId,
+    this.existingPaymentId,
+    this.expectedContractId,
     required this.repository,
     required this.tracker,
     this.onPaymentStatusChanged,
-  });
-  final String reservationId;
+  }) : assert((reservationId == null) != (existingPaymentId == null));
+  final String? reservationId;
+  final String? existingPaymentId;
+  final String? expectedContractId;
   final PaymentRepository repository;
   final PaymentStatusTracker tracker;
   final VoidCallback? onPaymentStatusChanged;
@@ -35,7 +39,11 @@ class _PaymentScreenState extends State<PaymentScreen>
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    _createSession();
+    if (widget.existingPaymentId != null) {
+      _loadExistingPayment();
+    } else {
+      _createSession();
+    }
   }
 
   @override
@@ -47,6 +55,8 @@ class _PaymentScreenState extends State<PaymentScreen>
   }
 
   Future<void> _createSession() async {
+    final reservationId = widget.reservationId;
+    if (reservationId == null || widget.existingPaymentId != null) return;
     if (mounted) {
       setState(() {
         _loading = true;
@@ -55,7 +65,7 @@ class _PaymentScreenState extends State<PaymentScreen>
     }
     try {
       final payment = await widget.repository.createReservationDeposit(
-        widget.reservationId,
+        reservationId,
       );
       if (!mounted) return;
       setState(() {
@@ -73,6 +83,49 @@ class _PaymentScreenState extends State<PaymentScreen>
       }
     }
   }
+
+  Future<void> _loadExistingPayment() async {
+    final paymentId = widget.existingPaymentId;
+    if (_loading) return;
+    if (paymentId == null ||
+        !RegExp(r'^[0-9a-fA-F]{24}$').hasMatch(paymentId)) {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _error = 'Mã thanh toán không hợp lệ.';
+        });
+      }
+      return;
+    }
+    setState(() {
+      _loading = true;
+      _error = null;
+    });
+    try {
+      final payment = await widget.repository.getById(paymentId);
+      if (widget.expectedContractId != null &&
+          (payment.contractId != widget.expectedContractId ||
+              payment.purpose != 'rent_first_period')) {
+        throw const FormatException('Payment does not match this contract.');
+      }
+      if (!mounted) return;
+      setState(() {
+        _latest = payment;
+        _loading = false;
+      });
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _loading = false;
+          _error = 'Không thể tải khoản thanh toán này. Vui lòng thử lại.';
+        });
+      }
+    }
+  }
+
+  Future<void> _retryInitialLoad() => widget.existingPaymentId != null
+      ? _loadExistingPayment()
+      : _createSession();
 
   void _watch(Payment payment) {
     _subscription?.cancel();
@@ -98,7 +151,12 @@ class _PaymentScreenState extends State<PaymentScreen>
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     final payment = _latest;
-    if (state == AppLifecycleState.resumed && payment != null) _watch(payment);
+    if (state == AppLifecycleState.resumed &&
+        widget.existingPaymentId != null) {
+      _loadExistingPayment();
+    } else if (state == AppLifecycleState.resumed && payment != null) {
+      _watch(payment);
+    }
     if (state == AppLifecycleState.paused) {
       _subscription?.pause();
       widget.tracker.stop();
@@ -107,16 +165,22 @@ class _PaymentScreenState extends State<PaymentScreen>
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('Thanh toán tiền cọc đặt kho')),
+    appBar: AppBar(
+      title: Text(
+        widget.existingPaymentId == null
+            ? 'Thanh toán tiền cọc đặt kho'
+            : 'Chi tiết thanh toán',
+      ),
+    ),
     bottomNavigationBar: _paymentFooter(context),
     body: _loading && _latest == null
         ? const Center(child: CircularProgressIndicator())
         : _error != null && _latest == null
-        ? _RetryState(message: _error!, onRetry: _createSession)
+        ? _RetryState(message: _error!, onRetry: _retryInitialLoad)
         : _latest == null
         ? _RetryState(
             message: 'Phiên thanh toán hiện không khả dụng.',
-            onRetry: _createSession,
+            onRetry: _retryInitialLoad,
           )
         : _paymentContent(_latest!),
   );
@@ -124,6 +188,16 @@ class _PaymentScreenState extends State<PaymentScreen>
   Widget _paymentContent(Payment payment) {
     final paid = payment.status == 'paid';
     final terminal = payment.isTerminal;
+    final qrStillValid =
+        payment.expiresAt == null || payment.expiresAt!.isAfter(DateTime.now());
+    final canShowQr =
+        const {'pending', 'partially_paid'}.contains(payment.status) &&
+        qrStillValid;
+    final paymentTitle = switch (payment.purpose) {
+      'rent_first_period' => 'Thanh toán tiền thuê kỳ đầu',
+      'contract_deposit' => 'Thanh toán tiền cọc hợp đồng',
+      _ => 'Thanh toán tiền cọc đặt kho',
+    };
     final amount = NumberFormat.currency(
       locale: 'vi_VN',
       symbol: '₫',
@@ -154,7 +228,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                             ? 'Đã xác nhận thanh toán'
                             : terminal
                             ? 'Thanh toán ${_statusLabel(payment.status).toLowerCase()}'
-                            : 'Thanh toán tiền cọc đặt kho',
+                            : paymentTitle,
                         style: Theme.of(context).textTheme.titleLarge
                             ?.copyWith(color: Colors.white),
                       ),
@@ -191,12 +265,20 @@ class _PaymentScreenState extends State<PaymentScreen>
                         ?.copyWith(color: Colors.white.withValues(alpha: .8)),
                   ),
                 ],
+                if (payment.contractId?.isNotEmpty == true) ...[
+                  const SizedBox(height: 4),
+                  Text(
+                    'Mã hợp đồng ${payment.contractId}',
+                    style: Theme.of(context).textTheme.bodySmall
+                        ?.copyWith(color: Colors.white.withValues(alpha: .8)),
+                  ),
+                ],
               ],
             ),
           ),
         ),
         const SizedBox(height: 16),
-        if (payment.qrUrl case final url? when url.isNotEmpty)
+        if (canShowQr && payment.qrUrl != null && payment.qrUrl!.isNotEmpty)
           Card(
             child: Padding(
               padding: const EdgeInsets.all(18),
@@ -211,7 +293,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                   const SizedBox(height: 16),
                   Center(
                     child: Image.network(
-                      url,
+                      payment.qrUrl!,
                       width: 220,
                       height: 220,
                       fit: BoxFit.contain,
@@ -243,8 +325,8 @@ class _PaymentScreenState extends State<PaymentScreen>
         else if (!paid)
           const AppEmptyState(
             icon: Icons.qr_code_2,
-            title: 'Chưa có mã QR',
-            message: 'Hệ thống chưa cung cấp mã QR thanh toán. Hãy thử lại hoặc kiểm tra trạng thái đơn đặt kho.',
+            title: 'Mã QR chưa khả dụng',
+            message: 'Khoản thanh toán đã hết hạn hoặc máy chủ chưa cung cấp mã QR còn hiệu lực. Hãy làm mới trạng thái hoặc liên hệ cơ sở.',
           ),
         if (_bankDetails(payment).isNotEmpty)
           Card(
@@ -295,6 +377,21 @@ class _PaymentScreenState extends State<PaymentScreen>
                   label: 'Trạng thái',
                   value: _statusLabel(payment.status),
                 ),
+                if (paid && payment.paidAt != null)
+                  _InfoLine(
+                    label: 'Đã thanh toán lúc',
+                    value: DateFormat('dd/MM/yyyy HH:mm')
+                        .format(payment.paidAt!.toLocal()),
+                  ),
+                if (paid && payment.paidAmount > 0)
+                  _InfoLine(
+                    label: 'Đã nhận',
+                    value: NumberFormat.currency(
+                      locale: 'vi_VN',
+                      symbol: '₫',
+                      decimalDigits: 0,
+                    ).format(payment.paidAmount),
+                  ),
               ],
             ),
           ),
@@ -312,7 +409,8 @@ class _PaymentScreenState extends State<PaymentScreen>
             padding: EdgeInsets.only(top: 10),
             child: Text('Đang chờ hệ thống xác nhận giao dịch…'),
           ),
-        if (payment.status == 'expired' || payment.status == 'cancelled')
+        if (widget.existingPaymentId == null &&
+            (payment.status == 'expired' || payment.status == 'cancelled'))
           Padding(
             padding: const EdgeInsets.only(top: 12),
             child: OutlinedButton(

@@ -24,6 +24,39 @@ class ContractRepository {
     return d;
   }
 
+  /// Reads the server-generated draft contract HTML without changing contract state.
+  Future<String> draftTerms(String id) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/contracts/$id/draft-pdf',
+    );
+    final data = response.data?['data'];
+    final html = data is Map ? data['html'] : null;
+    if (html is! String || html.trim().isEmpty) {
+      throw const FormatException('Draft contract terms are unavailable.');
+    }
+    return _htmlToText(html);
+  }
+
+  static String _htmlToText(String html) => html
+      .replaceAll(
+        RegExp(r'<(script|style)[^>]*>[\s\S]*?</\1>', caseSensitive: false),
+        '',
+      )
+      .replaceAll(
+        RegExp(r'<br\s*/?>|</(p|div|li|h[1-6]|tr)>', caseSensitive: false),
+        '\n',
+      )
+      .replaceAll(RegExp(r'<[^>]+>'), ' ')
+      .replaceAll('&nbsp;', ' ')
+      .replaceAll('&amp;', '&')
+      .replaceAll('&lt;', '<')
+      .replaceAll('&gt;', '>')
+      .replaceAll('&quot;', '"')
+      .replaceAll('&#39;', "'")
+      .replaceAll(RegExp(r'[ \t]+'), ' ')
+      .replaceAll(RegExp(r'\n\s+'), '\n')
+      .trim();
+
   Future<void> acceptTerms(String id) async {
     await _dio.post(
       '/contracts/$id/customer-sign',

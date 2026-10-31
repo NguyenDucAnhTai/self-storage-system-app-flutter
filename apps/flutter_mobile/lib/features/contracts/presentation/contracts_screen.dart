@@ -1,8 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
+import 'package:go_router/go_router.dart';
 
+import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/app_ui.dart';
 import '../data/contract_repository.dart';
+import '../../payments/data/models/payment.dart';
+import '../../payments/data/repositories/payment_repository.dart';
+import 'contract_detail_screen.dart';
 
 class ContractsScreen extends StatefulWidget {
   const ContractsScreen({
@@ -12,164 +17,309 @@ class ContractsScreen extends StatefulWidget {
   });
   final Dio dio;
   final VoidCallback? onContractsChanged;
+
   @override
   State<ContractsScreen> createState() => _ContractsScreenState();
 }
 
 class _ContractsScreenState extends State<ContractsScreen> {
-  late final ContractRepository _repo;
+  late final ContractRepository _repo = ContractRepository(widget.dio);
+  late final PaymentRepository _paymentRepo = PaymentRepository(widget.dio);
   late Future<List<Map<String, dynamic>>> _future;
+
   @override
   void initState() {
     super.initState();
-    _repo = ContractRepository(widget.dio);
     _future = _repo.list();
+  }
+
+  Future<void> _reload() async {
+    setState(() => _future = _repo.list());
+    await _future;
   }
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    appBar: AppBar(title: const Text('My storages & contracts')),
+    appBar: AppBar(title: const Text('Hợp đồng của tôi')),
     body: FutureBuilder<List<Map<String, dynamic>>>(
       future: _future,
-      builder: (context, s) {
-        if (s.connectionState == ConnectionState.waiting) {
+      builder: (context, state) {
+        if (state.connectionState == ConnectionState.waiting) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (s.hasError) {
+        if (state.hasError) {
           return AppErrorState(
-            message: 'Contracts could not be loaded. Check your connection and retry.',
+            message: 'Không thể tải hợp đồng. Vui lòng kiểm tra kết nối.',
             onRetry: () => setState(() => _future = _repo.list()),
           );
         }
-        final rows = s.data ?? const [];
-        if (rows.isEmpty) {
+        final contracts = state.data ?? const <Map<String, dynamic>>[];
+        if (contracts.isEmpty) {
           return const AppEmptyState(
             icon: Icons.description_outlined,
-            title: 'No contracts yet',
-            message: 'Your active storage contracts will appear here.',
+            title: 'Chưa có hợp đồng',
+            message: 'Hợp đồng kho của bạn sẽ hiển thị tại đây.',
           );
         }
-        return ListView.separated(
-          padding: const EdgeInsets.fromLTRB(20, 16, 20, 24),
-          itemCount: rows.length + 1,
-          separatorBuilder: (_, _) => const SizedBox(height: 8),
-          itemBuilder: (context, i) {
-            if (i == 0) {
-              return const Padding(
-                padding: EdgeInsets.only(bottom: 12),
-                child: AppSectionHeader(
-                  title: 'Your storage contracts',
-                  subtitle: 'Review terms and active storage periods',
+        return RefreshIndicator(
+          onRefresh: _reload,
+          child: ListView.separated(
+            padding: const EdgeInsets.fromLTRB(20, 16, 20, 28),
+            itemCount: contracts.length + 1,
+            separatorBuilder: (_, _) => const SizedBox(height: 12),
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return const Padding(
+                  padding: EdgeInsets.only(bottom: 8),
+                  child: AppSectionHeader(
+                    title: 'Hành trình hợp đồng',
+                    subtitle: 'Theo dõi ký kết, thanh toán và nhận kho',
+                  ),
+                );
+              }
+              final contract = contracts[index - 1];
+              final facility = _map(contract['facility']);
+              final unit = _map(contract['storageUnit']);
+              final facilityName = _text(facility?['name']);
+              final unitName =
+                  _text(unit?['unitNumber']) ?? _text(unit?['code']);
+              final code = _text(contract['contractCode']) ?? 'Hợp đồng kho';
+              final status = _statusLabel(contract['status']);
+              final next = _nextAction(contract);
+              final rental = _text(contract['rentalPrice']);
+              final billing = _text(contract['billingUnit']);
+              return Card(
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(20),
+                  onTap: () => _openDetail(contract),
+                  child: Padding(
+                    padding: const EdgeInsets.all(18),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(
+                              Icons.description_outlined,
+                              color: AppTheme.primaryEmerald,
+                            ),
+                            const SizedBox(width: 10),
+                            Expanded(
+                              child: Text(
+                                code,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                                style: Theme.of(context).textTheme.titleMedium,
+                              ),
+                            ),
+                            _StatusBadge(label: status),
+                          ],
+                        ),
+                        const SizedBox(height: 14),
+                        Text(
+                          facilityName ?? 'Cơ sở lưu trữ',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          unitName == null
+                              ? 'Chưa có thông tin kho'
+                              : 'Kho $unitName',
+                          style: Theme.of(context).textTheme.bodyMedium,
+                        ),
+                        if (_text(contract['startDate']) != null ||
+                            _text(contract['endDate']) != null) ...[
+                          const SizedBox(height: 12),
+                          _DateRange(
+                            start: contract['startDate'],
+                            end: contract['endDate'],
+                          ),
+                        ],
+                        if (rental != null) ...[
+                          const SizedBox(height: 8),
+                          Text(
+                            'Tiền thuê: $rental${billing == null ? '' : ' / ${_billingLabel(billing)}'}',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                          ),
+                        ],
+                        const SizedBox(height: 14),
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(12),
+                          decoration: BoxDecoration(
+                            color: AppTheme.lightMint,
+                            borderRadius: BorderRadius.circular(14),
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Icon(
+                                Icons.arrow_forward_rounded,
+                                size: 18,
+                                color: AppTheme.primaryEmerald,
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Text(
+                                  next,
+                                  style: const TextStyle(
+                                    color: AppTheme.primaryDarkGreen,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton.icon(
+                            onPressed: () => _openDetail(contract),
+                            icon: const Icon(Icons.chevron_right),
+                            label: const Text('Xem chi tiết'),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               );
-            }
-            final c = rows[i - 1];
-            return Card(
-              child: ListTile(
-                title: Text('${c['contractCode'] ?? 'Contract'}'),
-                subtitle: Text(
-                  '${c['status'] ?? ''} · Storage unit ${c['storageUnitId'] ?? ''}',
-                ),
-                trailing: const Icon(Icons.chevron_right),
-                onTap: () => _detail('${c['id']}'),
-              ),
-            );
-          },
+            },
+          ),
         );
       },
     ),
   );
-  Future<void> _detail(String id) async {
+
+  Future<void> _openDetail(Map<String, dynamic> contract) async {
+    final id = _text(contract['id']);
+    if (id == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Hợp đồng chưa có mã định danh hợp lệ.')),
+      );
+      return;
+    }
     try {
-      final c = await _repo.detail(id);
+      final detail = await _repo.detail(id);
       if (!mounted) return;
-      await showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => Padding(
-          padding: EdgeInsets.fromLTRB(
-            20,
-            20,
-            20,
-            MediaQuery.viewInsetsOf(context).bottom + 20,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${c['contractCode']}',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              Text('Status: ${c['status']}'),
-              Text('Period: ${c['startDate']} – ${c['endDate']}'),
-              Text('Rental: ${c['rentalPrice']} ${c['billingUnit']}'),
-              if (c['customerSigned'] != true)
-                FilledButton(
-                  onPressed: () async {
-                    try {
-                      await _repo.acceptTerms(id);
-                      widget.onContractsChanged?.call();
-                      if (context.mounted) Navigator.pop(context);
-                      if (mounted) setState(() => _future = _repo.list());
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Could not accept contract terms: $e',
-                            ),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  child: const Text('Accept contract terms'),
-                ),
-              if (c['status'] == 'active')
-                OutlinedButton.icon(
-                  onPressed: () => _renew(context, id, c),
-                  icon: const Icon(Icons.event_repeat),
-                  label: const Text('Request renewal'),
-                ),
-            ],
+      final updated = await Navigator.of(context).push<bool>(
+        MaterialPageRoute(
+          builder: (_) => ContractDetailScreen(
+            contract: detail,
+            repository: _repo,
+            paymentRepository: _paymentRepo,
+            onViewPayment: (Payment payment) async {
+              await context.push(
+                '/payments/${Uri.encodeComponent(payment.id)}/view?contractId=${Uri.encodeComponent(id)}',
+              );
+            },
           ),
         ),
       );
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Could not load contract: $e')));
+      if (updated == true && mounted) {
+        widget.onContractsChanged?.call();
+        setState(() => _future = _repo.list());
       }
+    } catch (_) {
+      if (!mounted) return;
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Không thể tải chi tiết hợp đồng. Vui lòng thử lại.'),
+        ),
+      );
     }
   }
+}
 
-  Future<void> _renew(
-    BuildContext sheetContext,
-    String id,
-    Map<String, dynamic> contract,
-  ) async {
-    final endDate = DateTime.tryParse('${contract['endDate']}');
-    if (endDate == null) return;
-    final chosen = await showDatePicker(
-      context: sheetContext,
-      firstDate: endDate.add(const Duration(days: 1)),
-      lastDate: DateTime(endDate.year + 5),
-      initialDate: DateTime(endDate.year + 1, endDate.month, endDate.day),
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({required this.label});
+  final String label;
+  @override
+  Widget build(BuildContext context) => Container(
+    constraints: const BoxConstraints(maxWidth: 130),
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+    decoration: BoxDecoration(
+      color: AppTheme.lightMint,
+      borderRadius: BorderRadius.circular(30),
+    ),
+    child: Text(
+      label,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: const TextStyle(
+        color: AppTheme.primaryEmerald,
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+      ),
+    ),
+  );
+}
+
+class _DateRange extends StatelessWidget {
+  const _DateRange({this.start, this.end});
+  final Object? start;
+  final Object? end;
+  @override
+  Widget build(BuildContext context) {
+    final startDate = DateTime.tryParse('$start');
+    final endDate = DateTime.tryParse('$end');
+    final localizations = MaterialLocalizations.of(context);
+    final range = [
+      if (startDate != null)
+        localizations.formatMediumDate(startDate.toLocal()),
+      if (endDate != null) localizations.formatMediumDate(endDate.toLocal()),
+    ].join(' – ');
+    return Row(
+      children: [
+        const Icon(
+          Icons.calendar_month_outlined,
+          size: 17,
+          color: AppTheme.secondaryText,
+        ),
+        const SizedBox(width: 7),
+        Expanded(
+          child: Text(range, style: Theme.of(context).textTheme.bodyMedium),
+        ),
+      ],
     );
-    if (chosen == null) return;
-    try {
-      await _repo.renew(id, chosen);
-      widget.onContractsChanged?.call();
-      if (sheetContext.mounted) Navigator.pop(sheetContext);
-      if (mounted) setState(() => _future = _repo.list());
-    } catch (error) {
-      if (sheetContext.mounted) {
-        ScaffoldMessenger.of(sheetContext).showSnackBar(
-          SnackBar(content: Text('Renewal request failed: $error')),
-        );
-      }
-    }
   }
+}
+
+Map<String, dynamic>? _map(Object? value) =>
+    value is Map<String, dynamic> ? value : null;
+String? _text(Object? value) {
+  final text = value?.toString().trim();
+  return text == null || text.isEmpty || text == 'null' ? null : text;
+}
+
+String _statusLabel(Object? value) => switch ('$value'.toLowerCase()) {
+  'draft' => 'Bản nháp',
+  'active' => 'Đang hoạt động',
+  'overdue' => 'Quá hạn',
+  'completed' => 'Đã hoàn tất',
+  'cancelled' => 'Đã hủy',
+  'terminated' => 'Đã chấm dứt',
+  _ => 'Đang xử lý',
+};
+String _billingLabel(String value) => switch (value.toLowerCase()) {
+  'month' || 'monthly' => 'tháng',
+  'day' || 'daily' => 'ngày',
+  'year' || 'yearly' => 'năm',
+  _ => value,
+};
+String _nextAction(Map<String, dynamic> contract) {
+  if (contract['status'] == 'active') {
+    return 'Hợp đồng đang hoạt động';
+  }
+  if (contract['customerSigned'] == true && contract['staffSigned'] != true) {
+    return 'Chờ nhân viên hoàn tất thủ tục nhận kho';
+  }
+  if (contract['customerSigned'] != true && contract['status'] == 'draft') {
+    return 'Xem lại hợp đồng và xác nhận chữ ký';
+  }
+  if (contract['staffSigned'] == true && contract['customerSigned'] == true) {
+    return 'Đang cập nhật trạng thái hợp đồng';
+  }
+  return 'Theo dõi cập nhật từ cơ sở';
 }

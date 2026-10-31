@@ -180,11 +180,42 @@ class _NotificationBellState extends ConsumerState<NotificationBell> {
   String? _destinationFor(AppNotification notification) {
     final metadata = notification.metadata;
     if (metadata == null) return null;
-    final rawId = metadata['reservationId'];
-    if (rawId is! String || rawId.trim().isEmpty) return null;
-    final id = Uri.encodeComponent(rawId.trim());
-    if (notification.type == 'reservation') return '/reservations/$id';
-    if (notification.type == 'payment') return '/payments/$id';
+    String? id(String key) {
+      final value = metadata[key];
+      final candidate = value is String ? value.trim() : '';
+      return RegExp(r'^[a-fA-F0-9]{24}$').hasMatch(candidate)
+          ? candidate
+          : null;
+    }
+
+    if (notification.type == 'reservation') {
+      final reservationId = id('reservationId');
+      return reservationId == null
+          ? null
+          : '/reservations/${Uri.encodeComponent(reservationId)}';
+    }
+    if (notification.type == 'payment') {
+      final paymentId = id('paymentId');
+      if (paymentId != null) {
+        final contractId = id('contractId');
+        return '/payments/${Uri.encodeComponent(paymentId)}/view'
+            '${contractId == null ? '' : '?contractId=${Uri.encodeComponent(contractId)}'}';
+      }
+      final contractId = id('contractId');
+      if (contractId != null) {
+        return '/contracts/${Uri.encodeComponent(contractId)}';
+      }
+      final reservationId = id('reservationId');
+      return reservationId == null
+          ? null
+          : '/payments/${Uri.encodeComponent(reservationId)}';
+    }
+    if (notification.type == 'contract') {
+      final contractId = id('contractId');
+      return contractId == null
+          ? null
+          : '/contracts/${Uri.encodeComponent(contractId)}';
+    }
     return null;
   }
 

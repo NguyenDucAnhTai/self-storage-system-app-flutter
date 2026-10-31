@@ -10,8 +10,11 @@ class Payment {
     required this.createdAt,
     required this.updatedAt,
     this.reservationId,
+    this.contractId,
     this.qrUrl,
     this.expiresAt,
+    this.paidAt,
+    this.confirmedAt,
     this.referenceCode,
     this.bankInfo,
   });
@@ -19,12 +22,15 @@ class Payment {
   final String paymentCode;
   final String purpose;
   final String? reservationId;
+  final String? contractId;
   final double amount;
   final double paidAmount;
   final String status;
   final String method;
   final String? qrUrl;
   final DateTime? expiresAt;
+  final DateTime? paidAt;
+  final DateTime? confirmedAt;
   final String? referenceCode;
   final Map<String, dynamic>? bankInfo;
   final DateTime createdAt;
@@ -35,12 +41,15 @@ class Payment {
     paymentCode: '${json['paymentCode'] ?? ''}',
     purpose: '${json['purpose'] ?? ''}',
     reservationId: json['reservationId']?.toString(),
+    contractId: json['contractId']?.toString(),
     amount: _number(json['amount']),
     paidAmount: _number(json['paidAmount']),
     status: '${json['status'] ?? ''}',
     method: '${json['method'] ?? ''}',
     qrUrl: json['qrUrl']?.toString(),
     expiresAt: _date(json['expiresAt']),
+    paidAt: _date(json['paidAt']),
+    confirmedAt: _date(json['confirmedAt']),
     referenceCode: json['referenceCode']?.toString(),
     bankInfo: json['bankInfo'] is Map<String, dynamic>
         ? json['bankInfo'] as Map<String, dynamic>
