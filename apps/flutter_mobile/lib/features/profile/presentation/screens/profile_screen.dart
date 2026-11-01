@@ -76,6 +76,11 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                 onTap: () => context.push('/change-password'),
               ),
               ListTile(
+                leading: const Icon(Icons.warehouse_outlined),
+                title: const Text('My storage & inventory'),
+                onTap: () => context.push('/storage'),
+              ),
+              ListTile(
                 leading: const Icon(Icons.inventory_2_outlined),
                 title: const Text('My storages & contracts'),
                 onTap: () => context.push('/contracts'),

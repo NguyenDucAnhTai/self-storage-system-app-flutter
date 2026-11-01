@@ -20,6 +20,7 @@ import '../features/reservations/presentation/screens/reservation_detail_screen.
 import '../features/reservations/presentation/screens/reservation_list_screen.dart';
 import '../features/payments/application/payment_status_tracker.dart';
 import '../features/payments/presentation/screens/payment_screen.dart';
+import '../features/storage/presentation/storage_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final auth = ref.watch(authControllerProvider);
@@ -38,6 +39,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           path == '/profile' ||
           path == '/change-password' ||
           path == '/contracts' ||
+          path == '/storage' ||
           path == '/notifications';
       if (guarded && !signedIn) {
         return '/login?from=${Uri.encodeComponent(state.uri.toString())}';
@@ -136,6 +138,10 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             builder: (_, _) => ContractsScreen(dio: ref.read(dioProvider)),
           ),
           GoRoute(
+            path: '/storage',
+            builder: (_, _) => StorageScreen(dio: ref.read(dioProvider)),
+          ),
+          GoRoute(
             path: '/notifications',
             builder: (_, _) => NotificationsScreen(dio: ref.read(dioProvider)),
           ),
@@ -156,7 +162,7 @@ class _AppShell extends StatelessWidget {
   const _AppShell({required this.location, required this.child});
   final String location;
   final Widget child;
-  int get _index => location.startsWith('/profile')
+  int get _index => location.startsWith('/profile') || location == '/storage'
       ? 2
       : location.startsWith('/reservations') || location.startsWith('/payments')
       ? 1
