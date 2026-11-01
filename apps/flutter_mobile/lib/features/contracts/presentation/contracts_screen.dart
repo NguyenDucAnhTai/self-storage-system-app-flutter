@@ -3,6 +3,19 @@ import 'package:dio/dio.dart';
 
 import '../data/contract_repository.dart';
 
+String _errorText(Object error) {
+  if (error is DioException) {
+    final body = error.response?.data;
+    if (body is Map) {
+      final message = body['message'] ?? error.message ?? 'Request failed';
+      final code = body['messageCode'];
+      return code == null ? '$message' : '$message ($code)';
+    }
+    return error.message ?? 'Request failed';
+  }
+  return '$error';
+}
+
 class ContractsScreen extends StatefulWidget {
   const ContractsScreen({super.key, required this.dio});
   final Dio dio;
@@ -20,24 +33,26 @@ class _ContractsScreenState extends State<ContractsScreen> {
     _future = _repo.list();
   }
 
+  void _reload() => setState(() => _future = _repo.list());
+
   @override
   Widget build(BuildContext context) => Scaffold(
     appBar: AppBar(title: const Text('My storages & contracts')),
     body: FutureBuilder<List<Map<String, dynamic>>>(
       future: _future,
-      builder: (context, s) {
-        if (s.connectionState == ConnectionState.waiting) {
+      builder: (context, snapshot) {
+        if (snapshot.connectionState != ConnectionState.done) {
           return const Center(child: CircularProgressIndicator());
         }
-        if (s.hasError) {
+        if (snapshot.hasError) {
           return Center(
             child: TextButton(
-              onPressed: () => setState(() => _future = _repo.list()),
+              onPressed: _reload,
               child: const Text('Could not load contracts. Retry'),
             ),
           );
         }
-        final rows = s.data ?? const [];
+        final rows = snapshot.data ?? const [];
         if (rows.isEmpty) {
           return const Center(child: Text('No storage contracts yet.'));
         }
@@ -62,95 +77,316 @@ class _ContractsScreenState extends State<ContractsScreen> {
       },
     ),
   );
+
   Future<void> _detail(String id) async {
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (_) => _ContractDetail(repo: _repo, id: id),
+    );
+    if (mounted) _reload();
+  }
+}
+
+class _ContractDetail extends StatefulWidget {
+  const _ContractDetail({required this.repo, required this.id});
+  final ContractRepository repo;
+  final String id;
+  @override
+  State<_ContractDetail> createState() => _ContractDetailState();
+}
+
+class _ContractDetailState extends State<_ContractDetail> {
+  late Future<Map<String, dynamic>> future;
+  bool busy = false;
+  @override
+  void initState() {
+    super.initState();
+    future = widget.repo.detail(widget.id);
+  }
+
+  void reload() => setState(() => future = widget.repo.detail(widget.id));
+
+  Future<void> runAction(
+    Future<Map<String, dynamic>> Function() action,
+    String message,
+  ) async {
+    if (busy) return;
+    setState(() => busy = true);
     try {
-      final c = await _repo.detail(id);
+      final updated = await action();
       if (!mounted) return;
-      await showModalBottomSheet<void>(
-        context: context,
-        isScrollControlled: true,
-        builder: (context) => Padding(
-          padding: EdgeInsets.fromLTRB(
-            20,
-            20,
-            20,
-            MediaQuery.viewInsetsOf(context).bottom + 20,
-          ),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                '${c['contractCode']}',
-                style: Theme.of(context).textTheme.titleLarge,
-              ),
-              Text('Status: ${c['status']}'),
-              Text('Period: ${c['startDate']} – ${c['endDate']}'),
-              Text('Rental: ${c['rentalPrice']} ${c['billingUnit']}'),
-              if (c['customerSigned'] != true)
-                FilledButton(
-                  onPressed: () async {
-                    try {
-                      await _repo.acceptTerms(id);
-                      if (context.mounted) Navigator.pop(context);
-                      if (mounted) setState(() => _future = _repo.list());
-                    } catch (e) {
-                      if (context.mounted) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              'Could not accept contract terms: $e',
-                            ),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  child: const Text('Accept contract terms'),
-                ),
-              if (c['status'] == 'active')
-                OutlinedButton.icon(
-                  onPressed: () => _renew(context, id, c),
-                  icon: const Icon(Icons.event_repeat),
-                  label: const Text('Request renewal'),
-                ),
-            ],
-          ),
-        ),
-      );
-    } catch (e) {
+      setState(() => future = Future.value(updated));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text(message)));
+    } catch (error) {
       if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text('Could not load contract: $e')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(_errorText(error))));
       }
+    } finally {
+      if (mounted) setState(() => busy = false);
     }
   }
 
-  Future<void> _renew(
-    BuildContext sheetContext,
-    String id,
-    Map<String, dynamic> contract,
-  ) async {
-    final endDate = DateTime.tryParse('${contract['endDate']}');
-    if (endDate == null) return;
-    final chosen = await showDatePicker(
-      context: sheetContext,
-      firstDate: endDate.add(const Duration(days: 1)),
-      lastDate: DateTime(endDate.year + 5),
-      initialDate: DateTime(endDate.year + 1, endDate.month, endDate.day),
-    );
-    if (chosen == null) return;
-    try {
-      await _repo.renew(id, chosen);
-      if (sheetContext.mounted) Navigator.pop(sheetContext);
-      if (mounted) setState(() => _future = _repo.list());
-    } catch (error) {
-      if (sheetContext.mounted) {
-        ScaffoldMessenger.of(sheetContext).showSnackBar(
-          SnackBar(content: Text('Renewal request failed: $error')),
-        );
-      }
+  Future<void> requestRenewal(Map<String, dynamic> contract) async {
+    final end = DateTime.tryParse('${contract['endDate'] ?? ''}');
+    if (end == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Contract end date is unavailable.')),
+      );
+      return;
     }
+    final localEnd = end.toLocal();
+    final first = DateTime(localEnd.year, localEnd.month, localEnd.day + 1);
+    final last = DateTime(first.year + 100, first.month, first.day);
+    final selected = await showDatePicker(
+      context: context,
+      initialDate: first,
+      firstDate: first,
+      lastDate: last,
+    );
+    if (selected == null || !mounted) return;
+    final controller = TextEditingController();
+    final result = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Request renewal'),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              'Requested end date: ${MaterialLocalizations.of(ctx).formatMediumDate(selected)}',
+            ),
+            const SizedBox(height: 12),
+            TextField(
+              controller: controller,
+              maxLength: 1000,
+              maxLines: 2,
+              decoration: const InputDecoration(labelText: 'Notes (optional)'),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Submit request'),
+          ),
+        ],
+      ),
+    );
+    final note = controller.text.trim();
+    controller.dispose();
+    if (result != true || !mounted) return;
+    await runAction(
+      () => widget.repo.renew(widget.id, selected.toUtc(), note: note),
+      'Renewal request submitted. Awaiting approval.',
+    );
   }
+
+  Future<void> sign(Map<String, dynamic> addendum) async {
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Sign renewal?'),
+        content: const Text(
+          'Confirm that you accept this renewal request. The renewal takes effect after the facility signs.',
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx, false),
+            child: const Text('Cancel'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(ctx, true),
+            child: const Text('Confirm and sign'),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !mounted) return;
+    await runAction(
+      () => widget.repo.signAddendum(widget.id, '${addendum['id']}'),
+      'Signed. Awaiting facility signature.',
+    );
+  }
+
+  Future<void> cancel(Map<String, dynamic> addendum) async {
+    final controller = TextEditingController();
+    final reason = await showDialog<String>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Cancel renewal'),
+        content: TextField(
+          controller: controller,
+          maxLength: 1000,
+          maxLines: 3,
+          decoration: const InputDecoration(labelText: 'Reason (required)'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(ctx),
+            child: const Text('Back'),
+          ),
+          FilledButton(
+            onPressed: () {
+              if (controller.text.trim().isNotEmpty) {
+                Navigator.pop(ctx, controller.text.trim());
+              }
+            },
+            child: const Text('Cancel request'),
+          ),
+        ],
+      ),
+    );
+    controller.dispose();
+    if (reason == null || !mounted) return;
+    await runAction(
+      () => widget.repo.cancelAddendum(widget.id, '${addendum['id']}', reason),
+      'Renewal request cancelled.',
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) => FractionallySizedBox(
+    heightFactor: 0.9,
+    child: Scaffold(
+      appBar: AppBar(
+        title: const Text('Contract details'),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            onPressed: busy ? null : () => Navigator.pop(context),
+            icon: const Icon(Icons.close),
+            tooltip: 'Close',
+          ),
+        ],
+      ),
+      body: FutureBuilder<Map<String, dynamic>>(
+        future: future,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState != ConnectionState.done) {
+            return const Center(child: CircularProgressIndicator());
+          }
+          if (snapshot.hasError) {
+            return Center(
+              child: TextButton(
+                onPressed: reload,
+                child: Text(
+                  'Could not load contract: ${_errorText(snapshot.error!)}. Retry',
+                ),
+              ),
+            );
+          }
+          final c = snapshot.data!;
+          final status = '${c['status'] ?? ''}';
+          final addendums =
+              (c['addendums'] is List ? c['addendums'] as List : const [])
+                  .whereType<Map<String, dynamic>>()
+                  .where((a) => a['type'] == 'renew')
+                  .toList();
+          return ListView(
+            padding: const EdgeInsets.all(20),
+            children: [
+              if (busy) const LinearProgressIndicator(),
+              Text(
+                '${c['contractCode'] ?? 'Contract'}',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              Text('Status: $status'),
+              Text('Period: ${c['startDate'] ?? '—'} – ${c['endDate'] ?? '—'}'),
+              Text(
+                'Rental: ${c['rentalPrice'] ?? '—'} ${c['billingUnit'] ?? ''}',
+              ),
+              if (c['customerSigned'] != true)
+                FilledButton(
+                  onPressed: busy
+                      ? null
+                      : () async {
+                          try {
+                            await widget.repo.acceptTerms(widget.id);
+                            if (mounted) reload();
+                          } catch (e) {
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(content: Text(_errorText(e))),
+                              );
+                            }
+                          }
+                        },
+                  child: const Text('Accept contract terms'),
+                ),
+              if (status == 'active' || status == 'overdue')
+                OutlinedButton.icon(
+                  onPressed: busy ? null : () => requestRenewal(c),
+                  icon: const Icon(Icons.event_repeat),
+                  label: const Text('Request renewal'),
+                ),
+              const SizedBox(height: 20),
+              Text(
+                'Renewal addendums',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+              if (addendums.isEmpty)
+                const Padding(
+                  padding: EdgeInsets.symmetric(vertical: 12),
+                  child: Text('No renewal requests yet.'),
+                ),
+              for (final a in addendums)
+                Card(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '${a['addendumCode'] ?? 'Renewal'}',
+                          style: Theme.of(context).textTheme.titleMedium,
+                        ),
+                        Text('Status: ${a['status'] ?? '—'}'),
+                        Text('Previous end: ${a['previousEndDate'] ?? '—'}'),
+                        Text('Requested end: ${a['newEndDate'] ?? '—'}'),
+                        Text(
+                          'Customer signed: ${a['customerSigned'] == true ? 'Yes' : 'No'}',
+                        ),
+                        Text(
+                          'Facility signed: ${a['staffSigned'] == true ? 'Yes' : 'No'}',
+                        ),
+                        if (a['notes'] != null && '${a['notes']}'.isNotEmpty)
+                          Text('Notes: ${a['notes']}'),
+                        if (a['rejectionReason'] != null &&
+                            '${a['rejectionReason']}'.isNotEmpty)
+                          Text('Rejection reason: ${a['rejectionReason']}'),
+                        if (a['cancellationReason'] != null &&
+                            '${a['cancellationReason']}'.isNotEmpty)
+                          Text(
+                            'Cancellation reason: ${a['cancellationReason']}',
+                          ),
+                        if (a['status'] == 'draft' &&
+                            a['customerSigned'] != true &&
+                            (status == 'active' || status == 'overdue'))
+                          FilledButton(
+                            onPressed: busy ? null : () => sign(a),
+                            child: const Text('Confirm and sign'),
+                          ),
+                        if (a['status'] == 'draft' ||
+                            a['status'] == 'pending_approval')
+                          TextButton(
+                            onPressed: busy ? null : () => cancel(a),
+                            child: const Text('Cancel renewal'),
+                          ),
+                      ],
+                    ),
+                  ),
+                ),
+            ],
+          );
+        },
+      ),
+    ),
+  );
 }
