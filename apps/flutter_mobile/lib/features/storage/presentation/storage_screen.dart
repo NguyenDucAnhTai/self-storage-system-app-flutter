@@ -3,6 +3,7 @@ import 'package:dio/dio.dart';
 
 import '../data/storage_repository.dart';
 import '../../contracts/data/contract_repository.dart';
+import '../../inventory_requests/presentation/inventory_requests_screen.dart';
 
 Map<String, dynamic> _map(dynamic value) =>
     value is Map<String, dynamic> ? value : {};
@@ -23,12 +24,18 @@ String _error(Object error) {
   return '$error';
 }
 
-class StorageScreen extends StatelessWidget {
+class StorageScreen extends StatefulWidget {
   const StorageScreen({super.key, required this.dio});
   final Dio dio;
   @override
+  State<StorageScreen> createState() => _StorageScreenState();
+}
+
+class _StorageScreenState extends State<StorageScreen> {
+  int inventoryRevision = 0;
+  @override
   Widget build(BuildContext context) {
-    final repo = StorageRepository(dio);
+    final repo = StorageRepository(widget.dio);
     return DefaultTabController(
       length: 4,
       child: Scaffold(
@@ -46,9 +53,20 @@ class StorageScreen extends StatelessWidget {
         ),
         body: TabBarView(
           children: [
-            _Overview(repo: repo),
-            _PagedList(repo: repo, kind: _Kind.inventory),
-            _PagedList(repo: repo, kind: _Kind.movements),
+            _Overview(
+              repo: repo,
+              onRequestsClosed: () => setState(() => inventoryRevision++),
+            ),
+            _PagedList(
+              key: ValueKey('inventory-$inventoryRevision'),
+              repo: repo,
+              kind: _Kind.inventory,
+            ),
+            _PagedList(
+              key: ValueKey('movements-$inventoryRevision'),
+              repo: repo,
+              kind: _Kind.movements,
+            ),
             _PagedList(repo: repo, kind: _Kind.skus),
           ],
         ),
@@ -58,8 +76,9 @@ class StorageScreen extends StatelessWidget {
 }
 
 class _Overview extends StatefulWidget {
-  const _Overview({required this.repo});
+  const _Overview({required this.repo, required this.onRequestsClosed});
   final StorageRepository repo;
+  final VoidCallback onRequestsClosed;
   @override
   State<_Overview> createState() => _OverviewState();
 }
@@ -123,6 +142,22 @@ class _OverviewState extends State<_Overview> {
               ],
             ),
             const SizedBox(height: 12),
+            OutlinedButton.icon(
+              onPressed: () async {
+                await Navigator.of(context).push(
+                  MaterialPageRoute(
+                    builder: (_) =>
+                        InventoryRequestsScreen(dio: widget.repo.dio),
+                  ),
+                );
+                if (mounted) {
+                  reload();
+                  widget.onRequestsClosed();
+                }
+              },
+              icon: const Icon(Icons.assignment_outlined),
+              label: const Text('Inbound & outbound requests'),
+            ),
             OutlinedButton.icon(
               onPressed: () => Navigator.of(context).push(
                 MaterialPageRoute(
@@ -263,7 +298,7 @@ class _StorageContractsState extends State<_StorageContracts> {
 enum _Kind { inventory, movements, skus }
 
 class _PagedList extends StatefulWidget {
-  const _PagedList({required this.repo, required this.kind});
+  const _PagedList({super.key, required this.repo, required this.kind});
   final StorageRepository repo;
   final _Kind kind;
   @override
