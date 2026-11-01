@@ -23,14 +23,22 @@ import '../features/payments/presentation/screens/payment_screen.dart';
 import '../features/storage/presentation/storage_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final auth = ref.watch(authControllerProvider);
+  final refresh = ValueNotifier<int>(0);
+  ref.listen(authControllerProvider, (_, _) => refresh.value++);
+  ref.onDispose(refresh.dispose);
   final features = ref.watch(reservationPaymentProvider);
   final facilityRepo = ref.watch(facilityRepositoryProvider);
-  return GoRouter(
+  final router = GoRouter(
     initialLocation: '/splash',
+    refreshListenable: refresh,
     redirect: (context, state) {
+      final auth = ref.read(authControllerProvider);
       final path = state.matchedLocation;
-      if (auth.isLoading) return path == '/splash' ? null : '/splash';
+      if (auth.isLoading) {
+        return path == '/splash' || path == '/login' || path == '/register'
+            ? null
+            : '/splash';
+      }
       final signedIn = auth.value != null;
       if (path == '/splash') return signedIn ? '/explore' : '/login';
       final guarded =
@@ -45,6 +53,13 @@ final appRouterProvider = Provider<GoRouter>((ref) {
         return '/login?from=${Uri.encodeComponent(state.uri.toString())}';
       }
       if (signedIn && (path == '/login' || path == '/register')) {
+        final from = state.uri.queryParameters['from'];
+        if (path == '/login' &&
+            from != null &&
+            from.startsWith('/') &&
+            !from.startsWith('//')) {
+          return from;
+        }
         return '/explore';
       }
       return null;
@@ -78,7 +93,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               facilityId: state.pathParameters['id']!,
               repository: facilityRepo,
               onBook: (selection) {
-                if (auth.value == null) {
+                if (ref.read(authControllerProvider).value == null) {
                   context.go(
                     '/login?from=${Uri.encodeComponent('/reservations/create?facilityId=${selection.facility.id}&offeringId=${selection.offering.id}&unitTypeId=${selection.offering.unitTypeId}&minRentalDays=${selection.offering.minRentalDays}')}',
                   );
@@ -149,6 +164,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+  ref.onDispose(router.dispose);
+  return router;
 });
 
 class _SplashScreen extends StatelessWidget {
