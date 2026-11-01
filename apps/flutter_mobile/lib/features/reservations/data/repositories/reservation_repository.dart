@@ -118,6 +118,18 @@ class ReservationRepository {
     )) {
       throw ArgumentError('Check-in date cannot be in the past.');
     }
+    final amenityIds = <String>{};
+    for (final amenity in amenities) {
+      final offeringId = amenity['facilityAmenityOfferingId'];
+      final quantity = amenity['quantity'];
+      if (offeringId is! String ||
+          !RegExp(r'^[0-9a-fA-F]{24}$').hasMatch(offeringId) ||
+          quantity is! int ||
+          quantity < 1 ||
+          !amenityIds.add(offeringId)) {
+        throw ArgumentError('Selected amenity and quantity are invalid.');
+      }
+    }
     final response = await _dio.post<Map<String, dynamic>>(
       '/reservations',
       data: {
@@ -164,6 +176,29 @@ class ReservationRepository {
     final response = await _dio.post<Map<String, dynamic>>(
       '/reservations/$id/cancel',
       data: {'cancellationReason': reason.trim()},
+    );
+    return Reservation.fromJson(_data(response.data));
+  }
+
+  Future<Reservation> respondUnitReassign(
+    String id, {
+    required String action,
+    String? rejectReason,
+  }) async {
+    if (!RegExp(r'^[0-9a-fA-F]{24}$').hasMatch(id) ||
+        !const {'accept', 'reject'}.contains(action)) {
+      throw ArgumentError('Invalid reservation reassignment response.');
+    }
+    if (rejectReason != null && rejectReason.length > 500) {
+      throw ArgumentError('Rejection reason must not exceed 500 characters.');
+    }
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/reservations/$id/respond-reassign',
+      data: {
+        'action': action,
+        if (rejectReason?.trim().isNotEmpty == true)
+          'rejectReason': rejectReason!.trim(),
+      },
     );
     return Reservation.fromJson(_data(response.data));
   }

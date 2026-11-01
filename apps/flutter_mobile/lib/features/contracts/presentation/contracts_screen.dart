@@ -203,12 +203,13 @@ class _ContractsScreenState extends State<ContractsScreen> {
     try {
       final detail = await _repo.detail(id);
       if (!mounted) return;
-      final updated = await Navigator.of(context).push<bool>(
+      await Navigator.of(context).push<bool>(
         MaterialPageRoute(
           builder: (_) => ContractDetailScreen(
             contract: detail,
             repository: _repo,
             paymentRepository: _paymentRepo,
+            onContractChanged: widget.onContractsChanged,
             onViewPayment: (Payment payment) async {
               await context.push(
                 '/payments/${Uri.encodeComponent(payment.id)}/view?contractId=${Uri.encodeComponent(id)}',
@@ -217,7 +218,7 @@ class _ContractsScreenState extends State<ContractsScreen> {
           ),
         ),
       );
-      if (updated == true && mounted) {
+      if (mounted) {
         widget.onContractsChanged?.call();
         setState(() => _future = _repo.list());
       }

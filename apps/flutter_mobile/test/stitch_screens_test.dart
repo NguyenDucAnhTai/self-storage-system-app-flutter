@@ -176,7 +176,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('Mã thanh toán PAY-1'), findsOneWidget);
-      expect(find.text('Mã đơn đặt kho reservation-1'), findsOneWidget);
+      expect(find.text('Có liên kết với đơn đặt kho'), findsOneWidget);
       await tester.scrollUntilVisible(
         find.text('Thông tin chuyển khoản'),
         240,
@@ -224,7 +224,19 @@ class _FacilityRepository extends FacilityRepository {
     String? search,
     String? city,
     int page = 1,
+    List<String> amenityIds = const [],
+    bool matchAllAmenities = true,
   }) async => facilities;
+
+  @override
+  Future<FacilitySearchPage> searchPage({
+    String? search,
+    String? city,
+    int page = 1,
+    List<String> amenityIds = const [],
+    bool matchAllAmenities = true,
+  }) async =>
+      FacilitySearchPage(items: facilities, page: page, hasNextPage: false);
 
   @override
   Future<FacilityDetail> getDetail(String id) async =>

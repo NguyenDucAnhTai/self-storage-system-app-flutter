@@ -7,15 +7,18 @@ import '../../../../core/widgets/app_ui.dart';
 import '../../data/models/facility.dart';
 import '../../data/repositories/facility_repository.dart';
 import '../../../notifications/presentation/notification_bell.dart';
+import '../../../amenities/amenity_repository.dart';
 
 class ExploreScreen extends StatefulWidget {
   const ExploreScreen({
     super.key,
     required this.repository,
     required this.onSelect,
+    this.amenityRepository,
   });
   final FacilityRepository repository;
   final ValueChanged<Facility> onSelect;
+  final AmenityRepository? amenityRepository;
   @override
   State<ExploreScreen> createState() => _ExploreScreenState();
 }
@@ -23,22 +26,184 @@ class ExploreScreen extends StatefulWidget {
 class _ExploreScreenState extends State<ExploreScreen> {
   final _search = TextEditingController();
   Timer? _searchDebounce;
-  late Future<List<Facility>> _future;
+  late Future<FacilitySearchPage> _future;
+  Future<List<Amenity>>? _amenitiesFuture;
+  List<Amenity> _amenities = const [];
+  final Set<String> _selectedAmenityIds = {};
+  bool _matchAllAmenities = true;
+  bool _loadingMore = false;
+  bool _loadMoreFailed = false;
+  int _requestGeneration = 0;
   @override
   void initState() {
     super.initState();
-    _future = widget.repository.search();
+    _future = _requestPage();
+    _amenitiesFuture = widget.amenityRepository?.listActive();
   }
 
   void _onSearchChanged(String _) {
     setState(() {});
+    _requestGeneration++;
     _searchDebounce?.cancel();
     _searchDebounce = Timer(const Duration(milliseconds: 350), _load);
   }
 
+  Future<FacilitySearchPage> _requestPage({int page = 1}) =>
+      widget.repository.searchPage(
+        search: _search.text,
+        amenityIds: List.of(_selectedAmenityIds),
+        matchAllAmenities: _matchAllAmenities,
+        page: page,
+      );
+
   void _load() {
     _searchDebounce?.cancel();
-    setState(() => _future = widget.repository.search(search: _search.text));
+    _requestGeneration++;
+    final future = _requestPage();
+    setState(() {
+      _future = future;
+      _loadingMore = false;
+      _loadMoreFailed = false;
+    });
+  }
+
+  Future<void> _refresh() async {
+    _load();
+    try {
+      await _future;
+    } catch (_) {
+      // FutureBuilder renders the request error state.
+    }
+  }
+
+  Future<void> _loadMore(FacilitySearchPage current) async {
+    if (_loadingMore || !current.hasNextPage) return;
+    final request = ++_requestGeneration;
+    setState(() {
+      _loadingMore = true;
+      _loadMoreFailed = false;
+    });
+    try {
+      final next = await _requestPage(page: current.page + 1);
+      if (!mounted || request != _requestGeneration) return;
+      setState(() => _future = Future.value(current.append(next)));
+    } catch (_) {
+      if (mounted && request == _requestGeneration) {
+        setState(() => _loadMoreFailed = true);
+      }
+    } finally {
+      if (mounted && request == _requestGeneration) {
+        setState(() => _loadingMore = false);
+      }
+    }
+  }
+
+  Future<void> _openAmenityFilter() async {
+    final future = _amenitiesFuture;
+    if (future == null) return;
+    late final List<Amenity> amenities;
+    try {
+      amenities = await future;
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _amenitiesFuture = widget.amenityRepository?.listActive());
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Không tải được tiện ích. Vui lòng thử lại.'),
+        ),
+      );
+      return;
+    }
+    if (!mounted) return;
+    setState(() => _amenities = amenities);
+    if (amenities.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Chưa có danh sách tiện ích để lọc.')),
+      );
+      return;
+    }
+    final draftIds = Set<String>.from(_selectedAmenityIds);
+    var draftMatchAll = _matchAllAmenities;
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      builder: (sheetContext) => StatefulBuilder(
+        builder: (context, setSheetState) => SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 16, 16, 24),
+            child: SizedBox(
+              height: MediaQuery.sizeOf(context).height * .72,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Lọc theo tiện ích',
+                    style: Theme.of(context).textTheme.titleLarge,
+                  ),
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    value: draftMatchAll,
+                    title: const Text('Cơ sở có tất cả tiện ích đã chọn'),
+                    subtitle: const Text(
+                      'Tắt để tìm cơ sở có ít nhất một tiện ích.',
+                    ),
+                    onChanged: (value) =>
+                        setSheetState(() => draftMatchAll = value),
+                  ),
+                  Expanded(
+                    child: ListView(
+                      children: amenities
+                          .map(
+                            (amenity) => CheckboxListTile(
+                              value: draftIds.contains(amenity.id),
+                              title: Text(amenity.name),
+                              subtitle: amenity.description == null
+                                  ? null
+                                  : Text(
+                                      amenity.description!,
+                                      maxLines: 2,
+                                      overflow: TextOverflow.ellipsis,
+                                    ),
+                              onChanged: (selected) => setSheetState(() {
+                                if (selected == true) {
+                                  draftIds.add(amenity.id);
+                                } else {
+                                  draftIds.remove(amenity.id);
+                                }
+                              }),
+                            ),
+                          )
+                          .toList(),
+                    ),
+                  ),
+                  Wrap(
+                    alignment: WrapAlignment.spaceBetween,
+                    runSpacing: 8,
+                    children: [
+                      TextButton(
+                        onPressed: () => setSheetState(draftIds.clear),
+                        child: const Text('Xóa bộ lọc'),
+                      ),
+                      FilledButton(
+                        onPressed: () {
+                          _selectedAmenityIds
+                            ..clear()
+                            ..addAll(draftIds);
+                          _matchAllAmenities = draftMatchAll;
+                          Navigator.of(sheetContext).pop();
+                          _load();
+                        },
+                        child: const Text('Áp dụng'),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 
   @override
@@ -128,23 +293,102 @@ class _ExploreScreenState extends State<ExploreScreen> {
             ),
           ),
         ),
+        if (widget.amenityRepository != null)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+            child: Row(
+              children: [
+                OutlinedButton.icon(
+                  onPressed: _openAmenityFilter,
+                  icon: const Icon(Icons.tune),
+                  label: Text(
+                    _selectedAmenityIds.isEmpty
+                        ? 'Tiện ích'
+                        : 'Tiện ích (${_selectedAmenityIds.length})',
+                  ),
+                ),
+                if (_selectedAmenityIds.isNotEmpty) ...[
+                  const SizedBox(width: 8),
+                  TextButton(
+                    onPressed: () {
+                      _selectedAmenityIds.clear();
+                      _load();
+                    },
+                    child: const Text('Xóa'),
+                  ),
+                ],
+              ],
+            ),
+          ),
+        if (_selectedAmenityIds.isNotEmpty && _amenities.isNotEmpty)
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(
+                height: 48,
+                child: SingleChildScrollView(
+                  scrollDirection: Axis.horizontal,
+                  padding: const EdgeInsets.symmetric(horizontal: 20),
+                  child: Row(
+                    children: _amenities
+                        .where(
+                          (amenity) => _selectedAmenityIds.contains(amenity.id),
+                        )
+                        .map(
+                          (amenity) => Padding(
+                            padding: const EdgeInsets.only(right: 8),
+                            child: Chip(
+                              label: Text(
+                                amenity.name,
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ),
+                        )
+                        .toList(),
+                  ),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
+                child: Text(
+                  _matchAllAmenities
+                      ? 'Cơ sở có tất cả tiện ích đã chọn'
+                      : 'Cơ sở có ít nhất một tiện ích đã chọn',
+                  style: Theme.of(context).textTheme.bodySmall,
+                ),
+              ),
+            ],
+          ),
         Expanded(
-          child: FutureBuilder<List<Facility>>(
+          child: FutureBuilder<FacilitySearchPage>(
             future: _future,
             builder: (context, s) {
               if (s.connectionState == ConnectionState.waiting) {
                 return const _FacilityLoadingList();
               }
               if (s.hasError) {
-                return AppErrorState(
-                  message: 'Không thể tải danh sách cơ sở. Vui lòng kiểm tra kết nối và thử lại.',
-                  onRetry: _load,
+                return LayoutBuilder(
+                  builder: (context, constraints) => SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    child: ConstrainedBox(
+                      constraints: BoxConstraints(
+                        minHeight: constraints.maxHeight,
+                      ),
+                      child: AppErrorState(
+                        message: 'Không thể tải danh sách cơ sở. Vui lòng kiểm tra kết nối và thử lại.',
+                        onRetry: _load,
+                      ),
+                    ),
+                  ),
                 );
               }
-              final items = s.data ?? const [];
+              final result = s.data!;
+              final items = result.items;
               if (items.isEmpty) {
                 return RefreshIndicator(
-                  onRefresh: () async => _load(),
+                  onRefresh: _refresh,
                   child: ListView(
                     physics: const AlwaysScrollableScrollPhysics(),
                     children: const [
@@ -161,10 +405,13 @@ class _ExploreScreenState extends State<ExploreScreen> {
                 );
               }
               return RefreshIndicator(
-                onRefresh: () async => _load(),
+                onRefresh: _refresh,
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-                  itemCount: items.length + 1,
+                  itemCount:
+                      items.length +
+                      1 +
+                      ((result.hasNextPage || _loadMoreFailed) ? 1 : 0),
                   separatorBuilder: (_, _) => const SizedBox(height: 12),
                   itemBuilder: (context, i) {
                     if (i == 0) {
@@ -180,6 +427,34 @@ class _ExploreScreenState extends State<ExploreScreen> {
                             ),
                           ],
                         ),
+                      );
+                    }
+                    if (i == items.length + 1) {
+                      return Column(
+                        children: [
+                          if (_loadMoreFailed)
+                            const Text(
+                              'Không tải thêm được. Vui lòng thử lại.',
+                            ),
+                          OutlinedButton(
+                            onPressed: _loadingMore
+                                ? null
+                                : () => _loadMore(result),
+                            child: _loadingMore
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                    ),
+                                  )
+                                : Text(
+                                    _loadMoreFailed
+                                        ? 'Thử tải thêm lại'
+                                        : 'Tải thêm cơ sở',
+                                  ),
+                          ),
+                        ],
                       );
                     }
                     final f = items[i - 1];

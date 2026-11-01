@@ -11,6 +11,7 @@ import '../../../features/notifications/application/notification_providers.dart'
 import '../../../features/notifications/presentation/notification_bell.dart';
 import '../../../features/reservations/data/models/reservation.dart';
 import '../../dashboard/application/dashboard_providers.dart';
+import '../../dashboard/data/active_rental_summary.dart';
 import '../../dashboard/data/customer_inventory_summary.dart';
 
 class CustomerDashboardScreen extends ConsumerStatefulWidget {
@@ -22,7 +23,34 @@ class CustomerDashboardScreen extends ConsumerStatefulWidget {
 }
 
 class _CustomerDashboardScreenState
-    extends ConsumerState<CustomerDashboardScreen> {
+    extends ConsumerState<CustomerDashboardScreen>
+    with WidgetsBindingObserver {
+  bool _wasBackgrounded = false;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addObserver(this);
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused ||
+        state == AppLifecycleState.inactive ||
+        state == AppLifecycleState.detached) {
+      _wasBackgrounded = true;
+    } else if (state == AppLifecycleState.resumed && _wasBackgrounded) {
+      _wasBackgrounded = false;
+      _refresh();
+    }
+  }
+
   Future<void> _refresh() async {
     final requests = <Future<void>>[
       ref
@@ -44,6 +72,13 @@ class _CustomerDashboardScreenState
     await Future.wait(requests);
   }
 
+  Future<void> _openContract(String contractId) async {
+    await context.push('/contracts/${Uri.encodeComponent(contractId)}');
+    if (!mounted) return;
+    ref.invalidate(dashboardInventorySummaryProvider);
+    ref.invalidate(dashboardContractsProvider);
+  }
+
   String _greeting() {
     final hour = DateTime.now().hour;
     if (hour < 12) return 'Chào buổi sáng';
@@ -55,7 +90,7 @@ class _CustomerDashboardScreenState
   Widget build(BuildContext context) {
     final user = ref.watch(authControllerProvider).value;
     final summary = ref.watch(dashboardInventorySummaryProvider);
-    final contracts = ref.watch(dashboardContractsProvider);
+    final activeRentals = ref.watch(dashboardActiveRentalsProvider);
     final reservations = ref.watch(dashboardReservationsProvider);
     final facilities = ref.watch(dashboardFacilitiesProvider);
     final displayName = user?.name.trim().isNotEmpty == true
@@ -128,7 +163,7 @@ class _CustomerDashboardScreenState
               ],
             ),
             const SizedBox(height: 24),
-            _summarySection(summary),
+            _summarySection(summary, activeRentals),
             const SizedBox(height: 26),
             const AppSectionHeader(
               title: 'Truy cập nhanh',
@@ -157,7 +192,7 @@ class _CustomerDashboardScreenState
               ),
             ),
             const SizedBox(height: 10),
-            _activeStorage(context, contracts),
+            _activeStorage(context, activeRentals),
             const SizedBox(height: 26),
             AppSectionHeader(
               title: 'Hoạt động gần đây',
@@ -182,81 +217,108 @@ class _CustomerDashboardScreenState
     );
   }
 
-  Widget _summarySection(AsyncValue<CustomerInventorySummary> state) =>
-      state.when(
-        loading: () => const Card(
-          child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Tổng quan kho của bạn'),
-                SizedBox(height: 18),
-                LinearProgressIndicator(),
-              ],
-            ),
-          ),
+  Widget _summarySection(
+    AsyncValue<CustomerInventorySummary> state,
+    AsyncValue<ActiveRentalSummary> activeRentals,
+  ) => state.when(
+    loading: () => const Card(
+      child: Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text('Tổng quan kho của bạn'),
+            SizedBox(height: 18),
+            LinearProgressIndicator(),
+          ],
         ),
-        error: (error, _) => _DashboardInlineError(
-          message: 'Không thể tải tổng quan kho.',
-          onRetry: () => ref.invalidate(dashboardInventorySummaryProvider),
-        ),
-        data: (data) => Card(
-          color: AppTheme.primaryDarkGreen,
-          child: Padding(
-            padding: const EdgeInsets.all(20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      ),
+    ),
+    error: (error, _) => _DashboardInlineError(
+      message: 'Không thể tải tổng quan kho.',
+      onRetry: () => ref.invalidate(dashboardInventorySummaryProvider),
+    ),
+    data: (data) => Card(
+      color: AppTheme.primaryDarkGreen,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
               children: [
-                Row(
-                  children: [
-                    const Expanded(
-                      child: Text(
-                        'Tổng quan kho của bạn',
-                        style: TextStyle(
-                          color: Colors.white,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 16,
-                        ),
-                      ),
+                const Expanded(
+                  child: Text(
+                    'Tổng quan kho của bạn',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.w700,
+                      fontSize: 16,
                     ),
-                    Icon(
-                      Icons.north_east_rounded,
-                      color: Colors.white.withValues(alpha: .8),
-                      size: 20,
-                    ),
-                  ],
+                  ),
                 ),
-                const SizedBox(height: 18),
-                Row(
-                  children: [
-                    _Metric(value: '${data.totalStorageUnits}', label: 'Kho'),
-                    _metricDivider(),
-                    _Metric(
-                      value: '${data.totalActiveContracts}',
-                      label: 'Hợp đồng đang dùng',
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 16),
-                Divider(color: Colors.white.withValues(alpha: .22), height: 1),
-                const SizedBox(height: 14),
-                Row(
-                  children: [
-                    _Metric(value: '${data.totalSkus}', label: 'Loại hàng'),
-                    _metricDivider(),
-                    _Metric(
-                      value: NumberFormat('#,##0.##')
-                          .format(data.totalQuantity),
-                      label: 'Số lượng lưu kho',
-                    ),
-                  ],
+                Icon(
+                  Icons.north_east_rounded,
+                  color: Colors.white.withValues(alpha: .8),
+                  size: 20,
                 ),
               ],
             ),
-          ),
+            const SizedBox(height: 18),
+            Row(
+              children: [
+                _Metric(
+                  value: activeRentals.when(
+                    loading: () => '…',
+                    error: (_, _) => '—',
+                    data: (value) => '${value.rentedUnitCount}',
+                  ),
+                  label: 'Phòng kho đang thuê',
+                ),
+                _metricDivider(),
+                _Metric(
+                  value: '${data.totalActiveContracts}',
+                  label: 'Hợp đồng đang dùng',
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Divider(color: Colors.white.withValues(alpha: .22), height: 1),
+            const SizedBox(height: 14),
+            Row(
+              children: [
+                _Metric(
+                  value: '${data.totalStorageUnits}',
+                  label: 'Vị trí lưu hàng',
+                ),
+                _metricDivider(),
+                _Metric(value: '${data.totalSkus}', label: 'Loại hàng'),
+              ],
+            ),
+            const SizedBox(height: 14),
+            Text(
+              'Số lượng lưu kho',
+              style: Theme.of(context).textTheme.bodySmall
+                  ?.copyWith(color: Colors.white.withValues(alpha: .78)),
+            ),
+            const SizedBox(height: 3),
+            Text(
+              NumberFormat('#,##0.##').format(data.totalQuantity),
+              style: Theme.of(context).textTheme.headlineSmall
+                  ?.copyWith(color: Colors.white),
+            ),
+            if (activeRentals.hasError) ...[
+              const SizedBox(height: 10),
+              Text(
+                'Không thể xác định số phòng kho đang thuê.',
+                style: TextStyle(color: Colors.white.withValues(alpha: .82)),
+              ),
+            ],
+          ],
         ),
-      );
+      ),
+    ),
+  );
 
   Widget _metricDivider() => Container(
     width: 1,
@@ -353,7 +415,7 @@ class _CustomerDashboardScreenState
 
   Widget _activeStorage(
     BuildContext context,
-    AsyncValue<List<Map<String, dynamic>>> state,
+    AsyncValue<ActiveRentalSummary> state,
   ) => state.when(
     loading: () => const _LoadingCard(height: 92),
     error: (error, _) => _DashboardInlineError(
@@ -361,10 +423,7 @@ class _CustomerDashboardScreenState
       onRetry: () => ref.invalidate(dashboardContractsProvider),
     ),
     data: (rows) {
-      final active = rows
-          .where((row) => row['status']?.toString() == 'active')
-          .take(3)
-          .toList();
+      final active = rows.contracts.take(3).toList();
       if (active.isEmpty) {
         return Card(
           child: Padding(
@@ -389,6 +448,9 @@ class _CustomerDashboardScreenState
           final offering = _map(contract['offering']);
           final facilityName = facility?['name']?.toString();
           final unitNumber = unit?['unitNumber']?.toString();
+          final floor = unit?['floor']?.toString();
+          final zone = unit?['zone']?.toString();
+          final contractId = contract['id']?.toString();
           final typeName =
               offering?['name']?.toString() ??
               _map(offering?['unitType'])?['name']?.toString();
@@ -398,7 +460,9 @@ class _CustomerDashboardScreenState
             color: AppTheme.primaryDarkGreen,
             child: InkWell(
               borderRadius: BorderRadius.circular(20),
-              onTap: () => context.go('/contracts'),
+              onTap: contractId == null
+                  ? null
+                  : () => _openContract(contractId),
               child: Padding(
                 padding: const EdgeInsets.all(18),
                 child: Column(
@@ -451,6 +515,24 @@ class _CustomerDashboardScreenState
                       style: Theme.of(context).textTheme.headlineSmall
                           ?.copyWith(color: Colors.white),
                     ),
+                    if (floor?.isNotEmpty == true ||
+                        zone?.isNotEmpty == true) ...[
+                      const SizedBox(height: 4),
+                      Text(
+                        [
+                          if (floor?.isNotEmpty == true) 'Tầng $floor',
+                          if (zone?.isNotEmpty == true) 'Khu $zone',
+                        ].join(' · '),
+                        style: Theme.of(context).textTheme.bodyMedium
+                            ?.copyWith(color: Colors.white70),
+                      ),
+                    ],
+                    const SizedBox(height: 8),
+                    Text(
+                      'Hợp đồng: Đang hoạt động',
+                      style: Theme.of(context).textTheme.bodySmall
+                          ?.copyWith(color: Colors.white70),
+                    ),
                     if (typeName?.isNotEmpty == true) ...[
                       const SizedBox(height: 4),
                       Text(
@@ -471,9 +553,9 @@ class _CustomerDashboardScreenState
                         spacing: 14,
                         runSpacing: 6,
                         children: [
-                          if (endDate != null)
+                          if (contract['startDate'] != null || endDate != null)
                             Text(
-                              'Kết thúc ${MaterialLocalizations.of(context).formatMediumDate(endDate.toLocal())}',
+                              'Thời hạn ${_formatContractDate(context, contract['startDate'])} – ${endDate == null ? '—' : MaterialLocalizations.of(context).formatMediumDate(endDate.toLocal())}',
                               style: Theme.of(context).textTheme.bodySmall
                                   ?.copyWith(color: Colors.white70),
                             ),
@@ -621,6 +703,13 @@ class _CustomerDashboardScreenState
   Map<String, dynamic>? _map(Object? value) =>
       value is Map<String, dynamic> ? value : null;
 
+  String _formatContractDate(BuildContext context, Object? value) {
+    final date = DateTime.tryParse('$value');
+    return date == null
+        ? '—'
+        : MaterialLocalizations.of(context).formatMediumDate(date.toLocal());
+  }
+
   IconData _movementIcon(String type) => switch (type.toLowerCase()) {
     'in' || 'stock_in' => Icons.south_west,
     'out' || 'stock_out' => Icons.north_east,
@@ -642,6 +731,9 @@ class _Metric extends StatelessWidget {
       children: [
         Text(
           value,
+          key: label == 'Phòng kho đang thuê'
+              ? const ValueKey('rentedUnitsValue')
+              : null,
           style: Theme.of(context).textTheme.headlineSmall
               ?.copyWith(color: Colors.white),
         ),

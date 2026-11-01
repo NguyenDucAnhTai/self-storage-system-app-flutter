@@ -29,7 +29,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final user = ref.watch(authControllerProvider).value;
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Profile'),
+        title: const Text('Cá nhân'),
         actions: const [NotificationBell()],
       ),
       body: FutureBuilder<Map<String, dynamic>>(
@@ -42,7 +42,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
             return Center(
               child: TextButton(
                 onPressed: () => setState(() => _profile = _repo.getMine()),
-                child: const Text('Could not load profile. Retry'),
+                child: const Text('Không tải được hồ sơ. Thử lại'),
               ),
             );
           }
@@ -88,29 +88,49 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                       OutlinedButton.icon(
                         onPressed: () => _edit(data),
                         icon: const Icon(Icons.edit_outlined),
-                        label: const Text('Edit profile'),
+                        label: const Text('Chỉnh sửa hồ sơ'),
                       ),
                     ],
                   ),
                 ),
               ),
               const SizedBox(height: 24),
-              const AppSectionHeader(title: 'Account settings'),
+              const AppSectionHeader(title: 'Cài đặt tài khoản'),
               const SizedBox(height: 8),
               ListTile(
                 leading: const Icon(Icons.lock_outline),
-                title: const Text('Change password'),
+                title: const Text('Đổi mật khẩu'),
                 onTap: () => context.push('/change-password'),
               ),
               ListTile(
                 leading: const Icon(Icons.inventory_2_outlined),
-                title: const Text('My storages & contracts'),
+                title: const Text('Kho và hợp đồng của tôi'),
                 onTap: () => context.push('/contracts'),
               ),
               ListTile(
                 leading: const Icon(Icons.notifications_outlined),
-                title: const Text('Notifications'),
+                title: const Text('Thông báo'),
                 onTap: () => context.push('/notifications'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.receipt_long_outlined),
+                title: const Text('Lịch sử thanh toán'),
+                onTap: () => context.push('/payments/history'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.currency_exchange_outlined),
+                title: const Text('Theo dõi hoàn tiền'),
+                onTap: () => context.push('/refunds'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.support_agent_outlined),
+                title: const Text('Hỗ trợ khách hàng'),
+                onTap: () => context.push('/support'),
+              ),
+              ListTile(
+                leading: const Icon(Icons.report_problem_outlined),
+                title: const Text('Báo cáo sự cố'),
+                onTap: () => context.push('/incidents'),
               ),
               FilledButton.tonalIcon(
                 onPressed: () async {
@@ -118,7 +138,7 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
                   if (context.mounted) context.go('/login');
                 },
                 icon: const Icon(Icons.logout),
-                label: const Text('Sign out'),
+                label: const Text('Đăng xuất'),
               ),
             ],
           );
@@ -132,20 +152,17 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
     final result = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('Edit address'),
+        title: const Text('Chỉnh sửa địa chỉ'),
         content: TextField(
           controller: address,
           maxLength: 200,
-          decoration: const InputDecoration(labelText: 'Address'),
+          decoration: const InputDecoration(labelText: 'Địa chỉ'),
         ),
         actions: [
-          TextButton(
-            onPressed: () => context.pop(),
-            child: const Text('Cancel'),
-          ),
+          TextButton(onPressed: () => context.pop(), child: const Text('Hủy')),
           FilledButton(
             onPressed: () => context.pop(address.text),
-            child: const Text('Save'),
+            child: const Text('Lưu'),
           ),
         ],
       ),
@@ -157,8 +174,9 @@ class _ProfileScreenState extends ConsumerState<ProfileScreen> {
       if (mounted) setState(() => _profile = Future.value(updated));
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Profile update failed: $e')));
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Không cập nhật được hồ sơ: $e')),
+        );
       }
     }
   }

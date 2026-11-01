@@ -19,6 +19,28 @@ class PaymentRepository {
     return Payment.fromJson(_data(response.data));
   }
 
+  /// Lists the authenticated customer's payments. Ownership is derived from
+  /// the session by the API; callers must never provide customerId.
+  Future<PaymentHistoryPage> getHistoryPage({
+    int page = 1,
+    int limit = 20,
+  }) async {
+    final response = await _dio.get<Map<String, dynamic>>(
+      '/payments',
+      queryParameters: {
+        'page': page,
+        'limit': limit.clamp(1, 100),
+        'sortBy': 'createdAt',
+        'sortOrder': 'desc',
+      },
+    );
+    final data = response.data?['data'];
+    if (data is! Map) {
+      throw const FormatException('Invalid payments list response.');
+    }
+    return PaymentHistoryPage.fromJson(Map<String, dynamic>.from(data));
+  }
+
   /// Lists only this authenticated customer's matching contract payments.
   /// The backend applies customer ownership from the session and accepts these
   /// documented filters; never send a client-supplied customerId here.

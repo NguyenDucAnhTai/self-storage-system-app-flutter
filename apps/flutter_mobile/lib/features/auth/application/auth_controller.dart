@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../core/providers/app_providers.dart';
 import '../../dashboard/application/dashboard_providers.dart';
 import '../../notifications/application/notification_providers.dart';
+import '../../payments/application/payment_history_provider.dart';
 import '../data/models/auth_user.dart';
 import '../data/repositories/auth_repository.dart';
 
@@ -27,6 +28,7 @@ class AuthController extends AsyncNotifier<AuthUser?> {
     state.requireValue;
     ref.invalidate(notificationFeedProvider);
     ref.invalidate(notificationUnreadCountProvider);
+    ref.invalidate(paymentHistoryProvider);
     _invalidateDashboard();
   }
 
@@ -50,6 +52,7 @@ class AuthController extends AsyncNotifier<AuthUser?> {
     state.requireValue;
     ref.invalidate(notificationFeedProvider);
     ref.invalidate(notificationUnreadCountProvider);
+    ref.invalidate(paymentHistoryProvider);
     _invalidateDashboard();
   }
 
@@ -58,6 +61,7 @@ class AuthController extends AsyncNotifier<AuthUser?> {
     state = const AsyncData(null);
     ref.invalidate(notificationFeedProvider);
     ref.invalidate(notificationUnreadCountProvider);
+    ref.invalidate(paymentHistoryProvider);
     _invalidateDashboard();
   }
 

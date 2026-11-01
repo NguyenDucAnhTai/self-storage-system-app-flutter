@@ -15,6 +15,34 @@ class ContractRepository {
         : const [];
   }
 
+  Future<List<Map<String, dynamic>>> listAll({int limit = 20}) async {
+    final result = <Map<String, dynamic>>[];
+    var page = 1;
+    var totalPages = 1;
+    do {
+      final response = await _dio.get<Map<String, dynamic>>(
+        '/contracts',
+        queryParameters: {'page': page, 'limit': limit},
+      );
+      final data = response.data?['data'];
+      if (data is List) {
+        result.addAll(data.whereType<Map<String, dynamic>>());
+        break;
+      }
+      if (data is! Map || data['items'] is! List) {
+        throw const FormatException('Invalid contracts list response.');
+      }
+      result.addAll((data['items'] as List).whereType<Map<String, dynamic>>());
+      final pagination = data['pagination'];
+      final parsed = pagination is Map
+          ? int.tryParse('${pagination['totalPages'] ?? ''}')
+          : null;
+      totalPages = parsed == null || parsed < page ? page : parsed;
+      page++;
+    } while (page <= totalPages);
+    return result;
+  }
+
   Future<Map<String, dynamic>> detail(String id) async {
     final r = await _dio.get<Map<String, dynamic>>('/contracts/$id');
     final d = r.data?['data'];
@@ -72,5 +100,35 @@ class ContractRepository {
         if (note?.isNotEmpty == true) 'note': note,
       },
     );
+  }
+
+  Future<Map<String, dynamic>> confirmSettlement(String id) async =>
+      _postSettlement('/contracts/$id/settlement/confirm');
+
+  Future<Map<String, dynamic>> disputeSettlement(
+    String id,
+    String reason,
+  ) async {
+    if (reason.trim().isEmpty || reason.trim().length > 1000) {
+      throw const FormatException('Settlement dispute reason is invalid.');
+    }
+    final response = await _dio.post<Map<String, dynamic>>(
+      '/contracts/$id/settlement/dispute',
+      data: {'disputeReason': reason.trim()},
+    );
+    final data = response.data?['data'];
+    if (data is! Map<String, dynamic>) {
+      throw const FormatException('Invalid settlement response.');
+    }
+    return data;
+  }
+
+  Future<Map<String, dynamic>> _postSettlement(String path) async {
+    final response = await _dio.post<Map<String, dynamic>>(path);
+    final data = response.data?['data'];
+    if (data is! Map<String, dynamic>) {
+      throw const FormatException('Invalid settlement response.');
+    }
+    return data;
   }
 }

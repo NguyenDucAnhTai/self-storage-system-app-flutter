@@ -23,11 +23,19 @@ import '../features/reservations/presentation/screens/reservation_detail_screen.
 import '../features/reservations/presentation/screens/reservation_list_screen.dart';
 import '../features/payments/application/payment_status_tracker.dart';
 import '../features/payments/presentation/screens/payment_screen.dart';
+import '../features/payments/presentation/screens/payment_history_screen.dart';
+import '../features/contracts/presentation/contract_settlement_screen.dart';
+import '../features/refunds/presentation/refund_screens.dart';
+import '../features/customer_care/customer_care.dart';
+import '../features/customer_care/customer_care_screens.dart';
+import '../features/amenities/amenity_repository.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
   final auth = ref.watch(authControllerProvider);
   final features = ref.watch(reservationPaymentProvider);
   final facilityRepo = ref.watch(facilityRepositoryProvider);
+  final amenityRepo = AmenityRepository(ref.watch(dioProvider));
+  final careRepo = CustomerCareRepository(ref.watch(dioProvider));
   return GoRouter(
     initialLocation: '/splash',
     redirect: (context, state) => resolveAuthRedirect(
@@ -60,6 +68,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             path: '/explore',
             builder: (context, _) => ExploreScreen(
               repository: facilityRepo,
+              amenityRepository: amenityRepo,
               onSelect: (f) => context.push('/facilities/${f.id}'),
             ),
           ),
@@ -69,6 +78,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               facilityId: state.pathParameters['id']!,
               repository: facilityRepo,
               availabilityRepository: features.reservations,
+              amenityRepository: amenityRepo,
               onBook: (selection) {
                 if (auth.value == null) {
                   context.go(
@@ -95,6 +105,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
                   1,
               repository: features.reservations,
               facilityRepository: facilityRepo,
+              amenityRepository: amenityRepo,
               onCreated: (r) {
                 ref.invalidate(dashboardInventorySummaryProvider);
                 ref.invalidate(dashboardContractsProvider);
@@ -124,12 +135,28 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ),
           ),
           GoRoute(
+            path: '/payments/history',
+            builder: (_, _) => const PaymentHistoryScreen(),
+          ),
+          GoRoute(
             path: '/payments/:id/view',
             builder: (context, state) => PaymentScreen(
               existingPaymentId: state.pathParameters['id']!,
               expectedContractId: state.uri.queryParameters['contractId'],
+              expectedReservationId: state.uri.queryParameters['reservationId'],
               repository: features.payments,
               tracker: PaymentStatusTracker(features.payments),
+              onOpenReservation:
+                  _validId(state.uri.queryParameters['reservationId'])
+                  ? () => context.push(
+                      '/reservations/${Uri.encodeComponent(state.uri.queryParameters['reservationId']!)}',
+                    )
+                  : null,
+              onOpenContract: _validId(state.uri.queryParameters['contractId'])
+                  ? () => context.push(
+                      '/contracts/${Uri.encodeComponent(state.uri.queryParameters['contractId']!)}',
+                    )
+                  : null,
               onPaymentStatusChanged: () {
                 ref.invalidate(dashboardInventorySummaryProvider);
                 ref.invalidate(dashboardContractsProvider);
@@ -177,6 +204,60 @@ final appRouterProvider = Provider<GoRouter>((ref) {
             ),
           ),
           GoRoute(
+            path: '/contracts/:id/settlement',
+            builder: (context, state) => ContractSettlementScreen(
+              contractId: state.pathParameters['id']!,
+              dio: ref.read(dioProvider),
+              onChanged: () {
+                ref.invalidate(dashboardContractsProvider);
+                ref.invalidate(dashboardInventorySummaryProvider);
+              },
+            ),
+          ),
+          GoRoute(
+            path: '/refunds',
+            builder: (_, _) => RefundListScreen(dio: ref.read(dioProvider)),
+          ),
+          GoRoute(
+            path: '/refunds/:id',
+            builder: (_, state) => RefundDetailScreen(
+              dio: ref.read(dioProvider),
+              refundId: state.pathParameters['id']!,
+            ),
+          ),
+          GoRoute(
+            path: '/support',
+            builder: (_, _) => CareListScreen(repo: careRepo, incidents: false),
+          ),
+          GoRoute(
+            path: '/support/create',
+            builder: (_, _) => SupportCreateScreen(repo: careRepo),
+          ),
+          GoRoute(
+            path: '/support/:id',
+            builder: (_, state) => CareDetailScreen(
+              repo: careRepo,
+              id: state.pathParameters['id']!,
+              incident: false,
+            ),
+          ),
+          GoRoute(
+            path: '/incidents',
+            builder: (_, _) => CareListScreen(repo: careRepo, incidents: true),
+          ),
+          GoRoute(
+            path: '/incidents/create',
+            builder: (_, _) => const IncidentCreateBlockedScreen(),
+          ),
+          GoRoute(
+            path: '/incidents/:id',
+            builder: (_, state) => CareDetailScreen(
+              repo: careRepo,
+              id: state.pathParameters['id']!,
+              incident: true,
+            ),
+          ),
+          GoRoute(
             path: '/notifications',
             builder: (_, _) => const NotificationsScreen(),
           ),
@@ -185,6 +266,9 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     ],
   );
 });
+
+bool _validId(String? value) =>
+    value != null && RegExp(r'^[0-9a-fA-F]{24}$').hasMatch(value);
 
 String? resolveAuthRedirect({
   required bool authLoading,
@@ -201,6 +285,8 @@ String? resolveAuthRedirect({
       path == '/profile' ||
       path == '/change-password' ||
       path.startsWith('/contracts') ||
+      path.startsWith('/support') ||
+      path.startsWith('/incidents') ||
       path == '/notifications';
   if (guarded && !signedIn) {
     return '/login?from=${Uri.encodeComponent(currentUri)}';

@@ -136,8 +136,14 @@ class AppTheme {
       chipTheme: base.chipTheme.copyWith(
         shape: const StadiumBorder(side: BorderSide(color: border)),
         selectedColor: lightMint,
+        backgroundColor: Colors.white,
+        disabledColor: const Color(0xFFE9EEEB),
+        checkmarkColor: Colors.white,
         side: const BorderSide(color: border),
-        labelStyle: const TextStyle(fontWeight: FontWeight.w600),
+        labelStyle: const TextStyle(
+          color: primaryText,
+          fontWeight: FontWeight.w600,
+        ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         height: 70,

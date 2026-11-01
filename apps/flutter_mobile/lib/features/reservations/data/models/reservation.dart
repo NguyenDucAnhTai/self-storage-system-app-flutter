@@ -28,6 +28,8 @@ class Reservation {
     this.facility,
     this.storageUnit,
     this.offering,
+    this.pendingUnitChange,
+    this.unitChangeHistory = const [],
   });
 
   final String id;
@@ -58,6 +60,8 @@ class Reservation {
   final Map<String, dynamic>? facility;
   final Map<String, dynamic>? storageUnit;
   final Map<String, dynamic>? offering;
+  final ReservationPendingUnitChange? pendingUnitChange;
+  final List<ReservationUnitChange> unitChangeHistory;
 
   factory Reservation.fromJson(Map<String, dynamic> json) => Reservation(
     id: _string(json['id']),
@@ -88,17 +92,116 @@ class Reservation {
     facility: _map(json['facility']),
     storageUnit: _map(json['storageUnit']),
     offering: _map(json['offering']),
+    pendingUnitChange: ReservationPendingUnitChange.fromJson(
+      json['pendingUnitChange'],
+    ),
+    unitChangeHistory: _list(json['unitChangeHistory'])
+        .map(ReservationUnitChange.fromJson)
+        .toList(),
   );
 
   static DateTime? _date(Object? value) =>
       value == null ? null : DateTime.parse(_string(value));
   static Map<String, dynamic>? _map(Object? value) =>
       value is Map<String, dynamic> ? value : null;
+  static List<Map<String, dynamic>> _list(Object? value) => value is List
+      ? value.whereType<Map>().map(Map<String, dynamic>.from).toList()
+      : const [];
   static String _string(Object? value) => value?.toString() ?? '';
   static String? _nullableString(Object? value) => value?.toString();
   static double _number(Object? value) =>
       value is num ? value.toDouble() : double.tryParse('$value') ?? 0;
 }
+
+class ReservationPendingUnitChange {
+  const ReservationPendingUnitChange({
+    required this.newStorageUnitId,
+    required this.newOfferingId,
+    required this.newPricePerUnit,
+    required this.reason,
+    required this.oldUnitStatus,
+    required this.proposedAt,
+    this.newStorageUnit,
+    this.newOffering,
+    this.priceDifference,
+  });
+  final String newStorageUnitId;
+  final String newOfferingId;
+  final double newPricePerUnit;
+  final String reason;
+  final String oldUnitStatus;
+  final DateTime? proposedAt;
+  final Map<String, dynamic>? newStorageUnit;
+  final Map<String, dynamic>? newOffering;
+  final double? priceDifference;
+
+  static ReservationPendingUnitChange? fromJson(Object? value) {
+    if (value is! Map) return null;
+    final json = Map<String, dynamic>.from(value);
+    return ReservationPendingUnitChange(
+      newStorageUnitId: '${json['newStorageUnitId'] ?? ''}',
+      newOfferingId: '${json['newFacilityUnitTypeOfferingId'] ?? ''}',
+      newPricePerUnit: _number(json['newPricePerUnit']),
+      reason: '${json['reason'] ?? ''}',
+      oldUnitStatus: '${json['oldUnitStatus'] ?? ''}',
+      proposedAt: DateTime.tryParse('${json['proposedAt'] ?? ''}'),
+      newStorageUnit: json['newStorageUnit'] is Map
+          ? Map<String, dynamic>.from(json['newStorageUnit'] as Map)
+          : null,
+      newOffering: json['newOffering'] is Map
+          ? Map<String, dynamic>.from(json['newOffering'] as Map)
+          : null,
+      priceDifference: json['priceDifference'] == null
+          ? null
+          : _number(json['priceDifference']),
+    );
+  }
+}
+
+class ReservationUnitChange {
+  const ReservationUnitChange({
+    required this.status,
+    required this.reason,
+    this.fromUnit,
+    this.toUnit,
+    this.fromPrice,
+    this.toPrice,
+    this.proposedAt,
+    this.decisionAt,
+    this.rejectReason,
+  });
+  final String status;
+  final String reason;
+  final Map<String, dynamic>? fromUnit;
+  final Map<String, dynamic>? toUnit;
+  final double? fromPrice;
+  final double? toPrice;
+  final DateTime? proposedAt;
+  final DateTime? decisionAt;
+  final String? rejectReason;
+
+  factory ReservationUnitChange.fromJson(Map<String, dynamic> json) =>
+      ReservationUnitChange(
+        status: '${json['status'] ?? ''}',
+        reason: '${json['reason'] ?? ''}',
+        fromUnit: json['fromUnit'] is Map
+            ? Map<String, dynamic>.from(json['fromUnit'] as Map)
+            : null,
+        toUnit: json['toUnit'] is Map
+            ? Map<String, dynamic>.from(json['toUnit'] as Map)
+            : null,
+        fromPrice: json['fromPrice'] == null
+            ? null
+            : _number(json['fromPrice']),
+        toPrice: json['toPrice'] == null ? null : _number(json['toPrice']),
+        proposedAt: DateTime.tryParse('${json['proposedAt'] ?? ''}'),
+        decisionAt: DateTime.tryParse('${json['decisionAt'] ?? ''}'),
+        rejectReason: json['rejectReason']?.toString(),
+      );
+}
+
+double _number(Object? value) =>
+    value is num ? value.toDouble() : double.tryParse('$value') ?? 0;
 
 class AvailableTimeSlot {
   const AvailableTimeSlot({

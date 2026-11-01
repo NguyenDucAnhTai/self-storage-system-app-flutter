@@ -15,6 +15,9 @@ class PaymentScreen extends StatefulWidget {
     this.reservationId,
     this.existingPaymentId,
     this.expectedContractId,
+    this.expectedReservationId,
+    this.onOpenReservation,
+    this.onOpenContract,
     required this.repository,
     required this.tracker,
     this.onPaymentStatusChanged,
@@ -22,6 +25,9 @@ class PaymentScreen extends StatefulWidget {
   final String? reservationId;
   final String? existingPaymentId;
   final String? expectedContractId;
+  final String? expectedReservationId;
+  final VoidCallback? onOpenReservation;
+  final VoidCallback? onOpenContract;
   final PaymentRepository repository;
   final PaymentStatusTracker tracker;
   final VoidCallback? onPaymentStatusChanged;
@@ -107,6 +113,11 @@ class _PaymentScreenState extends State<PaymentScreen>
           (payment.contractId != widget.expectedContractId ||
               payment.purpose != 'rent_first_period')) {
         throw const FormatException('Payment does not match this contract.');
+      }
+      if (widget.expectedReservationId != null &&
+          (payment.reservationId != widget.expectedReservationId ||
+              payment.purpose != 'reservation_deposit')) {
+        throw const FormatException('Payment does not match this reservation.');
       }
       if (!mounted) return;
       setState(() {
@@ -260,7 +271,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                 if (payment.reservationId?.isNotEmpty == true) ...[
                   const SizedBox(height: 4),
                   Text(
-                    'Mã đơn đặt kho ${payment.reservationId}',
+                    'Có liên kết với đơn đặt kho',
                     style: Theme.of(context).textTheme.bodySmall
                         ?.copyWith(color: Colors.white.withValues(alpha: .8)),
                   ),
@@ -268,7 +279,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                 if (payment.contractId?.isNotEmpty == true) ...[
                   const SizedBox(height: 4),
                   Text(
-                    'Mã hợp đồng ${payment.contractId}',
+                    'Có liên kết với hợp đồng',
                     style: Theme.of(context).textTheme.bodySmall
                         ?.copyWith(color: Colors.white.withValues(alpha: .8)),
                   ),
@@ -370,8 +381,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                 if (payment.expiresAt != null)
                   _InfoLine(
                     label: 'Hết hạn lúc',
-                    value: DateFormat('dd/MM/yyyy HH:mm')
-                        .format(payment.expiresAt!.toLocal()),
+                    value: _vietnamTime(payment.expiresAt!),
                   ),
                 _InfoLine(
                   label: 'Trạng thái',
@@ -380,8 +390,7 @@ class _PaymentScreenState extends State<PaymentScreen>
                 if (paid && payment.paidAt != null)
                   _InfoLine(
                     label: 'Đã thanh toán lúc',
-                    value: DateFormat('dd/MM/yyyy HH:mm')
-                        .format(payment.paidAt!.toLocal()),
+                    value: _vietnamTime(payment.paidAt!),
                   ),
                 if (paid && payment.paidAmount > 0)
                   _InfoLine(
@@ -392,10 +401,69 @@ class _PaymentScreenState extends State<PaymentScreen>
                       decimalDigits: 0,
                     ).format(payment.paidAmount),
                   ),
+                if (payment.overpaidAmount > 0)
+                  _InfoLine(
+                    label: 'Số tiền thanh toán vượt',
+                    value: NumberFormat.currency(
+                      locale: 'vi_VN',
+                      symbol: '₫',
+                      decimalDigits: 0,
+                    ).format(payment.overpaidAmount),
+                  ),
+                if (payment.confirmedAt != null)
+                  _InfoLine(
+                    label: 'Xác nhận lúc',
+                    value: _vietnamTime(payment.confirmedAt!),
+                  ),
+                if (payment.confirmedBy?.name?.isNotEmpty == true)
+                  _InfoLine(
+                    label: 'Người xác nhận',
+                    value: payment.confirmedBy!.name!,
+                  ),
+                if (payment.cancelledAt != null)
+                  _InfoLine(
+                    label: 'Đã hủy lúc',
+                    value: _vietnamTime(payment.cancelledAt!),
+                  ),
+                if (payment.cancellationReason?.isNotEmpty == true)
+                  _InfoLine(
+                    label: 'Lý do hủy',
+                    value: payment.cancellationReason!,
+                  ),
+                if (payment.note?.isNotEmpty == true)
+                  _InfoLine(label: 'Ghi chú', value: payment.note!),
               ],
             ),
           ),
         ),
+        if (payment.proofImageUrl != null && _isWebUrl(payment.proofImageUrl!))
+          Padding(
+            padding: const EdgeInsets.only(top: 12),
+            child: OutlinedButton.icon(
+              onPressed: () => _showProof(payment.proofImageUrl!),
+              icon: const Icon(Icons.image_outlined),
+              label: const Text('Xem chứng từ thanh toán'),
+            ),
+          ),
+        if (widget.onOpenReservation != null || widget.onOpenContract != null)
+          Card(
+            child: Column(
+              children: [
+                if (widget.onOpenReservation != null)
+                  ListTile(
+                    leading: const Icon(Icons.event_note_outlined),
+                    title: const Text('Xem đơn đặt kho liên quan'),
+                    onTap: widget.onOpenReservation,
+                  ),
+                if (widget.onOpenContract != null)
+                  ListTile(
+                    leading: const Icon(Icons.description_outlined),
+                    title: const Text('Xem hợp đồng liên quan'),
+                    onTap: widget.onOpenContract,
+                  ),
+              ],
+            ),
+          ),
         if (_error != null)
           Padding(
             padding: const EdgeInsets.only(top: 12),
@@ -498,8 +566,42 @@ class _PaymentScreenState extends State<PaymentScreen>
     'partially_paid' => 'Đã thanh toán một phần',
     'expired' => 'Đã hết hạn',
     'cancelled' => 'Đã hủy',
-    _ => status,
+    _ => 'Đang cập nhật',
   };
+
+  bool _isWebUrl(String value) {
+    final uri = Uri.tryParse(value);
+    return uri != null &&
+        const {'http', 'https'}.contains(uri.scheme) &&
+        uri.host.isNotEmpty;
+  }
+
+  String _vietnamTime(DateTime value) =>
+      DateFormat('dd/MM/yyyy HH:mm')
+          .format(value.toUtc().add(const Duration(hours: 7)));
+
+  Future<void> _showProof(String url) => showDialog<void>(
+    context: context,
+    builder: (context) => Dialog(
+      child: Padding(
+        padding: const EdgeInsets.all(12),
+        child: Image.network(
+          url,
+          fit: BoxFit.contain,
+          loadingBuilder: (context, child, progress) => progress == null
+              ? child
+              : const SizedBox(
+                  height: 240,
+                  child: Center(child: CircularProgressIndicator()),
+                ),
+          errorBuilder: (context, error, stack) => const Padding(
+            padding: EdgeInsets.all(24),
+            child: Text('Không tải được chứng từ.'),
+          ),
+        ),
+      ),
+    ),
+  );
 }
 
 class _StatusPill extends StatelessWidget {

@@ -13,11 +13,15 @@ class ContractDetailScreen extends StatefulWidget {
     required this.repository,
     required this.paymentRepository,
     required this.onViewPayment,
+    this.onContractChanged,
+    this.onOpenSettlement,
   });
   final Map<String, dynamic> contract;
   final ContractRepository repository;
   final PaymentRepository paymentRepository;
   final Future<void> Function(Payment payment) onViewPayment;
+  final VoidCallback? onContractChanged;
+  final VoidCallback? onOpenSettlement;
 
   @override
   State<ContractDetailScreen> createState() => _ContractDetailScreenState();
@@ -66,6 +70,7 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
           _contract = latest;
           _error = null;
         });
+        widget.onContractChanged?.call();
       }
     } catch (_) {
       if (mounted && reportError) {
@@ -152,7 +157,8 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
 
         final byStatus = rank(a).compareTo(rank(b));
         if (byStatus != 0) return byStatus;
-        return b.updatedAt.compareTo(a.updatedAt);
+        return (b.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0))
+            .compareTo(a.updatedAt ?? DateTime.fromMillisecondsSinceEpoch(0));
       });
     return sorted.first;
   }
@@ -377,6 +383,14 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
               active: active,
               hasTerms: _hasTerms,
             ),
+            if (status == 'completed' && widget.onOpenSettlement != null) ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: widget.onOpenSettlement,
+                icon: const Icon(Icons.receipt_long_outlined),
+                label: const Text('Xem quyết toán tiền cọc'),
+              ),
+            ],
             if (!_hasTerms && !customerSigned && status == 'draft') ...[
               const SizedBox(height: 12),
               const _Notice(

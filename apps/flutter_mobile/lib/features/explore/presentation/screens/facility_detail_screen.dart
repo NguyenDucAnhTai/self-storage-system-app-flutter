@@ -7,6 +7,7 @@ import '../../../../core/widgets/app_ui.dart';
 import '../../../reservations/data/repositories/reservation_repository.dart';
 import '../../data/models/facility.dart';
 import '../../data/repositories/facility_repository.dart';
+import '../../../amenities/amenity_repository.dart';
 
 class FacilityDetailScreen extends StatefulWidget {
   const FacilityDetailScreen({
@@ -15,12 +16,14 @@ class FacilityDetailScreen extends StatefulWidget {
     required this.repository,
     required this.availabilityRepository,
     required this.onBook,
+    this.amenityRepository,
   });
 
   final String facilityId;
   final FacilityRepository repository;
   final ReservationRepository availabilityRepository;
   final ValueChanged<({Facility facility, FacilityOffering offering})> onBook;
+  final AmenityRepository? amenityRepository;
 
   @override
   State<FacilityDetailScreen> createState() => _FacilityDetailScreenState();
@@ -29,16 +32,19 @@ class FacilityDetailScreen extends StatefulWidget {
 class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
   late Future<FacilityDetail> _future;
   final Map<String, Future<List<Map<String, dynamic>>>> _availability = {};
+  late Future<List<FacilityAmenityOffering>>? _amenitiesFuture;
 
   @override
   void initState() {
     super.initState();
     _future = widget.repository.getDetail(widget.facilityId);
+    _amenitiesFuture = widget.amenityRepository?.availableAt(widget.facilityId);
   }
 
   void _reload() => setState(() {
     _future = widget.repository.getDetail(widget.facilityId);
     _availability.clear();
+    _amenitiesFuture = widget.amenityRepository?.availableAt(widget.facilityId);
   });
 
   Future<List<Map<String, dynamic>>> _unitsFor(FacilityOffering offering) {
@@ -153,9 +159,92 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
             ...detail.offerings.map(
               (offering) => _offeringCard(facility, offering),
             ),
+            if (_amenitiesFuture != null) _amenitiesSection(),
           ],
         );
       },
+    ),
+  );
+
+  Widget _amenitiesSection() => Padding(
+    padding: const EdgeInsets.only(top: 12),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Padding(
+          padding: EdgeInsets.fromLTRB(20, 14, 20, 12),
+          child: AppSectionHeader(
+            title: 'Tiện ích tại cơ sở',
+            subtitle: 'Thông tin và giá do cơ sở cung cấp',
+          ),
+        ),
+        FutureBuilder<List<FacilityAmenityOffering>>(
+          future: _amenitiesFuture,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: CircularProgressIndicator(),
+                ),
+              );
+            }
+            if (snapshot.hasError) {
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 20),
+                child: TextButton.icon(
+                  onPressed: _reload,
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Không tải được tiện ích · Thử lại'),
+                ),
+              );
+            }
+            final offerings =
+                snapshot.data ?? const <FacilityAmenityOffering>[];
+            if (offerings.isEmpty) {
+              return const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
+                child: Text('Cơ sở chưa công bố tiện ích.'),
+              );
+            }
+            return Column(
+              children: offerings
+                  .map(
+                    (item) => Card(
+                      margin: const EdgeInsets.fromLTRB(20, 0, 20, 10),
+                      child: ListTile(
+                        leading: Icon(
+                          item.isAvailable
+                              ? Icons.check_circle_outline
+                              : Icons.remove_circle_outline,
+                          color: item.isAvailable
+                              ? Theme.of(context).colorScheme.primary
+                              : Theme.of(context).colorScheme.outline,
+                        ),
+                        title: Text(item.name),
+                        subtitle: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if (item.description?.trim().isNotEmpty == true)
+                              Text(item.description!),
+                            Text(
+                              '${NumberFormat('#,##0', 'vi_VN').format(item.pricePerUnit)} ₫ / ${_billingLabel(item.billingUnit)}',
+                            ),
+                            if (item.notes?.trim().isNotEmpty == true)
+                              Text(item.notes!),
+                            if (!item.isAvailable)
+                              const Text('Hiện không còn số lượng khả dụng.'),
+                          ],
+                        ),
+                        isThreeLine: true,
+                      ),
+                    ),
+                  )
+                  .toList(),
+            );
+          },
+        ),
+      ],
     ),
   );
 
@@ -350,7 +439,8 @@ class _FacilityDetailScreenState extends State<FacilityDetailScreen> {
     'week' => 'tuần',
     'month' => 'tháng',
     'year' => 'năm',
-    _ => value,
+    'one_time' => 'một lần',
+    _ => 'đơn vị',
   };
 
   String _dimensions(Map<String, dynamic> dimensions) {

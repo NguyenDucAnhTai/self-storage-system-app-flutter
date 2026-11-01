@@ -61,6 +61,14 @@ class _ContractDetailRouteScreenState extends State<ContractDetailRouteScreen> {
         contract: state.data!,
         repository: _contracts,
         paymentRepository: _payments,
+        onContractChanged: widget.onContractChanged,
+        onOpenSettlement: () async {
+          await context.push(
+            '/contracts/${Uri.encodeComponent(widget.contractId)}/settlement',
+          );
+          _retry();
+          widget.onContractChanged?.call();
+        },
         onViewPayment: (Payment payment) async {
           await context.push(
             '/payments/${Uri.encodeComponent(payment.id)}/view?contractId=${Uri.encodeComponent(widget.contractId)}',

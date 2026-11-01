@@ -7,6 +7,7 @@ import '../../explore/data/models/facility.dart';
 import '../../reservations/data/models/reservation.dart';
 import '../data/customer_inventory_summary.dart';
 import '../data/customer_inventory_summary_repository.dart';
+import '../data/active_rental_summary.dart';
 
 final customerInventorySummaryRepositoryProvider =
     Provider<CustomerInventorySummaryRepository>(
@@ -21,7 +22,14 @@ final dashboardInventorySummaryProvider =
 
 final dashboardContractsProvider =
     FutureProvider.autoDispose<List<Map<String, dynamic>>>(
-      (ref) => ContractRepository(ref.watch(dioProvider)).list(),
+      (ref) => ContractRepository(ref.watch(dioProvider)).listAll(),
+    );
+
+final dashboardActiveRentalsProvider =
+    FutureProvider.autoDispose<ActiveRentalSummary>(
+      (ref) async => ActiveRentalSummary.fromContracts(
+        await ref.watch(dashboardContractsProvider.future),
+      ),
     );
 
 final dashboardReservationsProvider =

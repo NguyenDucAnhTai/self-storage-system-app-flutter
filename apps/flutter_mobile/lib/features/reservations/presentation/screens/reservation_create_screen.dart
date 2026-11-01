@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:dio/dio.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/network/api_error.dart';
 import '../../../../core/widgets/app_ui.dart';
@@ -8,6 +9,7 @@ import '../../../explore/data/models/facility.dart';
 import '../../../explore/data/repositories/facility_repository.dart';
 import '../../data/models/reservation.dart';
 import '../../data/repositories/reservation_repository.dart';
+import '../../../amenities/amenity_repository.dart';
 
 class ReservationCreateScreen extends StatefulWidget {
   const ReservationCreateScreen({
@@ -18,12 +20,14 @@ class ReservationCreateScreen extends StatefulWidget {
     required this.minRentalDays,
     required this.repository,
     this.facilityRepository,
+    this.amenityRepository,
     required this.onCreated,
   });
   final String facilityId, offeringId, unitTypeId;
   final int minRentalDays;
   final ReservationRepository repository;
   final FacilityRepository? facilityRepository;
+  final AmenityRepository? amenityRepository;
   final ValueChanged<Reservation> onCreated;
   @override
   State<ReservationCreateScreen> createState() =>
@@ -48,6 +52,8 @@ class _ReservationCreateScreenState extends State<ReservationCreateScreen> {
   String? _durationError;
   int? _submitErrorStatus;
   bool _submissionOutcomeUnknown = false;
+  late Future<List<FacilityAmenityOffering>>? _amenityFuture;
+  final Map<String, int> _selectedAmenities = {};
   int _availabilityRequest = 0;
   late final Future<FacilityDetail>? _facilityDetail = widget.facilityRepository
       ?.getDetail(widget.facilityId);
@@ -57,6 +63,7 @@ class _ReservationCreateScreenState extends State<ReservationCreateScreen> {
     super.initState();
     _duration = widget.minRentalDays;
     _durationController = TextEditingController(text: '$_duration');
+    _amenityFuture = widget.amenityRepository?.availableAt(widget.facilityId);
   }
 
   @override
@@ -485,6 +492,11 @@ class _ReservationCreateScreenState extends State<ReservationCreateScreen> {
                 ),
               ),
             ),
+            if (_amenityFuture != null) ...[
+              const SizedBox(height: 24),
+              _amenitySelector(),
+              const SizedBox(height: 16),
+            ],
             if (_date != null) ...[
               const SizedBox(height: 24),
               AppSectionHeader(
@@ -830,6 +842,14 @@ class _ReservationCreateScreenState extends State<ReservationCreateScreen> {
         checkInTimeSlot: slot.slotName,
         rentalDuration: _duration,
         termsAccepted: _termsAccepted,
+        amenities: _selectedAmenities.entries
+            .map(
+              (entry) => {
+                'facilityAmenityOfferingId': entry.key,
+                'quantity': entry.value,
+              },
+            )
+            .toList(),
       );
       if (mounted) widget.onCreated(reservation);
     } catch (e) {
@@ -845,6 +865,150 @@ class _ReservationCreateScreenState extends State<ReservationCreateScreen> {
       if (mounted) setState(() => _submitting = false);
     }
   }
+
+  Widget _amenitySelector() => FutureBuilder<List<FacilityAmenityOffering>>(
+    future: _amenityFuture,
+    builder: (context, snapshot) {
+      if (snapshot.connectionState == ConnectionState.waiting) {
+        return const Card(
+          child: Padding(
+            padding: EdgeInsets.all(16),
+            child: Row(
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(width: 12),
+                Expanded(child: Text('Đang tải tiện ích…')),
+              ],
+            ),
+          ),
+        );
+      }
+      if (snapshot.hasError) {
+        return Card(
+          child: ListTile(
+            leading: const Icon(Icons.error_outline),
+            title: const Text('Không tải được tiện ích'),
+            trailing: IconButton(
+              icon: const Icon(Icons.refresh),
+              onPressed: () => setState(
+                () => _amenityFuture = widget.amenityRepository!.availableAt(
+                  widget.facilityId,
+                ),
+              ),
+            ),
+          ),
+        );
+      }
+      final offerings = snapshot.data ?? const <FacilityAmenityOffering>[];
+      if (offerings.isEmpty) return const SizedBox.shrink();
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const AppSectionHeader(
+            title: 'Tiện ích tùy chọn',
+            subtitle: 'Giá và tình trạng do cơ sở cung cấp',
+          ),
+          const SizedBox(height: 8),
+          ...offerings.map((item) {
+            final quantity = _selectedAmenities[item.id];
+            final available = item.isAvailable;
+            return Card(
+              color: available
+                  ? null
+                  : Theme.of(context).colorScheme.surfaceContainerHighest,
+              child: Column(
+                children: [
+                  CheckboxListTile(
+                    value: quantity != null,
+                    onChanged: !available || _submitting
+                        ? null
+                        : (checked) => setState(() {
+                            if (checked == true) {
+                              _selectedAmenities[item.id] = 1;
+                            } else {
+                              _selectedAmenities.remove(item.id);
+                            }
+                          }),
+                    title: Text(
+                      item.name,
+                      style: TextStyle(
+                        color: available
+                            ? null
+                            : Theme.of(context).colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    subtitle: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (item.description?.trim().isNotEmpty == true)
+                          Text(item.description!),
+                        Text(
+                          '${NumberFormat('#,##0', 'vi_VN').format(item.pricePerUnit)} ₫ / ${_amenityBillingUnit(item.billingUnit)}',
+                        ),
+                        if (item.notes?.trim().isNotEmpty == true)
+                          Text(item.notes!),
+                        if (available && item.availableQuantity != null)
+                          Text('Còn ${item.availableQuantity}'),
+                        if (!available) const Text('Hiện không khả dụng'),
+                      ],
+                    ),
+                    controlAffinity: ListTileControlAffinity.leading,
+                  ),
+                  if (quantity != null)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+                      child: Row(
+                        children: [
+                          const Text('Số lượng'),
+                          const Spacer(),
+                          IconButton(
+                            onPressed: _submitting || quantity <= 1
+                                ? null
+                                : () => setState(
+                                    () => _selectedAmenities[item.id] =
+                                        quantity - 1,
+                                  ),
+                            icon: const Icon(Icons.remove_circle_outline),
+                          ),
+                          Text('$quantity'),
+                          IconButton(
+                            onPressed:
+                                _submitting ||
+                                    (item.availableQuantity != null &&
+                                        quantity >= item.availableQuantity!)
+                                ? null
+                                : () => setState(
+                                    () => _selectedAmenities[item.id] =
+                                        quantity + 1,
+                                  ),
+                            icon: const Icon(Icons.add_circle_outline),
+                          ),
+                        ],
+                      ),
+                    ),
+                ],
+              ),
+            );
+          }),
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 4),
+            child: Text(
+              'Giá tiện ích là đơn giá máy chủ cung cấp; tổng tiền và thời điểm thu do Backend xác định.',
+            ),
+          ),
+        ],
+      );
+    },
+  );
+
+  String _amenityBillingUnit(String value) => switch (value) {
+    'day' => 'ngày',
+    'week' => 'tuần',
+    'month' => 'tháng',
+    'year' => 'năm',
+    'one_time' => 'một lần',
+    _ => 'đơn vị',
+  };
 
   Future<void> _showReservationTerms() => showDialog<void>(
     context: context,
