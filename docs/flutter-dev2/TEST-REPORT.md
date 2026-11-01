@@ -11,16 +11,16 @@
 
 ## Status
 
-| Requirement | State | Notes |
-| --- | --- | --- |
-| Reservation models | PARTIAL | Core BE fields parsed; optional snapshots retained as maps rather than typed snapshots. |
-| Availability integration | PARTIAL | Time slot and physical unit repositories implemented; runtime not verified. |
-| Reservation create/list/detail/cancel | PARTIAL | Endpoints and validation implemented; runtime not verified. No creation form yet. |
-| Payment session and QR rendering | PARTIAL | Backend-provided QR and missing-QR state handled; runtime not verified. |
-| Payment status polling | PARTIAL | Sequential, bounded polling; terminal statuses stop the stream. Needs device lifecycle/integration verification. |
-| Automated unit tests | NOT STARTED | Not run. |
-| Flutter static analysis | NOT STARTED | Not run. |
-| Developer 1 integration readiness | PARTIAL | Shared-Dio feature facade and contract documented; host core is not present yet. |
-| Real backend integration | BLOCKED | No runtime URL/credentials/test account. |
+| Requirement                           | State       | Notes                                                                                                            |
+| ------------------------------------- | ----------- | ---------------------------------------------------------------------------------------------------------------- |
+| Reservation models                    | PARTIAL     | Core BE fields parsed; optional snapshots retained as maps rather than typed snapshots.                          |
+| Availability integration              | PARTIAL     | Time slot and physical unit repositories implemented; runtime not verified.                                      |
+| Reservation create/list/detail/cancel | PARTIAL     | Endpoints and validation implemented; runtime not verified. No creation form yet.                                |
+| Payment session and QR rendering      | PARTIAL     | Backend-provided QR and missing-QR state handled; runtime not verified.                                          |
+| Payment status polling                | PARTIAL     | Sequential, bounded polling; terminal statuses stop the stream. Needs device lifecycle/integration verification. |
+| Automated unit tests                  | NOT STARTED | Not run.                                                                                                         |
+| Flutter static analysis               | NOT STARTED | Not run.                                                                                                         |
+| Developer 1 integration readiness     | PARTIAL     | Shared-Dio feature facade and contract documented; host core is not present yet.                                 |
+| Real backend integration              | BLOCKED     | No runtime URL/credentials/test account.                                                                         |
 
 No integration test is marked PASS.
