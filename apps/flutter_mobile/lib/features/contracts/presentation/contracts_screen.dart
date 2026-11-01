@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:dio/dio.dart';
 
 import '../data/contract_repository.dart';
+import 'settlement_screen.dart';
 
 String _errorText(Object error) {
   if (error is DioException) {
@@ -325,6 +326,24 @@ class _ContractDetailState extends State<_ContractDetail> {
                   onPressed: busy ? null : () => requestRenewal(c),
                   icon: const Icon(Icons.event_repeat),
                   label: const Text('Request renewal'),
+                ),
+              if (status == 'completed')
+                OutlinedButton.icon(
+                  onPressed: busy
+                      ? null
+                      : () async {
+                          await Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (_) => SettlementScreen(
+                                repo: widget.repo,
+                                contractId: widget.id,
+                              ),
+                            ),
+                          );
+                          if (mounted) reload();
+                        },
+                  icon: const Icon(Icons.receipt_long_outlined),
+                  label: const Text('Settlement & refunds'),
                 ),
               const SizedBox(height: 20),
               Text(

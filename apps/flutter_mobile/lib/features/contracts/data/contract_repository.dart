@@ -36,6 +36,53 @@ class ContractRepository {
     );
   }
 
+  Future<Map<String, dynamic>> confirmSettlement(String id) =>
+      _postContract('/contracts/$id/settlement/confirm');
+
+  Future<Map<String, dynamic>> disputeSettlement(String id, String reason) =>
+      _postContract(
+        '/contracts/$id/settlement/dispute',
+        data: {'disputeReason': reason.trim()},
+      );
+
+  Future<Map<String, dynamic>> refunds(
+    String contractId, {
+    int page = 1,
+  }) async {
+    final r = await _dio.get<Map<String, dynamic>>(
+      '/refund-requests',
+      queryParameters: {
+        'contractId': contractId,
+        'page': page,
+        'limit': 20,
+        'sortBy': 'createdAt',
+        'sortOrder': 'desc',
+      },
+    );
+    final data = r.data?['data'];
+    if (data is! Map<String, dynamic> ||
+        data['items'] is! List ||
+        data['pagination'] is! Map) {
+      throw const FormatException('Invalid refund list response');
+    }
+    return data;
+  }
+
+  Future<Map<String, dynamic>> refundDetail(String id) async {
+    final r = await _dio.get<Map<String, dynamic>>('/refund-requests/$id');
+    final data = r.data?['data'];
+    if (data is! Map<String, dynamic>) {
+      throw const FormatException('Invalid refund response');
+    }
+    return data;
+  }
+
+  Future<Map<String, dynamic>> cancelRefund(String id, String reason) =>
+      _postContract(
+        '/refund-requests/$id/cancel',
+        data: {'cancellationReason': reason.trim()},
+      );
+
   Future<Map<String, dynamic>> renew(
     String id,
     DateTime newEndDate, {
@@ -68,7 +115,7 @@ class ContractRepository {
 
   Future<Map<String, dynamic>> _postContract(
     String path, {
-    required Map<String, dynamic> data,
+    Map<String, dynamic>? data,
   }) async {
     final response = await _dio.post<Map<String, dynamic>>(path, data: data);
     final contract = response.data?['data'];
