@@ -96,6 +96,6 @@ void main() {
     );
     await tester.tap(find.text('Sign in'));
     await tester.pumpAndSettle();
-    expect(find.text('Explore storage'), findsOneWidget);
+    expect(find.text('Trang chủ'), findsWidgets);
   });
 }

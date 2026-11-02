@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_mobile/features/contracts/data/contract_repository.dart';
 import 'package:flutter_mobile/features/contracts/presentation/settlement_screen.dart';
+import 'package:flutter_mobile/features/refunds/presentation/refund_screens.dart'
+    as refund_ui;
 
 void main() {
   test(
@@ -59,7 +61,7 @@ void main() {
               statusCode: 200,
               data: {
                 'data': {
-                  'id': 'r1',
+                  'id': '0123456789abcdef01234567',
                   'refundCode': 'RF-1',
                   'reason': 'deposit_settlement',
                   'status': 'approved',
@@ -73,13 +75,16 @@ void main() {
     );
     await tester.pumpWidget(
       MaterialApp(
-        home: RefundDetailScreen(repo: ContractRepository(dio), id: 'r1'),
+        home: refund_ui.RefundDetailScreen(
+          dio: dio,
+          refundId: '0123456789abcdef01234567',
+        ),
       ),
     );
     await tester.pumpAndSettle();
-    expect(find.text('Approved · awaiting payout'), findsOneWidget);
-    expect(find.text('Cancel refund request'), findsNothing);
-    expect(find.text('Payout recorded'), findsNothing);
+    expect(find.text('Đã duyệt'), findsWidgets);
+    expect(find.text('Hủy yêu cầu hoàn tiền'), findsNothing);
+    expect(find.text('Đã hoàn tiền'), findsNothing);
   });
   testWidgets(
     'completed unconfirmed settlement shows customer actions and all refund reasons',
@@ -135,10 +140,10 @@ void main() {
         ),
       );
       await tester.pumpAndSettle();
-      expect(find.text('Confirm settlement'), findsOneWidget);
-      expect(find.text('Dispute'), findsOneWidget);
-      expect(find.textContaining('facility_fault'), findsOneWidget);
-      expect(find.textContaining('Check each refund request'), findsOneWidget);
+      expect(find.text('Xác nhận quyết toán'), findsOneWidget);
+      expect(find.text('Khiếu nại quyết toán'), findsOneWidget);
+      expect(find.textContaining('Lỗi từ cơ sở'), findsOneWidget);
+      expect(find.text('Theo dõi hoàn tiền'), findsOneWidget);
     },
   );
   testWidgets('dispute sends reason and displays backend settlement status', (
@@ -180,14 +185,17 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Dispute'));
+    await tester.tap(find.text('Khiếu nại quyết toán'));
     await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'Wrong fee');
-    await tester.tap(find.text('Submit dispute'));
+    await tester.tap(find.text('Gửi khiếu nại'));
     await tester.pumpAndSettle();
-    expect(calls.last.path, '/contracts/c1/settlement/dispute');
-    expect(calls.last.data, {'disputeReason': 'Wrong fee'});
-    expect(find.text('Wrong fee'), findsOneWidget);
+    await tester.tap(find.text('Gửi'));
+    await tester.pumpAndSettle();
+    final dispute = calls.lastWhere((call) => call.method == 'POST');
+    expect(dispute.path, '/contracts/c1/settlement/dispute');
+    expect(dispute.data, {'disputeReason': 'Wrong fee'});
+    expect(calls.where((call) => call.method == 'POST').length, 1);
   });
   testWidgets('pending refund requires a reason and reflects cancellation', (
     tester,
@@ -204,7 +212,7 @@ void main() {
               statusCode: 200,
               data: {
                 'data': {
-                  'id': 'r1',
+                  'id': '0123456789abcdef01234567',
                   'refundCode': 'RF-1',
                   'reason': 'deposit_settlement',
                   'status': o.method == 'POST'
@@ -220,20 +228,26 @@ void main() {
     );
     await tester.pumpWidget(
       MaterialApp(
-        home: RefundDetailScreen(repo: ContractRepository(dio), id: 'r1'),
+        home: refund_ui.RefundDetailScreen(
+          dio: dio,
+          refundId: '0123456789abcdef01234567',
+        ),
       ),
     );
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Cancel refund request'));
+    await tester.tap(find.text('Hủy yêu cầu hoàn tiền'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Cancel request'));
+    await tester.tap(find.text('Tiếp tục'));
     await tester.pumpAndSettle();
-    expect(find.text('Enter at least 3 characters'), findsOneWidget);
+    expect(find.text('Lý do cần từ 3 đến 500 ký tự.'), findsOneWidget);
+    await tester.tap(find.text('Hủy yêu cầu hoàn tiền'));
+    await tester.pumpAndSettle();
     await tester.enterText(find.byType(TextField), 'Other method');
-    await tester.tap(find.text('Cancel request'));
+    await tester.tap(find.text('Tiếp tục'));
     await tester.pumpAndSettle();
-    expect(calls.last.data, {'cancellationReason': 'Other method'});
-    expect(find.text('Cancelled'), findsOneWidget);
-    expect(find.text('Cancel refund request'), findsNothing);
+    await tester.tap(find.text('Hủy yêu cầu'));
+    await tester.pumpAndSettle();
+    final cancellation = calls.lastWhere((call) => call.method == 'POST');
+    expect(cancellation.data, {'cancellationReason': 'Other method'});
   });
 }

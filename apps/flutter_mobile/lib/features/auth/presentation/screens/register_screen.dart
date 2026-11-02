@@ -135,7 +135,7 @@ class _RegisterScreenState extends ConsumerState<RegisterScreen> {
             name: _name.text,
             phoneNumber: _phone.text,
           );
-      if (mounted) context.go('/explore');
+      if (mounted) context.go('/home');
     } catch (e) {
       if (mounted) setState(() => _error = e.toString());
     } finally {

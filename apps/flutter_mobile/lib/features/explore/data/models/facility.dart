@@ -48,7 +48,7 @@ class FacilityOffering {
     required this.billingUnit,
     required this.depositMultiplier,
     required this.minRentalDays,
-    required this.availableUnitsCount,
+    this.availableUnitsCount,
     this.area,
     this.volume,
     this.dimensions,
@@ -61,7 +61,10 @@ class FacilityOffering {
   final String billingUnit;
   final double depositMultiplier;
   final int minRentalDays;
-  final int availableUnitsCount;
+
+  /// Optional listing hint. Physical-unit availability must be checked via
+  /// the available storage-units endpoint before booking.
+  final int? availableUnitsCount;
   final double? area;
   final double? volume;
   final Map<String, dynamic>? dimensions;
@@ -78,7 +81,7 @@ class FacilityOffering {
       billingUnit: '${j['billingUnit'] ?? ''}',
       depositMultiplier: _n(j['depositMultiplier']),
       minRentalDays: (j['minRentalDays'] as num?)?.toInt() ?? 1,
-      availableUnitsCount: (j['availableUnitsCount'] as num?)?.toInt() ?? 0,
+      availableUnitsCount: _optionalCount(j['availableUnitsCount']),
       area: t['area'] == null ? null : _n(t['area']),
       volume: t['volume'] == null ? null : _n(t['volume']),
       dimensions: t['dimensions'] is Map<String, dynamic>
@@ -88,6 +91,14 @@ class FacilityOffering {
     );
   }
   static double _n(Object? v) => v is num ? v.toDouble() : 0;
+
+  static int? _optionalCount(Object? value) {
+    if (value == null) return null;
+    if (value is! num || value < 0 || value != value.toInt()) {
+      throw const FormatException('Invalid availableUnitsCount.');
+    }
+    return value.toInt();
+  }
 }
 
 class FacilityDetail {

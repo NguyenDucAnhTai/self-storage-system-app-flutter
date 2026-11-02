@@ -1,0 +1,274 @@
+<!-- A6. Thanh toán đặt kho (VietQR Payment) -->
+<!DOCTYPE html>
+
+<html class="h-full" lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><title>Self Storage</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;min-height:100%;margin:0;padding:0;background-color:#f8f9ff;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "secondary-fixed-dim": "#4edea3", "primary": "#003327", "on-tertiary-fixed": "#121e1c", "outline-variant": "#c0c9c3", "on-error": "#ffffff", "secondary-container": "#6cf8bb", "on-primary-container": "#86b9a6", "on-error-container": "#93000a", "error": "#ba1a1a", "on-secondary": "#ffffff", "inverse-on-surface": "#eaf1ff", "outline": "#707975", "tertiary": "#222e2c", "primary-container": "#164a3c", "tertiary-fixed-dim": "#bcc9c7", "surface-dim": "#d0dbed", "surface-container": "#e6eeff", "on-surface": "#121c2a", "primary-fixed": "#b9eeda", "error-container": "#ffdad6", "background": "#f8f9ff", "on-secondary-container": "#00714d", "on-tertiary-fixed-variant": "#3d4947", "inverse-surface": "#27313f", "secondary": "#006c49", "surface-container-high": "#dee9fc", "on-secondary-fixed-variant": "#005236", "on-tertiary-container": "#a3b1ae", "surface-container-highest": "#d9e3f6", "surface-variant": "#d9e3f6", "on-tertiary": "#ffffff", "surface": "#f8f9ff", "secondary-fixed": "#6ffbbe", "tertiary-fixed": "#d7e5e2", "on-background": "#121c2a", "surface-tint": "#366758", "on-primary-fixed-variant": "#1c4f41", "tertiary-container": "#374442", "on-surface-variant": "#404945", "surface-container-low": "#eff4ff", "inverse-primary": "#9dd1be", "on-primary": "#ffffff", "primary-fixed-dim": "#9dd1be", "on-secondary-fixed": "#002113", "on-primary-fixed": "#002018", "surface-container-lowest": "#ffffff", "surface-bright": "#f8f9ff" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-sm": "0.5rem", "space-md": "1rem", "gutter": "1rem", "space-lg": "1.5rem", "margin": "1rem", "space-xs": "0.25rem", "space-xl": "2rem" }, fontFamily: { "label-lg": ["Inter"], "headline-lg-mobile": ["Inter"], "label-md": ["Inter"], "label-sm": ["Inter"], "body-lg": ["Inter"], "headline-sm": ["Inter"], "headline-lg": ["Inter"], "body-md": ["Inter"], "headline-md": ["Inter"], "body-sm": ["Inter"] }, fontSize: { "label-lg": ["15px", { "lineHeight": "20px", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }], "label-md": ["13px", { "lineHeight": "18px", "fontWeight": "500" }], "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-screen antialiased selection:bg-secondary-fixed selection:text-on-secondary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="flex items-center justify-between px-margin h-16"><div class="flex items-center gap-space-xs min-w-0"><button aria-label="Quay lại" class="flex items-center justify-center w-11 h-11 -ml-2 rounded-full text-on-surface hover:bg-surface-container-high/60 transition-colors" onclick="history.back()" type="button"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><img alt="Self Storage Vault Logo" class="h-7 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1UWtBm6ywF0qC4y9jkzHThVmJV0Aa5Sp0hWueCIdmhowNiNOytxXuZrU3KdvY98NiTxJ07PVeDNkTmiqS8msiRaWL_z4DhSwj_EMpFsmn40qGcfmOP8cFUQS7UuaeiJz0DP6Hkw0JBGW0PeP8HDYwzLMluj1obN7FGytlm6ha39TvopnvM5qvoB88Kp60cqZ5hVPNksdfFsQI3IOrHbIG3ayXtD1pts7STa6SRrdmymeg"/><div class="flex flex-col min-w-0 pl-1"><span class="text-label-sm font-label-sm uppercase text-secondary truncate">Self Storage</span><h1 class="text-headline-sm font-headline-sm text-on-surface truncate leading-tight">Chi Tiết Kho</h1></div></div><div class="flex items-center gap-space-xs"><button aria-label="Thông báo" class="relative flex items-center justify-center w-11 h-11 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/60 transition-colors" type="button"><span class="material-symbols-outlined text-[24px]">notifications</span><span class="absolute top-2.5 right-2.5 flex h-2 w-2"><span class="relative inline-flex rounded-full h-2 w-2 bg-error"></span></span></button><button aria-label="Hồ sơ người dùng" class="flex items-center justify-center w-11 h-11 rounded-full hover:ring-2 hover:ring-primary/20 transition-all ml-0.5" type="button"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALNBGJKzObyzVA4bSogbTZ5N-Gv0KojbZGC1A162oR7TlzDKKcA_yMlLN168nAP7SV1cnlH5hQ0GWzXlbASmenw6vG9xjWQKx0rTDvdrNcnP9f9NSpsZOIRMjhs56p5nZTniIE-cCSggJyZ3sWPX-Yv71CF44ioPJXotGsCqEmQtQ2qDsyustOoevbHBljXOH0mv_z6ckVkYOOHkrlfFgGO20BmI-SPKRNl6l6lAIA"/></button></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-safe bg-surface"><div class="flex flex-col w-full pb-space-xl">
+<!-- Status Banner: Dynamic Countdown Timer -->
+<div class="px-margin pt-space-sm pb-space-xs">
+<div class="flex items-center justify-between bg-error-container text-on-error-container px-space-md py-space-sm rounded-xl shadow-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[20px] animate-pulse">timer</span>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm uppercase tracking-wider opacity-80">Thời gian giữ chỗ còn lại</span>
+<span class="font-headline-sm text-headline-sm font-bold tracking-tight" id="countdown-timer">14:45</span>
+</div>
+</div>
+<div class="text-right">
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm font-medium bg-error/15 text-error px-2 py-0.5 rounded-full">
+          Tự hủy sau 15p
+        </span>
+</div>
+</div>
+</div>
+<!-- Booking Amount Due Card -->
+<div class="px-margin mt-space-sm">
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<div class="w-7 h-7 rounded-lg bg-primary/10 flex items-center justify-center text-primary">
+<span class="material-symbols-outlined text-[18px]">warehouse</span>
+</div>
+<span class="font-label-md text-label-md text-on-surface-variant">Kho B-102 • 8.5 m²</span>
+</div>
+<span class="inline-flex items-center gap-1 font-label-sm text-label-sm px-2.5 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-semibold">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+          Chờ thanh toán
+        </span>
+</div>
+<div class="flex flex-col mt-1">
+<span class="font-body-sm text-body-sm text-on-surface-variant">Tiền cọc đảm bảo chỗ (Deposit)</span>
+<div class="flex items-baseline gap-2">
+<span class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary tracking-tight">1.450.000</span>
+<span class="font-headline-sm text-headline-sm font-semibold text-primary">₫</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-space-xs text-on-surface-variant">
+<span class="font-body-sm text-body-sm">Mã đơn giữ chỗ:</span>
+<div class="flex items-center gap-1 bg-surface-container px-2 py-0.5 rounded-md">
+<span class="font-label-md text-label-md text-on-surface font-semibold tracking-wide">#RES-8921</span>
+<button class="text-secondary hover:text-primary transition-colors flex items-center" onclick="navigator.clipboard.writeText('RES-8921'); showToast('Đã sao chép mã đơn');" type="button">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- VietQR Fintech Hub -->
+<div class="px-margin mt-space-md">
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm flex flex-col items-center">
+<!-- Bank and NAPAS Logos Banner -->
+<div class="w-full flex items-center justify-between pb-space-sm bg-surface-container-low px-space-md py-space-xs rounded-xl mb-space-md">
+<div class="flex items-center gap-2">
+<div class="w-6 h-6 rounded-md bg-error flex items-center justify-center text-on-error font-bold text-[10px]">
+            TCB
+          </div>
+<div class="flex flex-col">
+<span class="font-label-sm text-label-sm text-on-surface font-bold leading-tight">Techcombank</span>
+<span class="font-body-sm text-[10px] text-on-surface-variant leading-none">Chuyển nhanh 24/7</span>
+</div>
+</div>
+<div class="flex items-center gap-1.5">
+<span class="font-label-sm text-label-sm font-bold tracking-wider text-secondary">VietQR</span>
+<span class="w-1 h-1 rounded-full bg-outline-variant"></span>
+<span class="font-label-sm text-[10px] font-semibold text-on-surface-variant uppercase">Napas 247</span>
+</div>
+</div>
+<!-- Secure QR Canvas Container -->
+<div class="relative bg-surface-container-lowest p-3 rounded-2xl shadow-md flex flex-col items-center justify-center">
+<!-- Corner alignment guides for authentic scanner feel -->
+<div class="relative p-2 bg-surface-container-lowest rounded-xl">
+<!-- Stylized Realistic VietQR SVG with embedded Vault Lock mark -->
+<svg class="w-56 h-56 max-w-full" fill="none" viewbox="0 0 220 220" xmlns="http://www.w3.org/2000/svg">
+<rect fill="#FFFFFF" height="220" rx="12" width="220"></rect>
+<!-- Top-Left Finder -->
+<rect fill="#003327" height="48" rx="8" width="48" x="14" y="14"></rect>
+<rect fill="#FFFFFF" height="32" rx="4" width="32" x="22" y="22"></rect>
+<rect fill="#003327" height="20" rx="3" width="20" x="28" y="28"></rect>
+<!-- Top-Right Finder -->
+<rect fill="#003327" height="48" rx="8" width="48" x="158" y="14"></rect>
+<rect fill="#FFFFFF" height="32" rx="4" width="32" x="166" y="22"></rect>
+<rect fill="#003327" height="32" rx="3" width="20" x="172" y="28"></rect>
+<!-- Bottom-Left Finder -->
+<rect fill="#003327" height="48" rx="8" width="48" x="14" y="158"></rect>
+<rect fill="#FFFFFF" height="32" rx="4" width="32" x="22" y="166"></rect>
+<rect fill="#003327" height="20" rx="3" width="20" x="28" y="172"></rect>
+<!-- QR Data Elements (Authentic Module Matrix Pattern) -->
+<path d="M72 16h8v8h-8zM88 16h16v8h-16zM112 16h8v8h-8zM128 16h8v16h-8zM144 16h6v8h-6z" fill="#003327"></path>
+<path d="M72 32h16v8h-16zM96 32h8v8h-8zM112 32h16v8h-16zM136 32h14v8h-14z" fill="#003327"></path>
+<path d="M72 48h8v16h-8zM88 48h24v8h-24zM120 48h8v8h-8zM136 48h16v16h-16z" fill="#003327"></path>
+<path d="M16 72h8v8h-8zM32 72h16v8h-16zM56 72h8v8h-8zM72 72h32v8H72zM120 72h8v8h-8zM136 72h24v8h-24zM168 72h16v8h-16zM192 72h14v8h-14z" fill="#003327"></path>
+<path d="M16 88h16v8H16zM40 88h8v8h-8zM64 88h16v8H64zM88 88h8v8h-8zM104 88h16v8h-16zM144 88h8v8h-8zM160 88h16v8h-16zM184 88h22v8h-22z" fill="#003327"></path>
+<path d="M16 104h8v8h-8zM32 104h24v8H32zM64 104h8v8h-8zM144 104h16v8h-16zM176 104h8v8h-8zM192 104h14v8h-14z" fill="#003327"></path>
+<path d="M16 120h24v8H16zM48 120h8v8h-8zM64 120h16v8H64zM144 120h8v16h-8zM160 120h24v8h-24zM192 120h14v8h-14z" fill="#003327"></path>
+<path d="M16 136h8v8h-8zM32 136h16v8H32zM56 136h8v8h-8zM72 136h16v8H72zM152 136h24v8h-24zM184 136h22v8h-22z" fill="#003327"></path>
+<path d="M72 152h8v16h-8zM88 152h24v8h-24zM120 152h8v8h-8zM136 152h16v8h-16zM160 152h16v16h-16zM184 152h8v8h-8zM200 152h6v16h-6z" fill="#003327"></path>
+<path d="M72 176h16v8H72zM96 176h8v8h-8zM112 176h16v8h-16zM136 176h8v16h-8zM152 176h16v8h-16zM176 176h16v8h-16zM200 176h6v8h-6z" fill="#003327"></path>
+<path d="M72 192h8v14h-8zM88 192h16v8H88zM112 192h8v14h-8zM128 192h16v8h-16zM152 192h8v14h-8zM168 192h24v8h-24zM200 192h6v14h-6z" fill="#003327"></path>
+<!-- Center Branded Shield Lock badge -->
+<rect fill="#003327" height="48" rx="10" width="48" x="86" y="86"></rect>
+<rect fill="#164A3C" height="40" rx="8" width="40" x="90" y="90"></rect>
+<!-- Padlock icon matching App Logo -->
+<path d="M103 107V103C103 99.134 106.134 96 110 96C113.866 96 117 99.134 117 103V107H118.5C119.328 107 120 107.672 120 108.5V119.5C120 120.328 119.328 121 118.5 121H101.5C100.672 121 100 120.328 100 119.5V108.5C100 107.672 100.672 107 101.5 107H103ZM105 107H115V103C115 100.239 112.761 98 110 98C107.239 98 105 100.239 105 103V107Z" fill="#4EDEA3"></path>
+<circle cx="110" cy="113" fill="#003327" r="1.75"></circle>
+</svg>
+</div>
+</div>
+<div class="mt-space-sm text-center">
+<p class="font-body-sm text-body-sm text-on-surface flex items-center justify-center gap-1 font-medium">
+<span class="material-symbols-outlined text-[18px] text-secondary">qr_code_scanner</span>
+          Quét mã bằng app ngân hàng bất kỳ để thanh toán tức thì
+        </p>
+</div>
+<!-- Action Chips for VietQR -->
+<div class="w-full grid grid-cols-2 gap-space-sm mt-space-md">
+<button class="flex items-center justify-center gap-1.5 py-2.5 px-space-sm bg-surface-container text-on-surface rounded-xl font-label-md text-label-md active:bg-surface-container-high transition-colors" onclick="showToast('Đang tải ảnh mã QR xuống...')" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary">download</span>
+          Lưu mã QR
+        </button>
+<button class="flex items-center justify-center gap-1.5 py-2.5 px-space-sm bg-surface-container text-on-surface rounded-xl font-label-md text-label-md active:bg-surface-container-high transition-colors" onclick="navigator.clipboard.writeText('19038892441019'); showToast('Đã chép số tài khoản')" type="button">
+<span class="material-symbols-outlined text-[18px] text-secondary">copy_all</span>
+          Sao chép STK
+        </button>
+</div>
+</div>
+</div>
+<!-- Detailed Bank Transfer Specification List -->
+<div class="px-margin mt-space-md">
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm flex flex-col gap-space-sm">
+<div class="flex items-center gap-2 pb-space-xs">
+<span class="material-symbols-outlined text-primary text-[20px]">account_balance</span>
+<h2 class="font-headline-sm text-[16px] text-on-surface font-bold">Thông tin chuyển khoản chi tiết</h2>
+</div>
+<!-- Row 1: Bank Name -->
+<div class="flex items-center justify-between py-1.5">
+<div class="flex flex-col">
+<span class="font-body-sm text-[12px] text-on-surface-variant">Ngân hàng thụ hưởng</span>
+<span class="font-label-md text-label-md text-on-surface font-semibold">Techcombank</span>
+<span class="font-body-sm text-[11px] text-on-surface-variant">TMCP Kỹ Thương Việt Nam</span>
+</div>
+<span class="material-symbols-outlined text-outline-variant text-[20px]">verified</span>
+</div>
+<div class="h-[1px] bg-surface-container-high w-full"></div>
+<!-- Row 2: Account Number -->
+<div class="flex items-center justify-between py-1.5">
+<div class="flex flex-col">
+<span class="font-body-sm text-[12px] text-on-surface-variant">Số tài khoản</span>
+<span class="font-headline-sm text-[17px] text-primary font-bold tracking-wider">1903 8892 4410 19</span>
+</div>
+<button class="flex items-center gap-1 px-3 py-1.5 bg-secondary-fixed text-on-secondary-fixed rounded-lg font-label-sm text-label-sm font-semibold active:opacity-80 transition-opacity" onclick="navigator.clipboard.writeText('19038892441019'); showToast('Đã chép số tài khoản');" type="button">
+<span class="material-symbols-outlined text-[15px]">content_copy</span>
+          Chép
+        </button>
+</div>
+<div class="h-[1px] bg-surface-container-high w-full"></div>
+<!-- Row 3: Account Owner -->
+<div class="flex flex-col py-1.5">
+<span class="font-body-sm text-[12px] text-on-surface-variant">Tên người thụ hưởng</span>
+<span class="font-label-md text-label-md text-on-surface font-bold uppercase tracking-tight mt-0.5">CÔNG TY TNHH SELF STORAGE VIỆT NAM</span>
+</div>
+<div class="h-[1px] bg-surface-container-high w-full"></div>
+<!-- Row 4: Transfer Note (Crucial for fintech matching) -->
+<div class="flex items-center justify-between py-1.5 bg-surface-container-low px-space-sm py-space-sm rounded-xl">
+<div class="flex flex-col">
+<div class="flex items-center gap-1 text-primary">
+<span class="material-symbols-outlined text-[15px]">key</span>
+<span class="font-body-sm text-[12px] text-primary font-bold">Nội dung chuyển khoản (Bắt buộc)</span>
+</div>
+<span class="font-headline-sm text-[17px] text-primary font-extrabold tracking-widest mt-0.5">SS RES8921</span>
+</div>
+<button class="flex items-center gap-1 px-3 py-2 bg-primary text-on-primary rounded-xl font-label-sm text-label-sm font-bold shadow-sm active:bg-primary-container transition-colors" onclick="navigator.clipboard.writeText('SS RES8921'); showToast('Đã sao chép cú pháp');" type="button">
+<span class="material-symbols-outlined text-[16px]">content_copy</span>
+          Sao chép
+        </button>
+</div>
+</div>
+</div>
+<!-- Helpful Reassurance & Security Badge -->
+<div class="px-margin mt-space-md">
+<div class="flex items-start gap-3 bg-surface-container-low p-space-md rounded-2xl">
+<div class="w-8 h-8 rounded-full bg-secondary-container text-on-secondary-container flex items-center justify-center flex-shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+</div>
+<div class="flex flex-col">
+<span class="font-label-md text-label-md text-on-surface font-semibold">Tự động kích hoạt thông minh</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-0.5 leading-relaxed">
+          Hệ thống sẽ tự động xác nhận sau khi nhận được tiền từ ngân hàng (thông thường từ 30 giây đến 2 phút). Vui lòng không đóng màn hình khi chuyển khoản.
+        </p>
+</div>
+</div>
+</div>
+<!-- Primary Safety Trigger Button -->
+<div class="px-margin mt-space-lg flex flex-col gap-space-sm">
+<button class="w-full h-[52px] bg-primary-container text-on-primary rounded-2xl font-label-lg text-label-lg flex items-center justify-center gap-2 shadow-md hover:bg-primary active:scale-[0.99] transition-all" id="check-payment-btn" onclick="checkPaymentStatus()" type="button">
+<span class="material-symbols-outlined text-[20px] transition-transform" id="btn-spinner">autorenew</span>
+<span id="btn-text">Kiểm tra trạng thái thanh toán</span>
+</button>
+<div class="flex items-center justify-center gap-2 text-on-surface-variant pt-space-xs">
+<span class="material-symbols-outlined text-[16px] text-secondary">lock</span>
+<span class="font-body-sm text-[12px]">Giao dịch mã hóa an toàn 256-bit SSL Banking</span>
+</div>
+</div>
+<!-- Toast Notification Dynamic Shell -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 bg-inverse-surface text-inverse-on-surface px-4 py-2.5 rounded-full font-label-md text-label-md shadow-xl flex items-center gap-2 opacity-0 pointer-events-none transition-all duration-300 z-50" id="toast">
+<span class="material-symbols-outlined text-secondary-fixed text-[18px]">check_circle</span>
+<span id="toast-message">Đã sao chép</span>
+</div>
+</div>
+<script>
+  // Countdown Timer Logic (14:45 down to 0)
+  let totalSeconds = 14 * 60 + 45;
+  const timerDisplay = document.getElementById('countdown-timer');
+
+  const interval = setInterval(() => {
+    if (totalSeconds <= 0) {
+      clearInterval(interval);
+      timerDisplay.textContent = "00:00";
+      timerDisplay.classList.add('text-error');
+      return;
+    }
+    totalSeconds--;
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+    timerDisplay.textContent = 
+      String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+  }, 1000);
+
+  // Quick Micro Toast interaction
+  function showToast(message) {
+    const toast = document.getElementById('toast');
+    const toastText = document.getElementById('toast-message');
+    toastText.textContent = message;
+    toast.classList.remove('opacity-0', 'pointer-events-none');
+    toast.classList.add('opacity-100');
+    
+    setTimeout(() => {
+      toast.classList.remove('opacity-100');
+      toast.classList.add('opacity-0', 'pointer-events-none');
+    }, 2200);
+  }
+
+  // Check Status Micro-Interaction
+  let isChecking = false;
+  function checkPaymentStatus() {
+    if (isChecking) return;
+    isChecking = true;
+
+    const spinner = document.getElementById('btn-spinner');
+    const btnText = document.getElementById('btn-text');
+    
+    spinner.classList.add('animate-spin');
+    btnText.textContent = 'Đang đồng bộ Napas 247...';
+
+    setTimeout(() => {
+      spinner.classList.remove('animate-spin');
+      btnText.textContent = 'Kiểm tra trạng thái thanh toán';
+      isChecking = false;
+      showToast('Chưa ghi nhận biến động số dư. Vui lòng thử lại sau 30s');
+    }, 2000);
+  }
+</script></main></body></html>
