@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../core/widgets/app_ui.dart';
@@ -9,11 +10,13 @@ class ContractSettlementScreen extends StatefulWidget {
   const ContractSettlementScreen({
     super.key,
     required this.contractId,
-    required this.dio,
+    this.dio,
+    this.repository,
     this.onChanged,
-  });
+  }) : assert(dio != null || repository != null);
   final String contractId;
-  final Dio dio;
+  final Dio? dio;
+  final ContractRepository? repository;
   final VoidCallback? onChanged;
   @override
   State<ContractSettlementScreen> createState() =>
@@ -21,8 +24,11 @@ class ContractSettlementScreen extends StatefulWidget {
 }
 
 class _ContractSettlementScreenState extends State<ContractSettlementScreen> {
-  late final ContractRepository _repository = ContractRepository(widget.dio);
+  late final ContractRepository _repository =
+      widget.repository ?? ContractRepository(widget.dio!);
   late Future<Map<String, dynamic>> _future;
+  late Future<Map<String, dynamic>> _refunds;
+  int _refundPage = 1;
   bool _busy = false;
   String? _error;
 
@@ -30,10 +36,15 @@ class _ContractSettlementScreenState extends State<ContractSettlementScreen> {
   void initState() {
     super.initState();
     _future = _repository.detail(widget.contractId);
+    _refunds = _repository.refunds(widget.contractId);
   }
 
   void _reload() =>
       setState(() => _future = _repository.detail(widget.contractId));
+
+  void _reloadRefunds() => setState(
+    () => _refunds = _repository.refunds(widget.contractId, page: _refundPage),
+  );
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -148,6 +159,84 @@ class _ContractSettlementScreenState extends State<ContractSettlementScreen> {
                 child: const Text('Tải lại trạng thái'),
               ),
             ],
+            const SizedBox(height: 24),
+            Text(
+              'Theo dõi hoàn tiền',
+              style: Theme.of(context).textTheme.titleLarge,
+            ),
+            FutureBuilder<Map<String, dynamic>>(
+              future: _refunds,
+              builder: (context, refundSnapshot) {
+                if (refundSnapshot.connectionState != ConnectionState.done) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Center(child: CircularProgressIndicator()),
+                  );
+                }
+                if (refundSnapshot.hasError || refundSnapshot.data == null) {
+                  return TextButton.icon(
+                    onPressed: _reloadRefunds,
+                    icon: const Icon(Icons.refresh),
+                    label: const Text(
+                      'Không tải được yêu cầu hoàn tiền. Thử lại',
+                    ),
+                  );
+                }
+                final data = refundSnapshot.data!;
+                final items = (data['items'] as List)
+                    .whereType<Map<String, dynamic>>()
+                    .toList();
+                final pagination = data['pagination'] as Map;
+                return Column(
+                  children: [
+                    if (items.isEmpty)
+                      const ListTile(title: Text('Chưa có yêu cầu hoàn tiền.')),
+                    for (final item in items)
+                      Card(
+                        child: ListTile(
+                          title: Text(
+                            '${item['refundCode'] ?? 'Yêu cầu hoàn tiền'}',
+                          ),
+                          subtitle: Text(
+                            '${_refundReasonLabel(item['reason']?.toString())} · ${_refundStatusLabel(item['status']?.toString())} · ${_money(item['amount'] ?? 0)}',
+                          ),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () async {
+                            await context.push(
+                              '/refunds/${Uri.encodeComponent('${item['id']}')}',
+                            );
+                            if (mounted) _reloadRefunds();
+                          },
+                        ),
+                      ),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        TextButton(
+                          onPressed: _refundPage > 1
+                              ? () {
+                                  _refundPage--;
+                                  _reloadRefunds();
+                                }
+                              : null,
+                          child: const Text('Trước'),
+                        ),
+                        Text('Trang $_refundPage'),
+                        TextButton(
+                          onPressed: pagination['hasNextPage'] == true
+                              ? () {
+                                  _refundPage++;
+                                  _reloadRefunds();
+                                }
+                              : null,
+                          child: const Text('Tiếp'),
+                        ),
+                      ],
+                    ),
+                  ],
+                );
+              },
+            ),
           ],
         );
       },
@@ -199,13 +288,13 @@ class _ContractSettlementScreenState extends State<ContractSettlementScreen> {
   }
 
   Future<void> _dispute() async {
-    final controller = TextEditingController();
+    var reasonText = '';
     final reason = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Khiếu nại quyết toán'),
         content: TextField(
-          controller: controller,
+          onChanged: (value) => reasonText = value,
           minLines: 3,
           maxLines: 5,
           maxLength: 1000,
@@ -220,13 +309,12 @@ class _ContractSettlementScreenState extends State<ContractSettlementScreen> {
             child: const Text('Hủy'),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            onPressed: () => Navigator.pop(context, reasonText.trim()),
             child: const Text('Gửi khiếu nại'),
           ),
         ],
       ),
     );
-    controller.dispose();
     if (!mounted) return;
     if (reason == null) return;
     if (reason.isEmpty || reason.length > 1000) {
@@ -273,7 +361,8 @@ class _ContractSettlementScreenState extends State<ContractSettlementScreen> {
       if (!mounted) return;
       setState(() => _future = Future.value(response));
       widget.onChanged?.call();
-    } catch (_) {
+    } catch (error) {
+      final backendError = _backendError(error);
       // An uncertain POST is reconciled with GET; it is never resent automatically.
       try {
         final fresh = await _repository.detail(widget.contractId);
@@ -284,7 +373,7 @@ class _ContractSettlementScreenState extends State<ContractSettlementScreen> {
               fresh['settlementConfirmedAt'] != null ||
                   fresh['depositStatus'] == 'disputed'
               ? null
-              : 'Chưa xác định được kết quả. Trạng thái mới nhất đã được tải; không tự gửi lại yêu cầu.';
+              : 'Yêu cầu chưa được xác nhận: $backendError. Trạng thái mới nhất đã được tải; không tự gửi lại yêu cầu.';
         });
         widget.onChanged?.call();
       } catch (_) {
@@ -315,6 +404,22 @@ String _money(Object value) => NumberFormat.currency(
   symbol: '₫',
   decimalDigits: 0,
 ).format(value is num ? value : double.tryParse('$value') ?? 0);
+String _backendError(Object error) {
+  if (error is DioException) {
+    final data = error.response?.data;
+    if (data is Map) {
+      final message = data['message']?.toString();
+      final code = data['messageCode']?.toString();
+      if (message?.isNotEmpty == true && code?.isNotEmpty == true) {
+        return '$message ($code)';
+      }
+      if (message?.isNotEmpty == true) return message!;
+    }
+    return error.message ?? 'Lỗi kết nối máy chủ';
+  }
+  return 'Không thể gửi yêu cầu';
+}
+
 String _time(Object? value) {
   final date = DateTime.tryParse('$value');
   return date == null
@@ -331,4 +436,25 @@ String _depositLabel(String? value) => switch (value) {
   'forfeited' => 'Đã mất cọc',
   'disputed' => 'Đang khiếu nại',
   _ => 'Chưa có thông tin',
+};
+
+String _refundStatusLabel(String? value) => switch (value) {
+  'pending_approval' => 'Chờ duyệt',
+  'approved' => 'Đã duyệt',
+  'paid' => 'Đã hoàn tiền',
+  'rejected' => 'Bị từ chối',
+  'cancelled' => 'Đã hủy',
+  _ => 'Đang cập nhật',
+};
+
+String _refundReasonLabel(String? value) => switch (value) {
+  'deposit_settlement' => 'Quyết toán tiền cọc',
+  'facility_fault' => 'Lỗi từ cơ sở',
+  'customer_cancel' => 'Khách hàng hủy',
+  'facility_cancel' => 'Cơ sở hủy',
+  'system_cancel' => 'Hệ thống hủy',
+  'late_payment' => 'Thanh toán trễ',
+  'amount_mismatch' => 'Sai lệch số tiền',
+  null || '' => 'Lý do chưa cập nhật',
+  _ => 'Lý do khác',
 };

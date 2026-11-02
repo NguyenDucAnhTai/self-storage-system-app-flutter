@@ -13,6 +13,7 @@ class ContractDetailScreen extends StatefulWidget {
     required this.repository,
     required this.paymentRepository,
     required this.onViewPayment,
+    this.onManageRenewal,
     this.onContractChanged,
     this.onOpenSettlement,
   });
@@ -20,6 +21,7 @@ class ContractDetailScreen extends StatefulWidget {
   final ContractRepository repository;
   final PaymentRepository paymentRepository;
   final Future<void> Function(Payment payment) onViewPayment;
+  final VoidCallback? onManageRenewal;
   final VoidCallback? onContractChanged;
   final VoidCallback? onOpenSettlement;
 
@@ -383,6 +385,14 @@ class _ContractDetailScreenState extends State<ContractDetailScreen> {
               active: active,
               hasTerms: _hasTerms,
             ),
+            if (widget.onManageRenewal != null) ...[
+              const SizedBox(height: 12),
+              OutlinedButton.icon(
+                onPressed: widget.onManageRenewal,
+                icon: const Icon(Icons.event_repeat_outlined),
+                label: const Text('Gia hạn & phụ lục hợp đồng'),
+              ),
+            ],
             if (status == 'completed' && widget.onOpenSettlement != null) ...[
               const SizedBox(height: 12),
               OutlinedButton.icon(

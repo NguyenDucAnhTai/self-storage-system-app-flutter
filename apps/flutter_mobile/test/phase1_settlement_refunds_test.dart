@@ -15,7 +15,10 @@ void main() {
       RequestOptions? request;
       final dio = _dio((options) {
         request = options;
-        return {'data': _contract('completed')};
+        return {
+          'data': _contract('completed')
+            ..['settlementConfirmedAt'] = '2026-10-30T00:00:00Z',
+        };
       });
       final result = await ContractRepository(dio)
           .confirmSettlement('0123456789abcdef01234567');
@@ -54,7 +57,20 @@ void main() {
   testWidgets(
     'settlement action only appears for eligible completed contract',
     (tester) async {
-      final dio = _dio((options) => {'data': _contract('active')});
+      final dio = _dio(
+        (options) => {
+          'data': options.path == '/refund-requests'
+              ? {
+                  'items': [],
+                  'pagination': {
+                    'page': 1,
+                    'totalPages': 0,
+                    'hasNextPage': false,
+                  },
+                }
+              : _contract('active'),
+        },
+      );
       await tester.pumpWidget(
         MaterialApp(
           home: ContractSettlementScreen(
@@ -70,6 +86,74 @@ void main() {
         findsOneWidget,
       );
       expect(tester.takeException(), isNull);
+    },
+  );
+
+  testWidgets(
+    'canonical settlement blocks active, confirmed and disputed states',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 1800);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final calls = <RequestOptions>[];
+      var current = _contract('active');
+      final dio = Dio(BaseOptions(baseUrl: 'https://example.test'))
+        ..interceptors.add(
+          InterceptorsWrapper(
+            onRequest: (options, handler) {
+              calls.add(options);
+              final data = options.path == '/refund-requests'
+                  ? {
+                      'items': [],
+                      'pagination': {
+                        'page': 1,
+                        'totalPages': 0,
+                        'hasNextPage': false,
+                      },
+                    }
+                  : current;
+              handler.resolve(
+                Response(
+                  requestOptions: options,
+                  statusCode: 200,
+                  data: {'data': data},
+                ),
+              );
+            },
+          ),
+        );
+
+      Future<void> render(Map<String, dynamic> contract) async {
+        current = contract;
+        await tester.pumpWidget(
+          MaterialApp(
+            home: ContractSettlementScreen(
+              key: ValueKey(
+                '${contract['status']}-${contract['settlementConfirmedAt']}-${contract['depositStatus']}',
+              ),
+              contractId: '0123456789abcdef01234567',
+              dio: dio,
+            ),
+          ),
+        );
+        await tester.pumpAndSettle();
+      }
+
+      for (final blocked in [
+        _contract('active'),
+        _contract('completed')
+          ..['settlementConfirmedAt'] = '2026-10-30T00:00:00Z',
+        _contract('completed')..['depositStatus'] = 'disputed',
+      ]) {
+        await render(blocked);
+        expect(find.text('Xác nhận quyết toán'), findsNothing);
+        expect(find.text('Khiếu nại quyết toán'), findsNothing);
+      }
+      await render(_contract('completed'));
+      expect(find.text('Xác nhận quyết toán'), findsOneWidget);
+      expect(find.text('Khiếu nại quyết toán'), findsOneWidget);
+      expect(calls.where((call) => call.method == 'POST'), isEmpty);
     },
   );
 
@@ -124,9 +208,7 @@ Map<String, dynamic> _contract(String status) => {
   'forfeitedAmount': 0,
   'refundAmount': 91000,
   'additionalPaymentRequired': 0,
-  'settlementConfirmedAt': status == 'completed'
-      ? '2026-10-30T00:00:00Z'
-      : null,
+  'settlementConfirmedAt': null,
 };
 
 Map<String, dynamic> _refundJson({String status = 'pending_approval'}) => {

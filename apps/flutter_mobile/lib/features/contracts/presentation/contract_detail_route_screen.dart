@@ -7,6 +7,7 @@ import '../../payments/data/models/payment.dart';
 import '../../payments/data/repositories/payment_repository.dart';
 import '../data/contract_repository.dart';
 import 'contract_detail_screen.dart';
+import 'contracts_screen.dart' show showContractRenewalAddendums;
 
 class ContractDetailRouteScreen extends StatefulWidget {
   const ContractDetailRouteScreen({
@@ -62,6 +63,15 @@ class _ContractDetailRouteScreenState extends State<ContractDetailRouteScreen> {
         repository: _contracts,
         paymentRepository: _payments,
         onContractChanged: widget.onContractChanged,
+        onManageRenewal: () async {
+          await showContractRenewalAddendums(
+            context: context,
+            repository: _contracts,
+            contractId: widget.contractId,
+            onChanged: widget.onContractChanged,
+          );
+          if (mounted) _retry();
+        },
         onOpenSettlement: () async {
           await context.push(
             '/contracts/${Uri.encodeComponent(widget.contractId)}/settlement',

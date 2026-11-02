@@ -97,15 +97,6 @@ class ContractRepository {
     );
   }
 
-  Future<Map<String, dynamic>> confirmSettlement(String id) =>
-      _postContract('/contracts/$id/settlement/confirm');
-
-  Future<Map<String, dynamic>> disputeSettlement(String id, String reason) =>
-      _postContract(
-        '/contracts/$id/settlement/dispute',
-        data: {'disputeReason': reason.trim()},
-      );
-
   Future<Map<String, dynamic>> refunds(
     String contractId, {
     int page = 1,

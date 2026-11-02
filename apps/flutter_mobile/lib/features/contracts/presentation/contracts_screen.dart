@@ -5,9 +5,6 @@ import 'package:go_router/go_router.dart';
 import '../../../core/theme/app_theme.dart';
 import '../../../core/widgets/app_ui.dart';
 import '../data/contract_repository.dart';
-import '../../payments/data/models/payment.dart';
-import '../../payments/data/repositories/payment_repository.dart';
-import 'contract_detail_screen.dart';
 import 'settlement_screen.dart';
 
 String _errorText(Object error) {
@@ -36,9 +33,23 @@ class ContractsScreen extends StatefulWidget {
   State<ContractsScreen> createState() => _ContractsScreenState();
 }
 
+/// Opens the existing renewal/addendum experience from any contract entry point.
+Future<void> showContractRenewalAddendums({
+  required BuildContext context,
+  required ContractRepository repository,
+  required String contractId,
+  VoidCallback? onChanged,
+}) async {
+  await showModalBottomSheet<void>(
+    context: context,
+    isScrollControlled: true,
+    builder: (_) => _ContractDetail(repo: repository, id: contractId),
+  );
+  onChanged?.call();
+}
+
 class _ContractsScreenState extends State<ContractsScreen> {
   late final ContractRepository _repo = ContractRepository(widget.dio);
-  late final PaymentRepository _paymentRepo = PaymentRepository(widget.dio);
   late Future<List<Map<String, dynamic>>> _future;
 
   @override
@@ -51,8 +62,6 @@ class _ContractsScreenState extends State<ContractsScreen> {
     setState(() => _future = _repo.list());
     await _future;
   }
-
-  void _reload() => setState(() => _future = _repo.list());
 
   @override
   Widget build(BuildContext context) => Scaffold(
@@ -71,8 +80,8 @@ class _ContractsScreenState extends State<ContractsScreen> {
             ),
           );
         }
-        final rows = snapshot.data ?? const [];
-        if (rows.isEmpty) {
+        final contracts = snapshot.data ?? const <Map<String, dynamic>>[];
+        if (contracts.isEmpty) {
           return const Center(child: Text('No storage contracts yet.'));
         }
         return RefreshIndicator(
@@ -207,13 +216,116 @@ class _ContractsScreenState extends State<ContractsScreen> {
   );
 
   Future<void> _detail(String id) async {
-    await showModalBottomSheet<void>(
-      context: context,
-      isScrollControlled: true,
-      builder: (_) => _ContractDetail(repo: _repo, id: id),
-    );
-    if (mounted) _reload();
+    await context.push('/contracts/${Uri.encodeComponent(id)}');
+    if (!mounted) return;
+    widget.onContractsChanged?.call();
+    await _reload();
   }
+
+  Future<void> _openDetail(Map<String, dynamic> contract) async {
+    final id = _text(contract['id']);
+    if (id == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Hợp đồng chưa có mã định danh hợp lệ.')),
+      );
+      return;
+    }
+    await _detail(id);
+  }
+}
+
+class _StatusBadge extends StatelessWidget {
+  const _StatusBadge({required this.label});
+  final String label;
+  @override
+  Widget build(BuildContext context) => Container(
+    constraints: const BoxConstraints(maxWidth: 130),
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+    decoration: BoxDecoration(
+      color: AppTheme.lightMint,
+      borderRadius: BorderRadius.circular(30),
+    ),
+    child: Text(
+      label,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: const TextStyle(
+        color: AppTheme.primaryEmerald,
+        fontSize: 12,
+        fontWeight: FontWeight.w700,
+      ),
+    ),
+  );
+}
+
+class _DateRange extends StatelessWidget {
+  const _DateRange({this.start, this.end});
+  final Object? start;
+  final Object? end;
+  @override
+  Widget build(BuildContext context) {
+    final startDate = DateTime.tryParse('$start');
+    final endDate = DateTime.tryParse('$end');
+    final localizations = MaterialLocalizations.of(context);
+    final range = [
+      if (startDate != null)
+        localizations.formatMediumDate(startDate.toLocal()),
+      if (endDate != null) localizations.formatMediumDate(endDate.toLocal()),
+    ].join(' – ');
+    return Row(
+      children: [
+        const Icon(
+          Icons.calendar_month_outlined,
+          size: 17,
+          color: AppTheme.secondaryText,
+        ),
+        const SizedBox(width: 7),
+        Expanded(
+          child: Text(range, style: Theme.of(context).textTheme.bodyMedium),
+        ),
+      ],
+    );
+  }
+}
+
+Map<String, dynamic>? _map(Object? value) =>
+    value is Map<String, dynamic> ? value : null;
+String? _text(Object? value) {
+  final text = value?.toString().trim();
+  return text == null || text.isEmpty || text == 'null' ? null : text;
+}
+
+String _statusLabel(Object? value) => switch ('$value'.toLowerCase()) {
+  'draft' => 'Bản nháp',
+  'active' => 'Đang hoạt động',
+  'overdue' => 'Quá hạn',
+  'completed' => 'Đã hoàn tất',
+  'cancelled' => 'Đã hủy',
+  'terminated' => 'Đã chấm dứt',
+  _ => 'Đang xử lý',
+};
+
+String _billingLabel(String value) => switch (value.toLowerCase()) {
+  'month' || 'monthly' => 'tháng',
+  'day' || 'daily' => 'ngày',
+  'year' || 'yearly' => 'năm',
+  _ => value,
+};
+
+String _nextAction(Map<String, dynamic> contract) {
+  if (contract['status'] == 'active') {
+    return 'Hợp đồng đang hoạt động';
+  }
+  if (contract['customerSigned'] == true && contract['staffSigned'] != true) {
+    return 'Chờ nhân viên hoàn tất thủ tục nhận kho';
+  }
+  if (contract['customerSigned'] != true && contract['status'] == 'draft') {
+    return 'Xem lại hợp đồng và xác nhận chữ ký';
+  }
+  if (contract['staffSigned'] == true && contract['customerSigned'] == true) {
+    return 'Đang cập nhật trạng thái hợp đồng';
+  }
+  return 'Theo dõi cập nhật từ cơ sở';
 }
 
 class _ContractDetail extends StatefulWidget {

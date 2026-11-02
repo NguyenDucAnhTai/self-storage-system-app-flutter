@@ -44,36 +44,12 @@ final appRouterProvider = Provider<GoRouter>((ref) {
     refreshListenable: refresh,
     redirect: (context, state) {
       final auth = ref.read(authControllerProvider);
-      final path = state.matchedLocation;
-      if (auth.isLoading) {
-        return path == '/splash' || path == '/login' || path == '/register'
-            ? null
-            : '/splash';
-      }
-      final signedIn = auth.value != null;
-      if (path == '/splash') return signedIn ? '/explore' : '/login';
-      final guarded =
-          path.startsWith('/reservations') ||
-          path.startsWith('/payments') ||
-          path == '/profile' ||
-          path == '/change-password' ||
-          path == '/contracts' ||
-          path == '/storage' ||
-          path == '/notifications';
-      if (guarded && !signedIn) {
-        return '/login?from=${Uri.encodeComponent(state.uri.toString())}';
-      }
-      if (signedIn && (path == '/login' || path == '/register')) {
-        final from = state.uri.queryParameters['from'];
-        if (path == '/login' &&
-            from != null &&
-            from.startsWith('/') &&
-            !from.startsWith('//')) {
-          return from;
-        }
-        return '/explore';
-      }
-      return null;
+      return resolveAuthRedirect(
+        authLoading: auth.isLoading,
+        signedIn: auth.value != null,
+        path: state.matchedLocation,
+        currentUri: state.uri.toString(),
+      );
     },
     routes: [
       GoRoute(path: '/splash', builder: (_, _) => const _SplashScreen()),
@@ -215,7 +191,82 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/contracts',
-            builder: (_, _) => ContractsScreen(dio: ref.read(dioProvider)),
+            builder: (_, _) => ContractsScreen(
+              dio: ref.read(dioProvider),
+              onContractsChanged: () {
+                ref.invalidate(dashboardInventorySummaryProvider);
+                ref.invalidate(dashboardContractsProvider);
+              },
+            ),
+          ),
+          GoRoute(
+            path: '/contracts/:id',
+            builder: (context, state) => ContractDetailRouteScreen(
+              contractId: state.pathParameters['id']!,
+              dio: ref.read(dioProvider),
+              onContractChanged: () {
+                ref.invalidate(dashboardInventorySummaryProvider);
+                ref.invalidate(dashboardContractsProvider);
+              },
+            ),
+          ),
+          GoRoute(
+            path: '/contracts/:id/settlement',
+            builder: (context, state) => ContractSettlementScreen(
+              contractId: state.pathParameters['id']!,
+              dio: ref.read(dioProvider),
+              onChanged: () {
+                ref.invalidate(dashboardContractsProvider);
+                ref.invalidate(dashboardInventorySummaryProvider);
+              },
+            ),
+          ),
+          GoRoute(
+            path: '/refunds',
+            builder: (_, _) => RefundListScreen(dio: ref.read(dioProvider)),
+          ),
+          GoRoute(
+            path: '/refunds/:id',
+            builder: (_, state) => RefundDetailScreen(
+              dio: ref.read(dioProvider),
+              refundId: state.pathParameters['id']!,
+            ),
+          ),
+          GoRoute(
+            path: '/support',
+            builder: (_, _) => CareListScreen(repo: careRepo, incidents: false),
+          ),
+          GoRoute(
+            path: '/support/create',
+            builder: (_, _) => SupportCreateScreen(repo: careRepo),
+          ),
+          GoRoute(
+            path: '/support/:id',
+            builder: (_, state) => CareDetailScreen(
+              repo: careRepo,
+              id: state.pathParameters['id']!,
+              incident: false,
+            ),
+          ),
+          GoRoute(
+            path: '/incidents',
+            builder: (_, _) => CareListScreen(repo: careRepo, incidents: true),
+          ),
+          GoRoute(
+            path: '/incidents/create',
+            builder: (_, _) => const IncidentCreateBlockedScreen(),
+          ),
+          GoRoute(
+            path: '/incidents/:id',
+            builder: (_, state) => CareDetailScreen(
+              repo: careRepo,
+              id: state.pathParameters['id']!,
+              incident: true,
+            ),
+          ),
+          GoRoute(
+            path: '/storage',
+            builder: (_, _) => StorageScreen(dio: ref.read(dioProvider)),
           ),
           GoRoute(
             path: '/notifications',
@@ -238,7 +289,11 @@ String? resolveAuthRedirect({
   required String path,
   required String currentUri,
 }) {
-  if (authLoading) return path == '/splash' ? null : '/splash';
+  if (authLoading) {
+    return path == '/splash' || path == '/login' || path == '/register'
+        ? null
+        : '/splash';
+  }
   if (path == '/splash') return signedIn ? '/home' : '/login';
   final guarded =
       path == '/home' ||
@@ -249,11 +304,22 @@ String? resolveAuthRedirect({
       path.startsWith('/contracts') ||
       path.startsWith('/support') ||
       path.startsWith('/incidents') ||
+      path.startsWith('/refunds') ||
+      path.startsWith('/storage') ||
       path == '/notifications';
   if (guarded && !signedIn) {
     return '/login?from=${Uri.encodeComponent(currentUri)}';
   }
-  if (signedIn && (path == '/login' || path == '/register')) return '/home';
+  if (signedIn && (path == '/login' || path == '/register')) {
+    final from = Uri.tryParse(currentUri)?.queryParameters['from'];
+    if (path == '/login' &&
+        from != null &&
+        from.startsWith('/') &&
+        !from.startsWith('//')) {
+      return from;
+    }
+    return '/home';
+  }
   return null;
 }
 

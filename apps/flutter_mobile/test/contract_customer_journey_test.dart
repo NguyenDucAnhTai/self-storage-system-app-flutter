@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_mobile/core/theme/app_theme.dart';
 import 'package:flutter_mobile/features/contracts/data/contract_repository.dart';
 import 'package:flutter_mobile/features/contracts/presentation/contract_detail_screen.dart';
@@ -171,7 +172,10 @@ void main() {
           ..['firstPeriodRentPaid'] = true
           ..['customerSigned'] = true
           ..['staffSigned'] = true
-          ..['actualCheckInDate'] = '2026-11-01T17:00:00.000Z'
+          ..['actualCheckInDate'] = DateTime.now()
+              .toUtc()
+              .add(const Duration(days: 2))
+              .toIso8601String()
           ..['status'] = 'active';
         await tester.pumpWidget(_app(contract, _SigningAdapter()));
         await tester.pumpAndSettle();
@@ -362,7 +366,11 @@ void main() {
       tester,
     ) async {
       _useTallViewport(tester);
-      final fixture = _backendActiveContract();
+      final fixture = _backendActiveContract()
+        ..['actualCheckInDate'] = DateTime.now()
+            .toUtc()
+            .add(const Duration(days: 2))
+            .toIso8601String();
       final adapter = _SigningAdapter()
         ..contractResponse = fixture
         ..payments = [_paymentJson(status: 'pending')];
@@ -378,7 +386,11 @@ void main() {
       expect(find.textContaining('12:17 31/10/2026'), findsOneWidget);
       expect(find.textContaining('12:38 31/10/2026'), findsNWidgets(2));
       expect(find.textContaining('12:46 31/10/2026'), findsOneWidget);
-      expect(find.textContaining('07:30 02/11/2026'), findsOneWidget);
+      final checkIn = DateTime.parse(fixture['actualCheckInDate']).toLocal();
+      expect(
+        find.textContaining(DateFormat('HH:mm dd/MM/yyyy').format(checkIn)),
+        findsOneWidget,
+      );
       expect(
         find.textContaining('Chưa thể xác nhận đã bàn giao thực tế'),
         findsOneWidget,

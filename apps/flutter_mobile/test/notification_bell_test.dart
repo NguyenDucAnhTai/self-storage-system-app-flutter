@@ -253,6 +253,8 @@ void main() {
       ),
     );
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('Thông báo'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Thông báo'));
     await tester.pumpAndSettle();
     expect(find.text('Full notifications screen'), findsOneWidget);

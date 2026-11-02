@@ -299,13 +299,13 @@ class _RefundDetailScreenState extends State<RefundDetailScreen> {
   );
 
   Future<void> _cancel(RefundRequest item) async {
-    final controller = TextEditingController();
+    var reasonText = '';
     final reason = await showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
         title: const Text('Hủy yêu cầu hoàn tiền?'),
         content: TextField(
-          controller: controller,
+          onChanged: (value) => reasonText = value,
           minLines: 2,
           maxLines: 4,
           maxLength: 500,
@@ -319,13 +319,12 @@ class _RefundDetailScreenState extends State<RefundDetailScreen> {
             child: const Text('Để sau'),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, controller.text.trim()),
+            onPressed: () => Navigator.pop(context, reasonText.trim()),
             child: const Text('Tiếp tục'),
           ),
         ],
       ),
     );
-    controller.dispose();
     if (!mounted) return;
     if (reason == null) return;
     if (reason.length < 3 || reason.length > 500) {
