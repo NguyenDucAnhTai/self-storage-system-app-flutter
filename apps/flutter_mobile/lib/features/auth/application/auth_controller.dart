@@ -24,8 +24,13 @@ class AuthController extends AsyncNotifier<AuthUser?> {
 
   Future<void> login(String email, String password) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(() => _repository.login(email, password));
-    state.requireValue;
+    try {
+      final user = await _repository.login(email, password);
+      state = AsyncData(user);
+    } catch (error, stack) {
+      state = AsyncError(error, stack);
+      rethrow;
+    }
     ref.invalidate(notificationFeedProvider);
     ref.invalidate(notificationUnreadCountProvider);
     ref.invalidate(paymentHistoryProvider);
@@ -40,16 +45,19 @@ class AuthController extends AsyncNotifier<AuthUser?> {
     String? phoneNumber,
   }) async {
     state = const AsyncLoading();
-    state = await AsyncValue.guard(
-      () => _repository.register(
+    try {
+      final user = await _repository.register(
         email: email,
         otp: otp,
         password: password,
         name: name,
         phoneNumber: phoneNumber,
-      ),
-    );
-    state.requireValue;
+      );
+      state = AsyncData(user);
+    } catch (error, stack) {
+      state = AsyncError(error, stack);
+      rethrow;
+    }
     ref.invalidate(notificationFeedProvider);
     ref.invalidate(notificationUnreadCountProvider);
     ref.invalidate(paymentHistoryProvider);

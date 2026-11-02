@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:dio/dio.dart';
 
+import '../../../../core/network/api_error.dart';
 import '../../application/auth_controller.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
@@ -107,7 +109,13 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           .login(_email.text, _password.text);
       if (mounted) context.go(widget.returnTo ?? '/home');
     } catch (e) {
-      if (mounted) setState(() => _error = e.toString());
+      if (mounted) {
+        setState(
+          () => _error = e is DioException
+              ? ApiError.fromDio(e).message
+              : e.toString(),
+        );
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }

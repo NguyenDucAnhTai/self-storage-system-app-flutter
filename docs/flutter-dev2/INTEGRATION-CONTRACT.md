@@ -19,12 +19,12 @@
 
 ## Proposed navigation
 
-| Route | Parameters | Destination |
-| --- | --- | --- |
-| `/reservations` | none | reservation list |
-| `/reservations/new` | facilityId, storageUnitId, facilityUnitTypeOfferingId | booking form/availability selection (not yet implemented) |
-| `/reservations/:id` | id | reservation detail |
-| `/payments/reservation/:reservationId` | reservationId | create/retrieve and track deposit payment |
+| Route                                  | Parameters                                            | Destination                                               |
+| -------------------------------------- | ----------------------------------------------------- | --------------------------------------------------------- |
+| `/reservations`                        | none                                                  | reservation list                                          |
+| `/reservations/new`                    | facilityId, storageUnitId, facilityUnitTypeOfferingId | booking form/availability selection (not yet implemented) |
+| `/reservations/:id`                    | id                                                    | reservation detail                                        |
+| `/payments/reservation/:reservationId` | reservationId                                         | create/retrieve and track deposit payment                 |
 
 Reservation detail's payment callback can navigate to the payment route with reservation ID. List/detail/payment screens accept feature repositories through constructors for dependency injection.
 

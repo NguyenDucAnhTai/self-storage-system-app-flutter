@@ -15,42 +15,42 @@
 
 Requests used HTTPS GET only, with no Authorization header. Response bodies from protected routes were not inspected.
 
-| Request | Result | Notes |
-| --- | --- | --- |
-| `GET /` | 200, `text/html` | Server responds over HTTPS. |
-| `GET /api-docs` | 200, `text/html` | Public Swagger UI. |
-| `GET /api-docs/swagger-ui-init.js` | 200, `application/javascript` | Contains an embedded OpenAPI 3.0.0 document, declares the production Render URL as its server, and lists 116 paths. |
-| `GET /openapi.json`, `/swagger.json`, `/docs` | 404 | No standalone JSON spec was exposed at these common paths. |
-| `GET /api/facilities` | 404 | Deployed API paths are rooted at `/`; no `/api` prefix was observed. |
-| `GET /health` | 404 | This path is not a health endpoint in the deployed app; the root and public APIs responded successfully. |
+| Request                                       | Result                        | Notes                                                                                                               |
+| --------------------------------------------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `GET /`                                       | 200, `text/html`              | Server responds over HTTPS.                                                                                         |
+| `GET /api-docs`                               | 200, `text/html`              | Public Swagger UI.                                                                                                  |
+| `GET /api-docs/swagger-ui-init.js`            | 200, `application/javascript` | Contains an embedded OpenAPI 3.0.0 document, declares the production Render URL as its server, and lists 116 paths. |
+| `GET /openapi.json`, `/swagger.json`, `/docs` | 404                           | No standalone JSON spec was exposed at these common paths.                                                          |
+| `GET /api/facilities`                         | 404                           | Deployed API paths are rooted at `/`; no `/api` prefix was observed.                                                |
+| `GET /health`                                 | 404                           | This path is not a health endpoint in the deployed app; the root and public APIs responded successfully.            |
 
 ## Verified read-only public APIs
 
-| Endpoint | HTTP | Deployed response | Flutter compatibility |
-| --- | --- | --- | --- |
-| `GET /facilities?page=1&limit=20&status=active&sortBy=name&sortOrder=asc` | 200 | Standard `{success,statusCode,messageCode,message,data}` envelope; `data` has `items` and `pagination`; 20 items returned. Item keys include `id`, `name`, `address`, `city`, `status`, `images`, `operatingHours`; optional `phone`/`email` are absent and ignored safely. | Compatible with `Facility.fromJson` and listing parser. |
-| Same listing with `search=codex-qa-no-match-20261022` | 200 | Same envelope, empty `items`. | Compatible with empty-state list parsing. |
-| `GET /facilities/{id}/public-detail` | 200 | `data` contains `facility`, `unitTypeOfferings`, `amenityOfferings`; first tested facility had 2 unit type offerings and 1 amenity offering. Offering keys include `unitTypeId`, `pricePerUnit`, `billingUnit`, `depositMultiplier`, `minRentalDays`, and `availableUnitsCount`; nested `unitType` includes `id`, `name`, `area`, `volume`, and `dimensions`. | Compatible with Flutter's facility/offerings response shape. |
-| `GET /storage-units/facility/{facilityId}/available` | 200 | Standard envelope; `data` is an array; 0 rows for the tested facility. | Compatible with physical-unit list parser; no unit could be selected from this response. |
-| `GET /facility-time-slots/facility/{facilityId}/available?date=2026-10-22` | 200 | Standard envelope; `data` is an array; 0 rows for the tested facility/date. | Compatible with time-slot list parser; no slot was available in this response. |
+| Endpoint                                                                   | HTTP | Deployed response                                                                                                                                                                                                                                                                                                                                             | Flutter compatibility                                                                    |
+| -------------------------------------------------------------------------- | ---- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- |
+| `GET /facilities?page=1&limit=20&status=active&sortBy=name&sortOrder=asc`  | 200  | Standard `{success,statusCode,messageCode,message,data}` envelope; `data` has `items` and `pagination`; 20 items returned. Item keys include `id`, `name`, `address`, `city`, `status`, `images`, `operatingHours`; optional `phone`/`email` are absent and ignored safely.                                                                                   | Compatible with `Facility.fromJson` and listing parser.                                  |
+| Same listing with `search=codex-qa-no-match-20261022`                      | 200  | Same envelope, empty `items`.                                                                                                                                                                                                                                                                                                                                 | Compatible with empty-state list parsing.                                                |
+| `GET /facilities/{id}/public-detail`                                       | 200  | `data` contains `facility`, `unitTypeOfferings`, `amenityOfferings`; first tested facility had 2 unit type offerings and 1 amenity offering. Offering keys include `unitTypeId`, `pricePerUnit`, `billingUnit`, `depositMultiplier`, `minRentalDays`, and `availableUnitsCount`; nested `unitType` includes `id`, `name`, `area`, `volume`, and `dimensions`. | Compatible with Flutter's facility/offerings response shape.                             |
+| `GET /storage-units/facility/{facilityId}/available`                       | 200  | Standard envelope; `data` is an array; 0 rows for the tested facility.                                                                                                                                                                                                                                                                                        | Compatible with physical-unit list parser; no unit could be selected from this response. |
+| `GET /facility-time-slots/facility/{facilityId}/available?date=2026-10-22` | 200  | Standard envelope; `data` is an array; 0 rows for the tested facility/date.                                                                                                                                                                                                                                                                                   | Compatible with time-slot list parser; no slot was available in this response.           |
 
 ### Reported reservation date
 
-| Request | HTTP | Result |
-| --- | --- | --- |
-| `GET /storage-units/facility/660000000000000000000003/available?unitTypeId=661000000000000000000002` | 200 | Contains `LK-301` (`663000000000000000000006`, floor 1, status `available`). |
-| `GET /facility-time-slots/facility/660000000000000000000003/available?date=2026-10-28` | 200 | `{ "success": true, "statusCode": 200, "messageCode": "MESSAGE_CODE_001", "message": "Operation Successful", "data": [] }`. This is a valid empty result for the user-reported date. |
-| Public OpenAPI: `/facility-time-slots/facility/{facilityId}/available` | — | Declares a facility/date GET returning an array. Slot item fields include `id`, `slotName`, `startTime`, `endTime`, `availableCapacity`, and `isAvailable`; Flutter checks all these fields and now rejects incomplete response items as parsing errors. |
+| Request                                                                                              | HTTP | Result                                                                                                                                                                                                                                                   |
+| ---------------------------------------------------------------------------------------------------- | ---- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `GET /storage-units/facility/660000000000000000000003/available?unitTypeId=661000000000000000000002` | 200  | Contains `LK-301` (`663000000000000000000006`, floor 1, status `available`).                                                                                                                                                                             |
+| `GET /facility-time-slots/facility/660000000000000000000003/available?date=2026-10-28`               | 200  | `{ "success": true, "statusCode": 200, "messageCode": "MESSAGE_CODE_001", "message": "Operation Successful", "data": [] }`. This is a valid empty result for the user-reported date.                                                                     |
+| Public OpenAPI: `/facility-time-slots/facility/{facilityId}/available`                               | —    | Declares a facility/date GET returning an array. Slot item fields include `id`, `slotName`, `startTime`, `endTime`, `availableCapacity`, and `isAvailable`; Flutter checks all these fields and now rejects incomplete response items as parsing errors. |
 
 The slot endpoint does not accept a physical storage unit ID. The Flutter request is facility and date based, so selecting LK-301 does not cause a slot refresh. A new date selection does issue a new request. For Oct 28, the selected unit is available but no check-in slots are returned; the create button correctly remains disabled because the user has no valid slot to select.
 
 ### Facility `660000000000000000000001` investigation (2026-10-23)
 
-| Read-only request | HTTP | Result |
-| --- | --- | --- |
-| `GET /facility-time-slots/facility/660000000000000000000001/available?date=2026-10-28` | 200 | `success: true`, `data: []`. |
-| `GET /facility-time-slots/facility/660000000000000000000001/available?date=2026-10-29` | 200 | `success: true`, `data: []`. |
-| `GET /storage-units/facility/660000000000000000000001/available` | 200 | Four physical units returned with `status: available`. |
+| Read-only request                                                                      | HTTP | Result                                                 |
+| -------------------------------------------------------------------------------------- | ---- | ------------------------------------------------------ |
+| `GET /facility-time-slots/facility/660000000000000000000001/available?date=2026-10-28` | 200  | `success: true`, `data: []`.                           |
+| `GET /facility-time-slots/facility/660000000000000000000001/available?date=2026-10-29` | 200  | `success: true`, `data: []`.                           |
+| `GET /storage-units/facility/660000000000000000000001/available`                       | 200  | Four physical units returned with `status: available`. |
 
 The separate unit response does not imply check-in slot availability: storage-unit availability and facility/date time-slot availability are distinct APIs and data. The Flutter repository calls the documented GET path and serializes the selected local calendar date as `YYYY-MM-DD`, without UTC conversion. The response parser accepts a valid empty array and rejects malformed arrays/items; screen state only displays “No time slots” for a successful empty response and displays API/parsing failures separately. The public Swagger/OpenAPI document is accessible and declares this route as a facility path parameter plus required date query parameter with an array response. No FE contract mismatch was found.
 
@@ -62,14 +62,14 @@ No facility records, reservations, payments, OTPs, or other production data were
 
 ## Protected API and authentication status
 
-| Safe request | HTTP | Result |
-| --- | --- | --- |
-| `GET /auth/me` | 401 | Authentication required; no test access token was available. |
-| `GET /reservations` | 401 | Authentication required. |
-| `GET /payments` | 401 | Authentication required. |
-| `GET /contracts` | 401 | Authentication required. |
-| `GET /profile/me` | 401 | Authentication required. |
-| `GET /notifications` | 401 | Authentication required. |
+| Safe request         | HTTP | Result                                                       |
+| -------------------- | ---- | ------------------------------------------------------------ |
+| `GET /auth/me`       | 401  | Authentication required; no test access token was available. |
+| `GET /reservations`  | 401  | Authentication required.                                     |
+| `GET /payments`      | 401  | Authentication required.                                     |
+| `GET /contracts`     | 401  | Authentication required.                                     |
+| `GET /profile/me`    | 401  | Authentication required.                                     |
+| `GET /notifications` | 401  | Authentication required.                                     |
 
 These 401 responses confirm the host is responding and are not treated as an outage. Swagger declares login, register, refresh, logout and session routes, but no POST auth request was sent: there are no authorized test credentials, and no production account or OTP may be created here. Session restore, token refresh, login, logout and authenticated navigation remain NOT VERIFIED against Render.
 
@@ -94,11 +94,11 @@ The embedded OpenAPI request schemas include:
 
 ## Flutter verification
 
-| Command | Result |
-| --- | --- |
-| `flutter pub get` | PASS; dependencies resolved (9 newer versions are outside current constraints). |
-| `flutter analyze` | PASS; no issues. |
-| `flutter test` | PASS; all 20 tests. |
+| Command                     | Result                                                                                          |
+| --------------------------- | ----------------------------------------------------------------------------------------------- |
+| `flutter pub get`           | PASS; dependencies resolved (9 newer versions are outside current constraints).                 |
+| `flutter analyze`           | PASS; no issues.                                                                                |
+| `flutter test`              | PASS; all 20 tests.                                                                             |
 | `flutter build apk --debug` | PASS; `apps/flutter_mobile/build/app/outputs/flutter-apk/app-debug.apk`, installed on emulator. |
 
 ## Production safety and remaining blockers

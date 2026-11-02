@@ -29,21 +29,52 @@ import '../features/refunds/presentation/refund_screens.dart';
 import '../features/customer_care/customer_care.dart';
 import '../features/customer_care/customer_care_screens.dart';
 import '../features/amenities/amenity_repository.dart';
+import '../features/storage/presentation/storage_screen.dart';
 
 final appRouterProvider = Provider<GoRouter>((ref) {
-  final auth = ref.watch(authControllerProvider);
+  final refresh = ValueNotifier<int>(0);
+  ref.listen(authControllerProvider, (_, _) => refresh.value++);
+  ref.onDispose(refresh.dispose);
   final features = ref.watch(reservationPaymentProvider);
   final facilityRepo = ref.watch(facilityRepositoryProvider);
   final amenityRepo = AmenityRepository(ref.watch(dioProvider));
   final careRepo = CustomerCareRepository(ref.watch(dioProvider));
-  return GoRouter(
+  final router = GoRouter(
     initialLocation: '/splash',
-    redirect: (context, state) => resolveAuthRedirect(
-      authLoading: auth.isLoading,
-      signedIn: auth.value != null,
-      path: state.matchedLocation,
-      currentUri: state.uri.toString(),
-    ),
+    refreshListenable: refresh,
+    redirect: (context, state) {
+      final auth = ref.read(authControllerProvider);
+      final path = state.matchedLocation;
+      if (auth.isLoading) {
+        return path == '/splash' || path == '/login' || path == '/register'
+            ? null
+            : '/splash';
+      }
+      final signedIn = auth.value != null;
+      if (path == '/splash') return signedIn ? '/explore' : '/login';
+      final guarded =
+          path.startsWith('/reservations') ||
+          path.startsWith('/payments') ||
+          path == '/profile' ||
+          path == '/change-password' ||
+          path == '/contracts' ||
+          path == '/storage' ||
+          path == '/notifications';
+      if (guarded && !signedIn) {
+        return '/login?from=${Uri.encodeComponent(state.uri.toString())}';
+      }
+      if (signedIn && (path == '/login' || path == '/register')) {
+        final from = state.uri.queryParameters['from'];
+        if (path == '/login' &&
+            from != null &&
+            from.startsWith('/') &&
+            !from.startsWith('//')) {
+          return from;
+        }
+        return '/explore';
+      }
+      return null;
+    },
     routes: [
       GoRoute(path: '/splash', builder: (_, _) => const _SplashScreen()),
       GoRoute(
@@ -80,7 +111,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
               availabilityRepository: features.reservations,
               amenityRepository: amenityRepo,
               onBook: (selection) {
-                if (auth.value == null) {
+                if (ref.read(authControllerProvider).value == null) {
                   context.go(
                     '/login?from=${Uri.encodeComponent('/reservations/create?facilityId=${selection.facility.id}&offeringId=${selection.offering.id}&unitTypeId=${selection.offering.unitTypeId}&minRentalDays=${selection.offering.minRentalDays}')}',
                   );
@@ -184,78 +215,7 @@ final appRouterProvider = Provider<GoRouter>((ref) {
           ),
           GoRoute(
             path: '/contracts',
-            builder: (_, _) => ContractsScreen(
-              dio: ref.read(dioProvider),
-              onContractsChanged: () {
-                ref.invalidate(dashboardInventorySummaryProvider);
-                ref.invalidate(dashboardContractsProvider);
-              },
-            ),
-          ),
-          GoRoute(
-            path: '/contracts/:id',
-            builder: (context, state) => ContractDetailRouteScreen(
-              contractId: state.pathParameters['id']!,
-              dio: ref.read(dioProvider),
-              onContractChanged: () {
-                ref.invalidate(dashboardInventorySummaryProvider);
-                ref.invalidate(dashboardContractsProvider);
-              },
-            ),
-          ),
-          GoRoute(
-            path: '/contracts/:id/settlement',
-            builder: (context, state) => ContractSettlementScreen(
-              contractId: state.pathParameters['id']!,
-              dio: ref.read(dioProvider),
-              onChanged: () {
-                ref.invalidate(dashboardContractsProvider);
-                ref.invalidate(dashboardInventorySummaryProvider);
-              },
-            ),
-          ),
-          GoRoute(
-            path: '/refunds',
-            builder: (_, _) => RefundListScreen(dio: ref.read(dioProvider)),
-          ),
-          GoRoute(
-            path: '/refunds/:id',
-            builder: (_, state) => RefundDetailScreen(
-              dio: ref.read(dioProvider),
-              refundId: state.pathParameters['id']!,
-            ),
-          ),
-          GoRoute(
-            path: '/support',
-            builder: (_, _) => CareListScreen(repo: careRepo, incidents: false),
-          ),
-          GoRoute(
-            path: '/support/create',
-            builder: (_, _) => SupportCreateScreen(repo: careRepo),
-          ),
-          GoRoute(
-            path: '/support/:id',
-            builder: (_, state) => CareDetailScreen(
-              repo: careRepo,
-              id: state.pathParameters['id']!,
-              incident: false,
-            ),
-          ),
-          GoRoute(
-            path: '/incidents',
-            builder: (_, _) => CareListScreen(repo: careRepo, incidents: true),
-          ),
-          GoRoute(
-            path: '/incidents/create',
-            builder: (_, _) => const IncidentCreateBlockedScreen(),
-          ),
-          GoRoute(
-            path: '/incidents/:id',
-            builder: (_, state) => CareDetailScreen(
-              repo: careRepo,
-              id: state.pathParameters['id']!,
-              incident: true,
-            ),
+            builder: (_, _) => ContractsScreen(dio: ref.read(dioProvider)),
           ),
           GoRoute(
             path: '/notifications',
@@ -265,6 +225,8 @@ final appRouterProvider = Provider<GoRouter>((ref) {
       ),
     ],
   );
+  ref.onDispose(router.dispose);
+  return router;
 });
 
 bool _validId(String? value) =>
@@ -306,7 +268,7 @@ class _AppShell extends StatelessWidget {
   const _AppShell({required this.location, required this.child});
   final String location;
   final Widget child;
-  int get _index => location.startsWith('/profile')
+  int get _index => location.startsWith('/profile') || location == '/storage'
       ? 3
       : location.startsWith('/reservations') || location.startsWith('/payments')
       ? 2
