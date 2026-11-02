@@ -1,0 +1,349 @@
+<!-- A4. Đặt kho mới (Multi-step Booking) -->
+<!DOCTYPE html>
+
+<html class="h-full" lang="vi"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport"/><meta content="mobile_stack" name="shell-type"/><title>Self Storage</title><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{width:100vw;min-height:100%;margin:0;padding:0;background-color:#f8f9ff;}body{overscroll-behavior-y:none;-webkit-tap-highlight-color:transparent;}.pb-safe{padding-bottom:env(safe-area-inset-bottom,0px);}.pt-safe{padding-top:env(safe-area-inset-top,0px);}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config = { darkMode: "class", theme: { extend: { colors: { "secondary-fixed-dim": "#4edea3", "primary": "#003327", "on-tertiary-fixed": "#121e1c", "outline-variant": "#c0c9c3", "on-error": "#ffffff", "secondary-container": "#6cf8bb", "on-primary-container": "#86b9a6", "on-error-container": "#93000a", "error": "#ba1a1a", "on-secondary": "#ffffff", "inverse-on-surface": "#eaf1ff", "outline": "#707975", "tertiary": "#222e2c", "primary-container": "#164a3c", "tertiary-fixed-dim": "#bcc9c7", "surface-dim": "#d0dbed", "surface-container": "#e6eeff", "on-surface": "#121c2a", "primary-fixed": "#b9eeda", "error-container": "#ffdad6", "background": "#f8f9ff", "on-secondary-container": "#00714d", "on-tertiary-fixed-variant": "#3d4947", "inverse-surface": "#27313f", "secondary": "#006c49", "surface-container-high": "#dee9fc", "on-secondary-fixed-variant": "#005236", "on-tertiary-container": "#a3b1ae", "surface-container-highest": "#d9e3f6", "surface-variant": "#d9e3f6", "on-tertiary": "#ffffff", "surface": "#f8f9ff", "secondary-fixed": "#6ffbbe", "tertiary-fixed": "#d7e5e2", "on-background": "#121c2a", "surface-tint": "#366758", "on-primary-fixed-variant": "#1c4f41", "tertiary-container": "#374442", "on-surface-variant": "#404945", "surface-container-low": "#eff4ff", "inverse-primary": "#9dd1be", "on-primary": "#ffffff", "primary-fixed-dim": "#9dd1be", "on-secondary-fixed": "#002113", "on-primary-fixed": "#002018", "surface-container-lowest": "#ffffff", "surface-bright": "#f8f9ff" }, borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" }, spacing: { "space-sm": "0.5rem", "space-md": "1rem", "gutter": "1rem", "space-lg": "1.5rem", "margin": "1rem", "space-xs": "0.25rem", "space-xl": "2rem" }, fontFamily: { "label-lg": ["Inter"], "headline-lg-mobile": ["Inter"], "label-md": ["Inter"], "label-sm": ["Inter"], "body-lg": ["Inter"], "headline-sm": ["Inter"], "headline-lg": ["Inter"], "body-md": ["Inter"], "headline-md": ["Inter"], "body-sm": ["Inter"] }, fontSize: { "label-lg": ["15px", { "lineHeight": "20px", "fontWeight": "600" }], "headline-lg-mobile": ["26px", { "lineHeight": "34px", "fontWeight": "700" }], "label-md": ["13px", { "lineHeight": "18px", "fontWeight": "500" }], "label-sm": ["11px", { "lineHeight": "14px", "fontWeight": "600" }], "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }], "headline-sm": ["18px", { "lineHeight": "24px", "fontWeight": "600" }], "headline-lg": ["32px", { "lineHeight": "40px", "fontWeight": "700" }], "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }], "headline-md": ["22px", { "lineHeight": "28px", "fontWeight": "600" }], "body-sm": ["12px", { "lineHeight": "16px", "fontWeight": "400" }] } } } };</script><style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head><body class="bg-surface text-on-surface font-body-md text-body-md flex flex-col min-h-screen antialiased selection:bg-secondary-fixed selection:text-on-secondary-fixed"><header class="fixed top-0 inset-x-0 z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)] pt-safe"><div class="flex items-center justify-between px-margin h-16"><div class="flex items-center gap-space-xs min-w-0"><button aria-label="Quay lại" class="flex items-center justify-center w-11 h-11 -ml-2 rounded-full text-on-surface hover:bg-surface-container-high/60 transition-colors" onclick="history.back()" type="button"><span class="material-symbols-outlined text-[24px]">arrow_back</span></button><img alt="Self Storage Vault Logo" class="h-7 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1UWtBm6ywF0qC4y9jkzHThVmJV0Aa5Sp0hWueCIdmhowNiNOytxXuZrU3KdvY98NiTxJ07PVeDNkTmiqS8msiRaWL_z4DhSwj_EMpFsmn40qGcfmOP8cFUQS7UuaeiJz0DP6Hkw0JBGW0PeP8HDYwzLMluj1obN7FGytlm6ha39TvopnvM5qvoB88Kp60cqZ5hVPNksdfFsQI3IOrHbIG3ayXtD1pts7STa6SRrdmymeg"/><div class="flex flex-col min-w-0 pl-1"><span class="text-label-sm font-label-sm uppercase text-secondary truncate">Self Storage</span><h1 class="text-headline-sm font-headline-sm text-on-surface truncate leading-tight">Đặt Kho Mới</h1></div></div><div class="flex items-center gap-space-xs"><button aria-label="Thông báo" class="relative flex items-center justify-center w-11 h-11 rounded-full text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/60 transition-colors" type="button"><span class="material-symbols-outlined text-[24px]">notifications</span><span class="absolute top-2.5 right-2.5 flex h-2 w-2"><span class="relative inline-flex rounded-full h-2 w-2 bg-error"></span></span></button><button aria-label="Hồ sơ người dùng" class="flex items-center justify-center w-11 h-11 rounded-full hover:ring-2 hover:ring-primary/20 transition-all ml-0.5" type="button"><img alt="Profile" class="w-8 h-8 rounded-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuALNBGJKzObyzVA4bSogbTZ5N-Gv0KojbZGC1A162oR7TlzDKKcA_yMlLN168nAP7SV1cnlH5hQ0GWzXlbASmenw6vG9xjWQKx0rTDvdrNcnP9f9NSpsZOIRMjhs56p5nZTniIE-cCSggJyZ3sWPX-Yv71CF44ioPJXotGsCqEmQtQ2qDsyustOoevbHBljXOH0mv_z6ckVkYOOHkrlfFgGO20BmI-SPKRNl6l6lAIA"/></button></div></div></header><main class="flex-1 flex flex-col relative w-full pt-16 pb-safe bg-surface"><div class="flex flex-col w-full pb-10">
+<!-- Stepper Indicator (4 Steps Material 3) -->
+<div class="px-margin pt-2 pb-space-md">
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm">
+<div class="flex items-center justify-between relative">
+<!-- Connecting Line Background -->
+<div class="absolute left-6 right-6 top-4 h-0.5 bg-surface-container-high -z-0"></div>
+<div class="absolute left-6 w-1/3 top-4 h-0.5 bg-secondary -z-0"></div>
+<!-- Step 1: Completed -->
+<div class="flex flex-col items-center gap-1 z-10">
+<div class="w-8 h-8 rounded-full bg-secondary text-on-secondary flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-[18px]">check</span>
+</div>
+<span class="text-label-sm font-label-sm text-secondary">Cơ sở</span>
+</div>
+<!-- Step 2: Active -->
+<div class="flex flex-col items-center gap-1 z-10">
+<div class="w-8 h-8 rounded-full bg-primary-container text-on-primary flex items-center justify-center shadow-md scale-110">
+<span class="text-label-sm font-label-sm">2</span>
+</div>
+<span class="text-label-sm font-label-sm text-primary font-bold">Vị trí &amp; Giờ</span>
+</div>
+<!-- Step 3: Pending -->
+<div class="flex flex-col items-center gap-1 z-10">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center">
+<span class="text-label-sm font-label-sm">3</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Thời hạn</span>
+</div>
+<!-- Step 4: Pending -->
+<div class="flex flex-col items-center gap-1 z-10">
+<div class="w-8 h-8 rounded-full bg-surface-container-high text-on-surface-variant flex items-center justify-center">
+<span class="text-label-sm font-label-sm">4</span>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Xác nhận</span>
+</div>
+</div>
+</div>
+</div>
+<!-- Facility Overview Badge -->
+<div class="px-margin mb-space-md">
+<div class="bg-primary-fixed/40 rounded-xl p-space-sm flex items-center justify-between">
+<div class="flex items-center gap-2 min-w-0">
+<span class="material-symbols-outlined text-primary text-[20px]">warehouse</span>
+<div class="truncate">
+<span class="text-label-sm font-label-sm text-on-primary-fixed-variant uppercase">Cơ sở đã chọn:</span>
+<span class="text-label-md font-label-md text-primary font-bold ml-1">Quận 7 • Central Vault</span>
+</div>
+</div>
+<button class="text-label-sm font-label-sm text-secondary font-semibold shrink-0 px-2 py-1 rounded hover:bg-secondary-fixed/50" type="button">Đổi</button>
+</div>
+</div>
+<!-- Step 2 Content: Section 1 - Physical Storage Unit Selection -->
+<section class="px-margin mb-space-lg flex flex-col gap-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">view_in_ar</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">1. Chọn phòng kho vật lý</h2>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Khoang Tiêu Chuẩn (S)</span>
+</div>
+<!-- Visual Hint Banner -->
+<div class="rounded-xl overflow-hidden relative h-28 bg-surface-container-high shadow-inner">
+<div class="w-full h-full bg-cover bg-center" data-alt="Modern indoor self-storage corridor in Vietnam featuring secure mint green and forest green storage locker doors, clean polished concrete floor, warm architectural LED lighting, tactile keypads, and sleek signage in high resolution." style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDanvR3bGFsLpuodQVz7XfBCMcLn3yUzR-PPru7LIR61GK6f4RdPB2Z2Txjf6Nxqhb6H5qjOwhHhbdDVsho9KufMcA_96Fx60Hym0e8gJALNzgP_1Jg1dxMPx9YjwZKYYXkUlC3oiCZTR_aT2w-nWaAkrr2-tiarDirBRg2qmm1l4EbPXU1JrGXB3a_0EXJtQh2PzPNM-Puf3y1BV3uxlJH4cLZ9ip-FXu1XrUnjfcH')"></div>
+<div class="absolute inset-0 bg-gradient-to-t from-primary/80 via-primary/30 to-transparent flex items-end p-3">
+<div class="flex items-center gap-2 text-on-primary">
+<span class="material-symbols-outlined text-[18px]">verified_user</span>
+<span class="text-label-sm font-label-sm">Kiểm soát nhiệt độ 22-25°C • Giám sát camera 24/7</span>
+</div>
+</div>
+</div>
+<!-- Units Stack -->
+<div class="flex flex-col gap-3" id="unit-selection-group">
+<!-- Unit B-102 (Selected) -->
+<label class="cursor-pointer">
+<input checked="" class="sr-only peer" name="selected_unit" type="radio" value="B-102"/>
+<div class="p-space-md rounded-2xl bg-surface-container-lowest peer-checked:bg-secondary-fixed/20 shadow-sm peer-checked:shadow-md transition-all flex items-center justify-between">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-primary-container text-on-primary flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[22px]">lock</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-headline-sm font-headline-sm text-primary">Unit B-102</span>
+<span class="text-label-sm font-label-sm bg-secondary text-on-secondary px-2 py-0.5 rounded-full">Khuyên dùng</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">Tầng 1 • Diện tích 3.2 m² • Gần cửa ra vào</p>
+<div class="flex items-center gap-3 mt-2 text-label-sm font-label-sm text-on-secondary-container">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">door_front</span> Dễ tiếp cận</span>
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">thermostat</span> Khí hậu ổn định</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end justify-between self-stretch shrink-0 pl-2">
+<span class="text-headline-sm font-headline-sm text-primary">1.100.000 đ<span class="text-body-sm font-body-sm text-on-surface-variant font-normal">/tháng</span></span>
+<div class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center mt-2">
+<span class="material-symbols-outlined text-[16px]">done</span>
+</div>
+</div>
+</div>
+</label>
+<!-- Unit B-105 (Available) -->
+<label class="cursor-pointer">
+<input class="sr-only peer" name="selected_unit" type="radio" value="B-105"/>
+<div class="p-space-md rounded-2xl bg-surface-container-lowest peer-checked:bg-secondary-fixed/20 shadow-sm peer-checked:shadow-md transition-all flex items-center justify-between">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-container-high text-on-surface-variant flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[22px]">lock_open</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-headline-sm font-headline-sm text-on-surface">Unit B-105</span>
+<span class="text-label-sm font-label-sm bg-surface-container-high text-on-surface px-2 py-0.5 rounded-full">Còn trống</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">Tầng 1 • Diện tích 3.0 m² • Khu vực yên tĩnh</p>
+<div class="flex items-center gap-3 mt-2 text-label-sm font-label-sm text-on-surface-variant">
+<span class="flex items-center gap-1"><span class="material-symbols-outlined text-[14px]">shield</span> Thẻ từ NFC</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col items-end justify-between self-stretch shrink-0 pl-2">
+<span class="text-headline-sm font-headline-sm text-on-surface">1.050.000 đ<span class="text-body-sm font-body-sm text-on-surface-variant font-normal">/tháng</span></span>
+<div class="w-6 h-6 rounded-full bg-surface-container-high text-transparent flex items-center justify-center mt-2 peer-checked:bg-primary peer-checked:text-on-primary">
+<span class="material-symbols-outlined text-[16px]">done</span>
+</div>
+</div>
+</div>
+</label>
+<!-- Unit B-108 (Disabled/Occupied) -->
+<div class="p-space-md rounded-2xl bg-surface-container/60 opacity-60 shadow-none flex items-center justify-between pointer-events-none cursor-not-allowed">
+<div class="flex items-start gap-3">
+<div class="w-10 h-10 rounded-xl bg-surface-dim text-outline flex items-center justify-center shrink-0 mt-0.5">
+<span class="material-symbols-outlined text-[22px]">block</span>
+</div>
+<div class="flex flex-col">
+<div class="flex items-center gap-2">
+<span class="text-headline-sm font-headline-sm text-outline">Unit B-108</span>
+<span class="text-label-sm font-label-sm bg-error-container text-on-error-container px-2 py-0.5 rounded-full">Hết chỗ</span>
+</div>
+<p class="text-body-sm font-body-sm text-outline mt-0.5">Tầng 1 • Diện tích 3.5 m² • Đã thuê tới 08/2025</p>
+</div>
+</div>
+<div class="flex flex-col items-end justify-between self-stretch shrink-0 pl-2">
+<span class="text-headline-sm font-headline-sm text-outline">1.200.000 đ<span class="text-body-sm font-body-sm text-outline font-normal">/tháng</span></span>
+<span class="text-label-sm font-label-sm text-error mt-2 font-medium">Đã kín</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Step 2 Content: Section 2 - Check-in Date & Time Slot -->
+<section class="px-margin mb-space-lg flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[22px]">event_available</span>
+<h2 class="text-headline-sm font-headline-sm text-on-surface">2. Lịch &amp; Khung giờ nhận kho</h2>
+</div>
+<span class="text-label-sm font-label-sm bg-secondary-fixed text-on-secondary-fixed px-2 py-0.5 rounded-full font-semibold">Theo thời gian thực</span>
+</div>
+<!-- Date Picker Card -->
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm">
+<div class="flex items-center justify-between mb-3">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">calendar_month</span>
+<span class="text-label-lg font-label-lg text-on-surface">Ngày nhận kho (2025-05-15)</span>
+</div>
+<span class="text-label-sm font-label-sm text-secondary font-bold">Thứ Năm</span>
+</div>
+<!-- Horizontal Mini-Calendar Slider -->
+<div class="grid grid-cols-5 gap-2 text-center">
+<!-- Day 1 -->
+<button class="flex flex-col items-center py-2 px-1 rounded-xl bg-surface-container-low text-on-surface-variant hover:bg-surface-container" type="button">
+<span class="text-label-sm font-label-sm text-outline">T3</span>
+<span class="text-label-lg font-label-lg font-bold">13</span>
+<span class="text-[10px] text-outline">Th05</span>
+</button>
+<!-- Day 2 -->
+<button class="flex flex-col items-center py-2 px-1 rounded-xl bg-surface-container-low text-on-surface-variant hover:bg-surface-container" type="button">
+<span class="text-label-sm font-label-sm text-outline">T4</span>
+<span class="text-label-lg font-label-lg font-bold">14</span>
+<span class="text-[10px] text-outline">Th05</span>
+</button>
+<!-- Day 3: Selected -->
+<button class="flex flex-col items-center py-2 px-1 rounded-xl bg-primary text-on-primary shadow-sm ring-0" type="button">
+<span class="text-label-sm font-label-sm text-secondary-fixed">T5</span>
+<span class="text-label-lg font-label-lg font-bold">15</span>
+<span class="text-[10px] text-primary-fixed">Th05</span>
+</button>
+<!-- Day 4 -->
+<button class="flex flex-col items-center py-2 px-1 rounded-xl bg-surface-container-low text-on-surface-variant hover:bg-surface-container" type="button">
+<span class="text-label-sm font-label-sm text-outline">T6</span>
+<span class="text-label-lg font-label-lg font-bold">16</span>
+<span class="text-[10px] text-outline">Th05</span>
+</button>
+<!-- Day 5 -->
+<button class="flex flex-col items-center py-2 px-1 rounded-xl bg-surface-container-low text-on-surface-variant hover:bg-surface-container" type="button">
+<span class="text-label-sm font-label-sm text-outline">T7</span>
+<span class="text-label-lg font-label-lg font-bold">17</span>
+<span class="text-[10px] text-outline">Th05</span>
+</button>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-3 flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[16px] text-secondary">info</span>
+        Nhân viên hỗ trợ sẽ có mặt tại kho theo khung giờ bạn đã chọn.
+      </p>
+</div>
+<!-- Time Slots Matrix from Server API -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center justify-between">
+<span class="text-label-md font-label-md text-on-surface font-semibold">Khung giờ nhận phòng khả dụng:</span>
+<span class="text-body-sm font-body-sm text-outline">Thời lượng: 60 phút</span>
+</div>
+<div class="grid grid-cols-2 gap-3" id="timeslot-group">
+<!-- Slot 1: Selected (Available) -->
+<label class="cursor-pointer">
+<input checked="" class="sr-only peer" name="checkin_slot" type="radio" value="08:30 - 09:30"/>
+<div class="p-3 rounded-xl bg-surface-container-lowest peer-checked:bg-secondary-fixed/20 shadow-sm peer-checked:shadow-md transition-all flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="text-label-lg font-label-lg text-primary font-bold">08:30 - 09:30</span>
+<span class="material-symbols-outlined text-primary text-[18px]">check_circle</span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<span class="text-label-sm font-label-sm bg-secondary-fixed text-on-secondary-fixed px-2 py-0.5 rounded-full">Còn 2 lượt</span>
+<span class="text-body-sm font-body-sm text-secondary font-medium">Buổi sáng</span>
+</div>
+</div>
+</label>
+<!-- Slot 2: Available -->
+<label class="cursor-pointer">
+<input class="sr-only peer" name="checkin_slot" type="radio" value="10:00 - 11:00"/>
+<div class="p-3 rounded-xl bg-surface-container-lowest peer-checked:bg-secondary-fixed/20 shadow-sm peer-checked:shadow-md transition-all flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="text-label-lg font-label-lg text-on-surface font-bold">10:00 - 11:00</span>
+<span class="material-symbols-outlined text-surface-container-high text-[18px] peer-checked:text-primary">schedule</span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<span class="text-label-sm font-label-sm bg-surface-container-high text-on-surface-variant px-2 py-0.5 rounded-full">Còn 1 lượt</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">Buổi trưa</span>
+</div>
+</div>
+</label>
+<!-- Slot 3: Disabled / Full -->
+<div class="p-3 rounded-xl bg-surface-container/60 opacity-60 shadow-none flex flex-col gap-1 cursor-not-allowed">
+<div class="flex items-center justify-between">
+<span class="text-label-lg font-label-lg text-outline font-bold">14:00 - 15:00</span>
+<span class="material-symbols-outlined text-outline text-[18px]">block</span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<span class="text-label-sm font-label-sm bg-error-container text-on-error-container px-2 py-0.5 rounded-full font-medium">Hết chỗ</span>
+<span class="text-body-sm font-body-sm text-outline">Đã kín lịch</span>
+</div>
+</div>
+<!-- Slot 4: Available -->
+<label class="cursor-pointer">
+<input class="sr-only peer" name="checkin_slot" type="radio" value="16:00 - 17:00"/>
+<div class="p-3 rounded-xl bg-surface-container-lowest peer-checked:bg-secondary-fixed/20 shadow-sm peer-checked:shadow-md transition-all flex flex-col gap-1">
+<div class="flex items-center justify-between">
+<span class="text-label-lg font-label-lg text-on-surface font-bold">16:00 - 17:00</span>
+<span class="material-symbols-outlined text-surface-container-high text-[18px] peer-checked:text-primary">schedule</span>
+</div>
+<div class="flex items-center justify-between mt-1">
+<span class="text-label-sm font-label-sm bg-secondary-fixed-dim/40 text-on-secondary-fixed-variant px-2 py-0.5 rounded-full">Còn 3 lượt</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant">Buổi chiều</span>
+</div>
+</div>
+</label>
+</div>
+</div>
+</section>
+<!-- Step 2 Content: Section 3 - Estimated Cost Summary -->
+<section class="px-margin mb-space-lg">
+<div class="bg-surface-container-lowest rounded-2xl p-space-md shadow-sm">
+<div class="flex items-center justify-between pb-3 border-none">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">receipt_long</span>
+<h3 class="text-label-lg font-label-lg text-on-surface">Tóm tắt chi phí dự kiến</h3>
+</div>
+<span class="text-label-sm font-label-sm text-on-surface-variant">Thanh toán ở Bước 4</span>
+</div>
+<div class="flex flex-col gap-2.5 pt-1">
+<div class="flex items-center justify-between text-body-md font-body-md text-on-surface-variant">
+<span>Tiền cọc giữ kho (hoàn lại 1 tháng)</span>
+<span class="font-medium text-on-surface">1.100.000 đ</span>
+</div>
+<div class="flex items-center justify-between text-body-md font-body-md text-on-surface-variant">
+<span>Phí thuê tháng đầu tiên (Unit B-102)</span>
+<span class="font-medium text-on-surface">1.100.000 đ</span>
+</div>
+<div class="flex items-center justify-between text-body-sm font-body-sm text-secondary">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px]">security</span>
+            Bảo hiểm tài sản tiêu chuẩn
+          </span>
+<span class="font-medium uppercase">Miễn phí</span>
+</div>
+<!-- Total Divider & Highlight -->
+<div class="mt-2 pt-3 bg-surface-container-low/80 -mx-space-md px-space-md py-2.5 rounded-xl flex items-center justify-between">
+<div class="flex flex-col">
+<span class="text-label-sm font-label-sm text-on-surface-variant">Tổng ước tính ban đầu</span>
+<span class="text-[11px] text-outline">Đã bao gồm VAT &amp; tiền cọc hoàn lại</span>
+</div>
+<span class="text-headline-md font-headline-md text-primary font-bold">2.200.000 đ</span>
+</div>
+</div>
+</div>
+</section>
+<!-- CTA Action Panel (Fixed Bottom Style Flow) -->
+<div class="px-margin flex flex-col gap-2 mt-auto">
+<button class="w-full h-[52px] bg-primary-container text-on-primary rounded-2xl flex items-center justify-center gap-2 text-label-lg font-label-lg shadow-md active:scale-[0.99] transition-transform" id="btn-submit-step" type="button">
+<span>Tiếp tục sang bước thời hạn &amp; dịch vụ</span>
+<span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</button>
+<div class="flex items-center justify-center gap-1.5 text-body-sm font-body-sm text-on-surface-variant mt-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">lock</span>
+<span>Dữ liệu phòng và giờ được khóa tạm thời trong 15:00 phút</span>
+</div>
+</div>
+</div>
+<script>
+  // Simple reactive selection updates for UI delight
+  document.addEventListener('DOMContentLoaded', () => {
+    const unitRadios = document.querySelectorAll('input[name="selected_unit"]');
+    const slotRadios = document.querySelectorAll('input[name="checkin_slot"]');
+    const submitBtn = document.getElementById('btn-submit-step');
+
+    function checkValidity() {
+      const selectedUnit = document.querySelector('input[name="selected_unit"]:checked');
+      const selectedSlot = document.querySelector('input[name="checkin_slot"]:checked');
+      if (selectedUnit && selectedSlot) {
+        submitBtn.removeAttribute('disabled');
+        submitBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+      } else {
+        submitBtn.setAttribute('disabled', 'true');
+        submitBtn.classList.add('opacity-50', 'cursor-not-allowed');
+      }
+    }
+
+    unitRadios.forEach(radio => radio.addEventListener('change', checkValidity));
+    slotRadios.forEach(radio => radio.addEventListener('change', checkValidity));
+  });
+</script></main></body></html>
